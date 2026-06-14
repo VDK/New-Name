@@ -151,27 +151,23 @@ final class HomeController
 
         .language-switch {
             display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            justify-content: flex-start;
+            align-items: center;
+            gap: 6px;
             font-size: 13px;
         }
 
-        .language-switch a {
-            min-width: 32px;
-            padding: 3px 7px;
-            border: 1px solid transparent;
-            border-radius: 2px;
-            color: var(--accent-dark);
-            text-align: center;
-            text-decoration: none;
+        .language-switch label {
+            color: var(--muted);
+            font-weight: 600;
         }
 
-        .language-switch a.is-active {
-            border-color: #a2a9b1;
+        .language-switch select {
+            min-height: 32px;
+            padding: 4px 28px 4px 8px;
+            border: 1px solid #a2a9b1;
+            border-radius: 2px;
             background: #fff;
             color: var(--text);
-            font-weight: 700;
         }
 
         h1 {
@@ -791,16 +787,26 @@ HTML;
 
     private function languageSwitch(Request $request, string $current): string
     {
-        $links = '';
-        foreach (['en' => 'EN', 'nl' => 'NL', 'de' => 'DE', 'fr' => 'FR', 'es' => 'ES'] as $code => $label) {
-            $query = $request->query->all();
-            $query['ui'] = $code;
-            $href = '?' . http_build_query($query);
-            $active = $code === $current ? ' class="is-active"' : '';
-            $links .= '<a href="' . htmlspecialchars($href, ENT_QUOTES, 'UTF-8') . '"' . $active . '>' . $label . '</a>';
+        $query = $request->query->all();
+        unset($query['ui']);
+
+        $hidden = '';
+        foreach ($query as $key => $value) {
+            if (is_array($value)) {
+                continue;
+            }
+            $hidden .= '<input type="hidden" name="' . htmlspecialchars((string) $key, ENT_QUOTES, 'UTF-8') . '" value="' . htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '">';
         }
 
-        return '<nav class="language-switch" aria-label="' . htmlspecialchars($this->t($current, 'interface_language'), ENT_QUOTES, 'UTF-8') . '">' . $links . '</nav>';
+        $options = '';
+        foreach (['en' => 'English', 'nl' => 'Nederlands', 'de' => 'Deutsch', 'fr' => 'Français', 'es' => 'Español'] as $code => $label) {
+            $selected = $code === $current ? ' selected' : '';
+            $options .= '<option value="' . htmlspecialchars($code, ENT_QUOTES, 'UTF-8') . '"' . $selected . '>' . htmlspecialchars($label, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</option>';
+        }
+
+        $label = htmlspecialchars($this->t($current, 'interface_language'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
+        return '<form class="language-switch" method="get" action="" aria-label="' . $label . '">' . $hidden . '<label for="ui-language">' . $label . '</label><select id="ui-language" name="ui" onchange="this.form.submit()">' . $options . '</select></form>';
     }
 
     private function authStatus(Request $request, bool $authorized, string $username, string $uiLanguage): string
@@ -1508,7 +1514,7 @@ HTML;
         $checks .= $this->nativeLabelRow((string) $analysis['name'], $this->nativeLabelLanguage($language), $uiLanguage);
 
         foreach ($analysis['claims'] as $claim) {
-            $title = $claim['propertyLabel'];
+            $title = $this->propertyLabel($uiLanguage, $claim['property'], $claim['propertyLabel']);
             $detail = $claim['valueLabel'];
             $checks .= $this->staticRow($title, $detail);
         }
@@ -1523,7 +1529,7 @@ HTML;
 
         $suggestions = '';
         foreach ($analysis['relationshipSuggestions'] as $suggestion) {
-            $suggestions .= $this->relationshipCheck($suggestion);
+            $suggestions .= $this->relationshipCheck($suggestion, $uiLanguage);
         }
 
         if ($suggestions !== '') {
@@ -1628,13 +1634,13 @@ HTML;
     /**
      * @param array{target: string, targetLabel: string, targetTypes?: list<string>, property: string, propertyLabel: string, value: string, reason: string} $suggestion
      */
-    private function relationshipCheck(array $suggestion): string
+    private function relationshipCheck(array $suggestion, string $uiLanguage): string
     {
         $id = 'related_' . $suggestion['target'] . '_' . $suggestion['property'];
         $safeId = htmlspecialchars(preg_replace('/[^a-z0-9_]+/i', '_', $id) ?? $id, ENT_QUOTES, 'UTF-8');
         $value = htmlspecialchars($id, ENT_QUOTES, 'UTF-8');
         $propertyId = htmlspecialchars($suggestion['property'], ENT_QUOTES, 'UTF-8');
-        $property = htmlspecialchars($this->relationshipPropertyLabel($suggestion['property'], $suggestion['propertyLabel']), ENT_QUOTES, 'UTF-8');
+        $property = htmlspecialchars($this->propertyLabel($uiLanguage, $suggestion['property'], $suggestion['propertyLabel']), ENT_QUOTES, 'UTF-8');
         $target = htmlspecialchars($suggestion['target'], ENT_QUOTES, 'UTF-8');
         $targetLabel = htmlspecialchars($suggestion['targetLabel'], ENT_QUOTES, 'UTF-8');
         $targetTypes = htmlspecialchars(implode(', ', $suggestion['targetTypes'] ?? []), ENT_QUOTES, 'UTF-8');
@@ -1652,11 +1658,68 @@ HTML;
 HTML;
     }
 
-    private function relationshipPropertyLabel(string $propertyId, string $fallback): string
+    private function propertyLabel(string $uiLanguage, string $propertyId, string $fallback): string
     {
-        return match ($propertyId) {
-            'P1560', 'P5278' => 'other gender form',
-            default => $fallback,
-        };
+        $labels = [
+            'en' => [
+                'P31' => 'instance of',
+                'P282' => 'writing system',
+                'P407' => 'language of name',
+                'P1705' => 'native label',
+                'P7377' => 'infix',
+                'P460' => 'said to be the same as',
+                'P1533' => 'family name identical to this given name',
+                'P1560' => 'other gender form',
+                'P5278' => 'other gender form',
+            ],
+            'nl' => [
+                'P31' => 'is een',
+                'P282' => 'schrift',
+                'P407' => 'taal van de naam',
+                'P1705' => 'native label',
+                'P7377' => 'tussenvoegsel',
+                'P460' => 'mogelijk dezelfde naam',
+                'P1533' => 'identieke achternaam',
+                'P1560' => 'vorm voor ander gender',
+                'P5278' => 'vorm voor ander gender',
+            ],
+            'de' => [
+                'P31' => 'ist ein',
+                'P282' => 'Schriftsystem',
+                'P407' => 'Sprache des Namens',
+                'P1705' => 'native label',
+                'P7377' => 'Namenszusatz',
+                'P460' => 'möglicherweise derselbe Name',
+                'P1533' => 'identischer Nachname',
+                'P1560' => 'Form für anderes Geschlecht',
+                'P5278' => 'Form für anderes Geschlecht',
+            ],
+            'fr' => [
+                'P31' => 'nature de l’élément',
+                'P282' => 'système d’écriture',
+                'P407' => 'langue du nom',
+                'P1705' => 'native label',
+                'P7377' => 'particule',
+                'P460' => 'nom possiblement identique',
+                'P1533' => 'nom de famille identique',
+                'P1560' => 'forme pour un autre genre',
+                'P5278' => 'forme pour un autre genre',
+            ],
+            'es' => [
+                'P31' => 'instancia de',
+                'P282' => 'sistema de escritura',
+                'P407' => 'idioma del nombre',
+                'P1705' => 'native label',
+                'P7377' => 'partícula',
+                'P460' => 'posiblemente el mismo nombre',
+                'P1533' => 'apellido idéntico',
+                'P1560' => 'forma de otro género',
+                'P5278' => 'forma de otro género',
+            ],
+        ];
+
+        $uiLanguage = $this->interfaceLanguage($uiLanguage);
+
+        return $labels[$uiLanguage][$propertyId] ?? $labels['en'][$propertyId] ?? $fallback;
     }
 }
