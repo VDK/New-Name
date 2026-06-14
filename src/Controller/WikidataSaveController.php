@@ -188,6 +188,48 @@ final class WikidataSaveController
         ][$qid ?? ''] ?? null;
     }
 
+    private function languageLabel(?string $qid): string
+    {
+        $code = $this->languageCode($qid);
+
+        return [
+            'en' => 'English',
+            'nl' => 'Dutch',
+            'de' => 'German',
+            'uk' => 'Ukrainian',
+            'bg' => 'Bulgarian',
+            'sr' => 'Serbian',
+            'mk' => 'Macedonian',
+            'be' => 'Belarusian',
+            'fy' => 'West Frisian',
+            'ga' => 'Irish',
+            'gd' => 'Scottish Gaelic',
+            'fr' => 'French',
+            'es' => 'Spanish',
+            'it' => 'Italian',
+            'pt' => 'Portuguese',
+            'pl' => 'Polish',
+            'cs' => 'Czech',
+            'sv' => 'Swedish',
+            'da' => 'Danish',
+            'no' => 'Norwegian',
+            'fi' => 'Finnish',
+            'hu' => 'Hungarian',
+            'ro' => 'Romanian',
+            'zh' => 'Chinese',
+            'cmn' => 'Mandarin',
+            'ja' => 'Japanese',
+            'ko' => 'Korean',
+            'ar' => 'Arabic',
+            'hy' => 'Armenian',
+            'ka' => 'Georgian',
+            'el' => 'Greek',
+            'ru' => 'Russian',
+            'he' => 'Hebrew',
+            'hi' => 'Hindi',
+        ][$code ?? ''] ?? ($qid ?? '');
+    }
+
     /**
      * @param array<string, mixed> $analysis
      */
@@ -308,6 +350,9 @@ final class WikidataSaveController
                 'instance_of' => 'instance of',
                 'label' => 'Label',
                 'language_of_name' => 'language of name',
+                'made_changes_to_item' => 'Changes were made to item',
+                'new_item_can_be_found_at' => 'New item can be found at',
+                'on_wikidata' => 'on Wikidata',
                 'mit' => 'MIT licensed',
                 'native_label' => 'native label',
                 'not_set' => 'not set',
@@ -328,6 +373,9 @@ final class WikidataSaveController
                 'instance_of' => 'is een',
                 'label' => 'Label',
                 'language_of_name' => 'taal van de naam',
+                'made_changes_to_item' => 'Wijzigingen zijn gedaan op item',
+                'new_item_can_be_found_at' => 'Nieuw item staat op',
+                'on_wikidata' => 'op Wikidata',
                 'mit' => 'MIT-licentie',
                 'native_label' => 'native label',
                 'not_set' => 'niet ingesteld',
@@ -348,6 +396,9 @@ final class WikidataSaveController
                 'instance_of' => 'ist ein',
                 'label' => 'Label',
                 'language_of_name' => 'Sprache des Namens',
+                'made_changes_to_item' => 'Änderungen wurden am Item vorgenommen',
+                'new_item_can_be_found_at' => 'Das neue Item ist zu finden unter',
+                'on_wikidata' => 'auf Wikidata',
                 'mit' => 'MIT-lizenziert',
                 'native_label' => 'native label',
                 'not_set' => 'nicht gesetzt',
@@ -368,6 +419,9 @@ final class WikidataSaveController
                 'instance_of' => 'nature de l’élément',
                 'label' => 'Libellé',
                 'language_of_name' => 'langue du nom',
+                'made_changes_to_item' => 'Les modifications ont été faites sur l’élément',
+                'new_item_can_be_found_at' => 'Le nouvel élément se trouve à',
+                'on_wikidata' => 'sur Wikidata',
                 'mit' => 'Licence MIT',
                 'native_label' => 'native label',
                 'not_set' => 'non défini',
@@ -388,6 +442,9 @@ final class WikidataSaveController
                 'instance_of' => 'instancia de',
                 'label' => 'Etiqueta',
                 'language_of_name' => 'idioma del nombre',
+                'made_changes_to_item' => 'Se hicieron cambios en el elemento',
+                'new_item_can_be_found_at' => 'El elemento nuevo se encuentra en',
+                'on_wikidata' => 'en Wikidata',
                 'mit' => 'Licencia MIT',
                 'native_label' => 'native label',
                 'not_set' => 'sin definir',
@@ -415,16 +472,18 @@ final class WikidataSaveController
         $safeDisplayLabel = htmlspecialchars($displayLabel, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $homeAction = htmlspecialchars($request->getBasePath() . '/', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $mode = $result['mode'] === 'updated' ? $this->t($uiLanguage, 'updated') : $this->t($uiLanguage, 'created');
-        $safeMode = htmlspecialchars($mode, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        $typeLabel = htmlspecialchars(NameTypes::LABELS[$type] ?? $type, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $titleType = $this->completionTypeLabel($uiLanguage, $type);
+        $typeLabel = htmlspecialchars($this->itemDisplayLabel(NameTypes::LABELS[$type] ?? $type, NameTypes::TYPE_ITEMS[$type] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $nativeLanguage = htmlspecialchars($nativeLabelLanguage !== '' ? $nativeLabelLanguage : 'mul', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        $script = htmlspecialchars($this->scriptLabel($scriptQid), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        $language = htmlspecialchars($languageQid ?? $this->t($uiLanguage, 'not_set'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $script = htmlspecialchars($this->scriptDisplayLabel($scriptQid), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $language = htmlspecialchars($languageQid ? $this->languageDisplayLabel($languageQid) : $this->t($uiLanguage, 'not_set'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $relatedUpdates = (int) $result['relatedUpdates'];
         $warnings = '';
         $safeUiLanguage = htmlspecialchars($uiLanguage, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        $title = htmlspecialchars($this->t($uiLanguage, 'saved_title'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        $savedOnWikidata = htmlspecialchars($this->t($uiLanguage, 'saved_on_wikidata'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $titleText = $mode . ' ' . $titleType . " '" . $displayLabel . "' " . $this->t($uiLanguage, 'on_wikidata');
+        $title = htmlspecialchars($titleText, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $entityMessage = $result['mode'] === 'created' ? $this->t($uiLanguage, 'new_item_can_be_found_at') : $this->t($uiLanguage, 'made_changes_to_item');
+        $safeEntityMessage = htmlspecialchars($entityMessage, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $copy = htmlspecialchars($this->t($uiLanguage, 'copy'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $label = htmlspecialchars($this->t($uiLanguage, 'label'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $nativeLabel = htmlspecialchars($this->t($uiLanguage, 'native_label'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -483,8 +542,8 @@ final class WikidataSaveController
 <body>
 <main>
     <section>
-        <h1>$safeMode $safeDisplayLabel</h1>
-        <p>$savedOnWikidata: <a href="https://www.wikidata.org/wiki/$entityId" target="_blank" rel="noopener noreferrer">$entityId</a><button class="copy" type="button" aria-label="$copy $entityId" title="$copy $entityId" onclick="copyEntityId(this, $entityIdJs)"><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M6 2h9a1 1 0 0 1 1 1v11h-2V4H6V2Zm-2 4h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Zm1 2v8h7V8H5Z"/></svg></button></p>
+        <h1>$title</h1>
+        <p>$safeEntityMessage <a href="https://www.wikidata.org/wiki/$entityId" target="_blank" rel="noopener noreferrer">$entityId</a><button class="copy" type="button" aria-label="$copy $entityId" title="$copy $entityId" onclick="copyEntityId(this, $entityIdJs)"><svg viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="M6 2h9a1 1 0 0 1 1 1v11h-2V4H6V2Zm-2 4h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Zm1 2v8h7V8H5Z"/></svg></button></p>
         <dl>
             <dt>$label</dt><dd>$safeDisplayLabel (mul)</dd>
             <dt>$nativeLabel</dt><dd>$safeName ($nativeLanguage)</dd>
@@ -564,6 +623,66 @@ function copyEntityId(button, id) {
 </body>
 </html>
 HTML;
+    }
+
+    private function completionTypeLabel(string $uiLanguage, string $type): string
+    {
+        $labels = [
+            'en' => [
+                NameTypes::FAMILY_NAME => 'last name',
+                NameTypes::GIVEN_NAME => 'first name',
+                NameTypes::MALE_GIVEN_NAME => 'male first name',
+                NameTypes::FEMALE_GIVEN_NAME => 'female first name',
+                NameTypes::UNISEX_GIVEN_NAME => 'unisex first name',
+            ],
+            'nl' => [
+                NameTypes::FAMILY_NAME => 'achternaam',
+                NameTypes::GIVEN_NAME => 'voornaam',
+                NameTypes::MALE_GIVEN_NAME => 'mannelijke voornaam',
+                NameTypes::FEMALE_GIVEN_NAME => 'vrouwelijke voornaam',
+                NameTypes::UNISEX_GIVEN_NAME => 'unisex voornaam',
+            ],
+            'de' => [
+                NameTypes::FAMILY_NAME => 'Nachname',
+                NameTypes::GIVEN_NAME => 'Vorname',
+                NameTypes::MALE_GIVEN_NAME => 'männlicher Vorname',
+                NameTypes::FEMALE_GIVEN_NAME => 'weiblicher Vorname',
+                NameTypes::UNISEX_GIVEN_NAME => 'Unisex-Vorname',
+            ],
+            'fr' => [
+                NameTypes::FAMILY_NAME => 'nom de famille',
+                NameTypes::GIVEN_NAME => 'prénom',
+                NameTypes::MALE_GIVEN_NAME => 'prénom masculin',
+                NameTypes::FEMALE_GIVEN_NAME => 'prénom féminin',
+                NameTypes::UNISEX_GIVEN_NAME => 'prénom épicène',
+            ],
+            'es' => [
+                NameTypes::FAMILY_NAME => 'apellido',
+                NameTypes::GIVEN_NAME => 'nombre de pila',
+                NameTypes::MALE_GIVEN_NAME => 'nombre masculino',
+                NameTypes::FEMALE_GIVEN_NAME => 'nombre femenino',
+                NameTypes::UNISEX_GIVEN_NAME => 'nombre unisex',
+            ],
+        ];
+
+        $uiLanguage = $this->interfaceLanguage($uiLanguage);
+
+        return $labels[$uiLanguage][$type] ?? $labels['en'][$type] ?? (NameTypes::LABELS[$type] ?? $type);
+    }
+
+    private function itemDisplayLabel(string $label, string $qid): string
+    {
+        return $qid !== '' ? $label . ' (' . $qid . ')' : $label;
+    }
+
+    private function scriptDisplayLabel(string $scriptQid): string
+    {
+        return $this->itemDisplayLabel($this->scriptLabel($scriptQid), $scriptQid);
+    }
+
+    private function languageDisplayLabel(string $languageQid): string
+    {
+        return $this->itemDisplayLabel($this->languageLabel($languageQid), $languageQid);
     }
 
     private function scriptLabel(string $scriptQid): string
