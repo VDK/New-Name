@@ -23,15 +23,11 @@ final class WikidataEditService
         $token = $this->oauthClient->getCsrfToken();
         $entityId = $existingItem ?: null;
         $existingClaims = $entityId ? $this->existingClaims($entityId) : [];
-        $descriptions = $this->descriptions($type, $name, $name);
-        if ($entityId) {
-            $descriptions = $this->onlyMissingDescriptions($descriptions, $this->existingDescriptions($entityId));
-        }
         $data = [
             'labels' => [
                 'mul' => ['language' => 'mul', 'value' => $displayLabel],
             ],
-            'descriptions' => $descriptions,
+            'descriptions' => $this->descriptions($type, $name, $name),
             'claims' => [],
         ];
 
@@ -158,55 +154,6 @@ final class WikidataEditService
         $claims = $data['entities'][$entityId]['claims'] ?? [];
 
         return is_array($claims) ? $claims : [];
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    private function existingDescriptions(string $entityId): array
-    {
-        $data = $this->oauthClient->signedPost(WikimediaOAuthClient::WIKIDATA_API_URL, [
-            'action' => 'wbgetentities',
-            'format' => 'json',
-            'ids' => $entityId,
-            'props' => 'descriptions',
-        ]);
-
-        $rawDescriptions = $data['entities'][$entityId]['descriptions'] ?? [];
-        if (!is_array($rawDescriptions)) {
-            return [];
-        }
-
-        $descriptions = [];
-        foreach ($rawDescriptions as $language => $description) {
-            if (!is_array($description)) {
-                continue;
-            }
-            $value = trim((string) ($description['value'] ?? ''));
-            if ($value !== '') {
-                $descriptions[(string) $language] = $value;
-            }
-        }
-
-        return $descriptions;
-    }
-
-    /**
-     * @param array<string, array{language: string, value: string}> $descriptions
-     * @param array<string, string> $existingDescriptions
-     * @return array<string, array{language: string, value: string}>
-     */
-    private function onlyMissingDescriptions(array $descriptions, array $existingDescriptions): array
-    {
-        if ($existingDescriptions === []) {
-            return $descriptions;
-        }
-
-        return array_filter(
-            $descriptions,
-            static fn (array $description, string $language): bool => !isset($existingDescriptions[$language]),
-            ARRAY_FILTER_USE_BOTH
-        );
     }
 
     /**

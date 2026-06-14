@@ -16,6 +16,10 @@ final class DescriptionSet
         $nameScript = $this->scriptForText($suffixName);
 
         $out = [];
+        foreach ($this->descriptionOverrides($type) as $language => $description) {
+            $descriptions[$language] = $description;
+        }
+
         foreach ($descriptions as $language => $description) {
             $value = str_replace('%name%', $name, $description);
             if (!str_contains($description, '%name%') && $this->shouldAppendName($language, $nameScript, $suffixName)) {
@@ -46,6 +50,21 @@ final class DescriptionSet
         }
 
         return NameTypes::DESCRIPTIONS[$type] ?? NameTypes::DESCRIPTIONS[NameTypes::GIVEN_NAME];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function descriptionOverrides(string $type): array
+    {
+        return match ($type) {
+            NameTypes::FAMILY_NAME, NameTypes::CHINESE_FAMILY_NAME => [
+                'hu' => 'családnév',
+                'nl' => 'achternaam',
+                'pt-br' => 'nome de família',
+            ],
+            default => [],
+        };
     }
 
     /**
@@ -97,26 +116,109 @@ final class DescriptionSet
 
     private function scriptForLanguage(string $language): string
     {
-        $base = strtolower(explode('-', $language, 2)[0]);
+        $language = strtolower($language);
+        $base = explode('-', $language, 2)[0];
+
+        $script = [
+            'crh-cyrl' => 'Cyrillic',
+            'crh-latn' => 'Latin',
+            'gan-hans' => 'Han',
+            'gan-hant' => 'Han',
+            'hif-latn' => 'Latin',
+            'ike-cans' => 'Canadian_Aboriginal',
+            'ike-latn' => 'Latin',
+            'kk-arab' => 'Arabic',
+            'kk-cyrl' => 'Cyrillic',
+            'kk-latn' => 'Latin',
+            'ks-arab' => 'Arabic',
+            'ks-deva' => 'Devanagari',
+            'ku-arab' => 'Arabic',
+            'ku-latn' => 'Latin',
+            'shi-latn' => 'Latin',
+            'shi-tfng' => 'Tifinagh',
+            'sr-ec' => 'Cyrillic',
+            'sr-el' => 'Latin',
+            'tg-cyrl' => 'Cyrillic',
+            'tg-latn' => 'Latin',
+            'tt-cyrl' => 'Cyrillic',
+            'tt-latn' => 'Latin',
+            'ug-arab' => 'Arabic',
+            'ug-latn' => 'Latin',
+            'zh-classical' => 'Han',
+            'zh-cn' => 'Han',
+            'zh-hans' => 'Han',
+            'zh-hant' => 'Han',
+            'zh-hk' => 'Han',
+            'zh-min-nan' => 'Han',
+            'zh-mo' => 'Han',
+            'zh-my' => 'Han',
+            'zh-sg' => 'Han',
+            'zh-tw' => 'Han',
+            'zh-yue' => 'Han',
+        ][$language] ?? null;
+
+        if ($script !== null) {
+            return $script;
+        }
 
         return [
+            'am' => 'Ethiopic',
             'ar' => 'Arabic',
+            'as' => 'Bengali',
             'be' => 'Cyrillic',
             'bg' => 'Cyrillic',
+            'bo' => 'Tibetan',
+            'bn' => 'Bengali',
+            'ckb' => 'Arabic',
+            'dv' => 'Thaana',
+            'dz' => 'Tibetan',
+            'fa' => 'Arabic',
+            'gan' => 'Han',
+            'gu' => 'Gujarati',
             'el' => 'Greek',
             'en' => 'Latin',
             'es' => 'Latin',
             'fr' => 'Latin',
             'de' => 'Latin',
             'he' => 'Hebrew',
+            'hi' => 'Devanagari',
             'hy' => 'Armenian',
             'it' => 'Latin',
             'ja' => 'Han',
+            'ka' => 'Georgian',
+            'km' => 'Khmer',
+            'kn' => 'Kannada',
+            'kk' => 'Cyrillic',
+            'ko' => 'Hangul',
+            'lo' => 'Lao',
+            'lzh' => 'Han',
+            'mhr' => 'Cyrillic',
             'mk' => 'Cyrillic',
+            'ml' => 'Malayalam',
+            'mn' => 'Cyrillic',
+            'my' => 'Myanmar',
+            'nan' => 'Han',
+            'ne' => 'Devanagari',
+            'new' => 'Devanagari',
             'nl' => 'Latin',
+            'or' => 'Oriya',
+            'pa' => 'Gurmukhi',
+            'pnb' => 'Arabic',
+            'ps' => 'Arabic',
             'ru' => 'Cyrillic',
+            'sah' => 'Cyrillic',
+            'sat' => 'Ol_Chiki',
+            'sd' => 'Arabic',
+            'si' => 'Sinhala',
             'sr' => 'Cyrillic',
+            'ta' => 'Tamil',
+            'te' => 'Telugu',
+            'th' => 'Thai',
+            'tg' => 'Cyrillic',
             'uk' => 'Cyrillic',
+            'ur' => 'Arabic',
+            'yi' => 'Hebrew',
+            'yue' => 'Han',
             'zh' => 'Han',
         ][$base] ?? 'Latin';
     }
@@ -124,7 +226,7 @@ final class DescriptionSet
     private function scriptForText(string $text): string
     {
         $counts = [];
-        foreach (['Han', 'Latin', 'Cyrillic', 'Arabic', 'Hebrew', 'Hangul', 'Hiragana', 'Katakana', 'Devanagari', 'Greek', 'Georgian', 'Armenian'] as $script) {
+        foreach (['Han', 'Latin', 'Cyrillic', 'Arabic', 'Hebrew', 'Hangul', 'Hiragana', 'Katakana', 'Devanagari', 'Greek', 'Georgian', 'Armenian', 'Bengali', 'Gujarati', 'Gurmukhi', 'Malayalam', 'Myanmar', 'Oriya', 'Sinhala', 'Tamil', 'Telugu', 'Thai', 'Ethiopic', 'Tibetan', 'Thaana', 'Khmer', 'Kannada', 'Lao', 'Tifinagh'] as $script) {
             preg_match_all('/\p{' . $script . '}/u', $text, $matches);
             $count = count($matches[0] ?? []);
             if ($count > 0) {
