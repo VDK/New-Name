@@ -1208,16 +1208,16 @@ HTML;
             return $language;
         }
 
-        $textLanguage = $this->languageCodeForTextAndScript((string) ($analysis['name'] ?? ''), $analysis['script'] ?? null, $selectedType);
-        if ($textLanguage !== null) {
-            return $textLanguage;
-        }
-
         foreach ($analysis['affixes'] ?? [] as $affix) {
             $code = is_array($affix) ? $this->languageCodeForAffix($affix, $preferredLanguages) : null;
             if ($code !== null) {
                 return $code;
             }
+        }
+
+        $textLanguage = $this->languageCodeForTextAndScript((string) ($analysis['name'] ?? ''), $analysis['script'] ?? null, $selectedType);
+        if ($textLanguage !== null) {
+            return $textLanguage;
         }
 
         $scriptLanguage = $this->languageCodeForScript($analysis['script'] ?? null);
@@ -1246,10 +1246,6 @@ HTML;
             return 'high';
         }
 
-        if ($this->languageCodeForTextAndScript((string) ($analysis['name'] ?? ''), $analysis['script'] ?? null, $selectedType) === $resolvedLanguage) {
-            return 'high';
-        }
-
         foreach ($analysis['affixes'] ?? [] as $affix) {
             if (!is_array($affix)) {
                 continue;
@@ -1257,6 +1253,10 @@ HTML;
             if ($this->languageCodeForAffix($affix, []) === $resolvedLanguage) {
                 return 'high';
             }
+        }
+
+        if ($this->languageCodeForTextAndScript((string) ($analysis['name'] ?? ''), $analysis['script'] ?? null, $selectedType) === $resolvedLanguage) {
+            return 'high';
         }
 
         if (($preferredLanguages[$resolvedLanguage] ?? 0) >= 2) {

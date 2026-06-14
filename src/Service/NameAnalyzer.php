@@ -276,6 +276,22 @@ final class NameAnalyzer
                 ];
             }
 
+            if (
+                $foldedLabel === $foldedName
+                && $this->isGivenNameType($selectedType)
+                && $this->hasFamilyNameInstance($matchInstances)
+            ) {
+                $suggestions[] = [
+                    'target' => $id,
+                    'targetLabel' => $label,
+                    'targetTypes' => $this->instanceLabels($matchInstances),
+                    'property' => 'P1533',
+                    'propertyLabel' => 'family name identical to this given name',
+                    'value' => 'new item',
+                    'reason' => 'same spelling is already used as a family name',
+                ];
+            }
+
             if ($this->isGivenNameType($selectedType) && $this->isOtherGenderGivenName($selectedType, $matchInstances)) {
                 $suggestions[] = [
                     'target' => $id,
@@ -522,5 +538,13 @@ final class NameAnalyzer
             NameTypes::FAMILY_NAME,
             NameTypes::CHINESE_FAMILY_NAME,
         ], true);
+    }
+
+    /**
+     * @param list<string> $instances
+     */
+    private function hasFamilyNameInstance(array $instances): bool
+    {
+        return array_intersect(NameTypes::COMPATIBLE_TYPE_ITEMS[NameTypes::FAMILY_NAME], $instances) !== [];
     }
 }

@@ -193,11 +193,6 @@ final class WikidataSaveController
      */
     private function detectedLanguageCode(array $analysis): ?string
     {
-        $textLanguage = $this->languageCodeForTextAndScript((string) ($analysis['name'] ?? ''), $analysis['script'] ?? null, (string) ($analysis['selectedType'] ?? ''));
-        if ($textLanguage !== null) {
-            return $textLanguage;
-        }
-
         foreach ($analysis['affixes'] ?? [] as $affix) {
             if (!is_array($affix)) {
                 continue;
@@ -206,6 +201,11 @@ final class WikidataSaveController
             if ($code !== null) {
                 return $code;
             }
+        }
+
+        $textLanguage = $this->languageCodeForTextAndScript((string) ($analysis['name'] ?? ''), $analysis['script'] ?? null, (string) ($analysis['selectedType'] ?? ''));
+        if ($textLanguage !== null) {
+            return $textLanguage;
         }
 
         return null;
