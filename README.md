@@ -6,12 +6,15 @@ The app starts with a single name input, analyzes likely Wikidata properties, ch
 
 Source code: <https://github.com/VDK/New-Name>
 
+Production: <https://new-name.toolforge.org/>
+
 Created by [Vera de Kok](https://www.veradekok.nl/). Licensed under the MIT License.
 
 ## Features
 
-- Detects likely name type: family name, given name, male/female/unisex given name, and Chinese name variants.
+- Detects likely name type: family name, given name, and male/female/unisex given name.
 - Detects writing system from Unicode script.
+- Suggests transliterations for non-Latin scripts using the bundled Wikidata transliteration gadget data.
 - Suggests Wikidata matches for the selected name type to avoid duplicates.
 - Suggests related name statements:
   - `said to be the same as (P460)`
@@ -75,6 +78,12 @@ If running under XAMPP Apache from `htdocs`, the local URL is typically:
 
 ```text
 http://192.168.178.2/new-name/public/
+```
+
+Production is intended to run at:
+
+```text
+https://new-name.toolforge.org/
 ```
 
 On Toolforge, the web document root is normally `public_html`. Deploy the Symfony public entrypoint there, for example by copying or symlinking the contents of `public/` into `public_html/` according to the tool account setup.
