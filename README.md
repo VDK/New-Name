@@ -135,6 +135,14 @@ Important environment variables:
 
 The edit summary links back to the app URL so Wikidata edits remain attributable to the tool.
 
+## Wikidata Gadget
+
+`gadgets/NewNameCreateLink.js` is an optional Wikidata gadget snippet. It changes the Wikibase entity selector's "not found" link into a link to New Name with the current input prefilled:
+
+```text
+https://new-name.toolforge.org/?name=...
+```
+
 ## Project Structure
 
 - `src/Controller/HomeController.php` renders the main analyze/review/create flow.

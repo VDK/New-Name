@@ -126,7 +126,7 @@ final class DescriptionSet
         $description = preg_replace('/\s*-\s*' . $quotedName . '$/u', '', $description) ?? $description;
         $description = preg_replace('/\s*\(\s*' . $quotedName . '\s*\)$/u', '', $description) ?? $description;
 
-        if (in_array(strtolower(explode('-', $language, 2)[0]), ['uk', 'ru', 'be'], true)) {
+        if (in_array(strtolower($language), ['uk', 'ru', 'be', 'sr', 'sr-ec'], true)) {
             return trim($description) . ' - ' . $name;
         }
 
