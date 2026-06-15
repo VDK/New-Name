@@ -83,29 +83,31 @@ final class WikidataEditService
 
         $relatedUpdates = 0;
         $warnings = [];
-        if ($mode === 'created') {
-            foreach ($relationships as $relationship) {
-                $applyKey = 'related_' . $relationship['target'] . '_' . $relationship['property'];
-                if (!in_array($applyKey, $apply, true)) {
+        foreach ($relationships as $relationship) {
+            $applyKey = 'related_' . $relationship['target'] . '_' . $relationship['property'];
+            if (
+                !in_array($applyKey, $apply, true)
+                || !$this->isSymmetricNameProperty($relationship['property'])
+                || $relationship['target'] === $entityId
+            ) {
+                continue;
+            }
+            try {
+                $targetClaims = $this->existingClaims($relationship['target']);
+                if ($this->hasItemClaim($targetClaims, $relationship['property'], $entityId)) {
                     continue;
                 }
-                try {
-                    $targetClaims = $this->existingClaims($relationship['target']);
-                    if ($this->hasItemClaim($targetClaims, $relationship['property'], $entityId)) {
-                        continue;
-                    }
-                    $this->oauthClient->signedPost(WikimediaOAuthClient::WIKIDATA_API_URL, [
-                        'action' => 'wbeditentity',
-                        'format' => 'json',
-                        'id' => $relationship['target'],
-                        'data' => json_encode(['claims' => [$this->relationshipClaim($relationship, $entityId)]], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE),
-                        'token' => $token,
-                        'summary' => 'New Name: link related name item',
-                    ]);
-                    $relatedUpdates++;
-                } catch (\Throwable $e) {
-                    $warnings[] = 'Could not update ' . $relationship['target'] . ' with ' . $relationship['property'] . ': ' . $e->getMessage();
-                }
+                $this->oauthClient->signedPost(WikimediaOAuthClient::WIKIDATA_API_URL, [
+                    'action' => 'wbeditentity',
+                    'format' => 'json',
+                    'id' => $relationship['target'],
+                    'data' => json_encode(['claims' => [$this->relationshipClaim($relationship, $entityId)]], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE),
+                    'token' => $token,
+                    'summary' => 'New Name: link related name item',
+                ]);
+                $relatedUpdates++;
+            } catch (\Throwable $e) {
+                $warnings[] = 'Could not update ' . $relationship['target'] . ' with ' . $relationship['property'] . ': ' . $e->getMessage();
             }
         }
 
