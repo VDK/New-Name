@@ -50,6 +50,7 @@ final class LanguageHeuristics
     public const LANGUAGE_SUFFIXES = [
         ['group' => 'fy', 'value' => '-stra', 'confidence' => 'medium', 'suffix' => 'stra'],
         ['group' => 'de', 'value' => '-dorf', 'confidence' => 'medium', 'suffix' => 'dorf'],
+        ['group' => 'de', 'value' => '-dorff', 'confidence' => 'medium', 'suffix' => 'dorff'],
         ['group' => 'de', 'value' => '-stein', 'confidence' => 'medium', 'suffix' => 'stein'],
         ['group' => 'nl', 'value' => '-stein', 'confidence' => 'low', 'suffix' => 'stein'],
         ['group' => 'de', 'value' => '-berg', 'confidence' => 'medium', 'suffix' => 'berg'],

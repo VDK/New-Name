@@ -436,10 +436,28 @@ final class NameAnalyzer
             $variant = preg_replace('/^' . $prefix . '[\s-]+/iu', '', $normalizedName, 1);
             if (is_string($variant) && $variant !== '' && $variant !== $normalizedName) {
                 $variants[] = $variant;
+                foreach ($this->familyNameSpellingVariants($variant) as $spellingVariant) {
+                    $variants[] = $spellingVariant;
+                }
             }
         }
 
         return array_values(array_unique($variants));
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function familyNameSpellingVariants(string $name): array
+    {
+        if (preg_match('/dorff$/iu', $name) === 1) {
+            return [preg_replace('/dorff$/iu', 'dorf', $name) ?? $name];
+        }
+        if (preg_match('/dorf$/iu', $name) === 1) {
+            return [$name . 'f'];
+        }
+
+        return [];
     }
 
     /**
