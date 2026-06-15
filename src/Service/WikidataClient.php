@@ -93,6 +93,73 @@ final class WikidataClient
      * @param list<string> $ids
      * @return array<string, list<string>>
      */
+    public function itemClaims(array $ids, string $property): array
+    {
+        $ids = array_values(array_filter(array_unique($ids), static fn (string $id): bool => preg_match('/^Q\d+$/', $id) === 1));
+        if (!$ids || !preg_match('/^P\d+$/', $property)) {
+            return [];
+        }
+        sort($ids, SORT_NATURAL);
+
+        $data = $this->api([
+            'action' => 'wbgetentities',
+            'format' => 'json',
+            'ids' => implode('|', $ids),
+            'props' => 'claims',
+        ]);
+
+        $out = [];
+        foreach ($ids as $id) {
+            $out[$id] = [];
+            foreach ($data['entities'][$id]['claims'][$property] ?? [] as $claim) {
+                $value = $claim['mainsnak']['datavalue']['value']['id'] ?? null;
+                if (is_string($value)) {
+                    $out[$id][] = $value;
+                }
+            }
+        }
+
+        return $out;
+    }
+
+    /**
+     * @param list<string> $ids
+     * @return array<string, list<string>>
+     */
+    public function nativeLabels(array $ids): array
+    {
+        $ids = array_values(array_filter(array_unique($ids), static fn (string $id): bool => preg_match('/^Q\d+$/', $id) === 1));
+        if (!$ids) {
+            return [];
+        }
+        sort($ids, SORT_NATURAL);
+
+        $data = $this->api([
+            'action' => 'wbgetentities',
+            'format' => 'json',
+            'ids' => implode('|', $ids),
+            'props' => 'claims',
+        ]);
+
+        $out = [];
+        foreach ($ids as $id) {
+            $out[$id] = [];
+            foreach ($data['entities'][$id]['claims']['P1705'] ?? [] as $claim) {
+                $value = $claim['mainsnak']['datavalue']['value']['text'] ?? null;
+                if (is_string($value) && $value !== '') {
+                    $out[$id][] = $value;
+                }
+            }
+            $out[$id] = array_values(array_unique($out[$id]));
+        }
+
+        return $out;
+    }
+
+    /**
+     * @param list<string> $ids
+     * @return array<string, list<string>>
+     */
     public function terms(array $ids): array
     {
         $ids = array_values(array_filter(array_unique($ids), static fn (string $id): bool => preg_match('/^Q\d+$/', $id) === 1));

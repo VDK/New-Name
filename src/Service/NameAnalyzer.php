@@ -45,6 +45,9 @@ final class NameAnalyzer
         if ($missingInstanceIds) {
             $instances += $this->wikidataClient->instanceOf($missingInstanceIds);
         }
+        $matchIds = array_column($matches, 'id');
+        $scripts = $this->wikidataClient->itemClaims($matchIds, 'P282');
+        $nativeLabels = $this->wikidataClient->nativeLabels($matchIds);
 
         return [
             'name' => $name,
@@ -53,8 +56,8 @@ final class NameAnalyzer
             'suggestions' => $suggestions,
             'script' => $script,
             'affixes' => $affixes,
-            'matches' => $this->shapeMatches($matches, $instances),
-            'sameTypeMatches' => $this->sameTypeMatches($matches, $instances, $type, $name),
+            'matches' => $this->shapeMatches($matches, $instances, $scripts, $nativeLabels, $script),
+            'sameTypeMatches' => $this->sameTypeMatches($matches, $instances, $scripts, $nativeLabels, $type, $name, $script),
             'descriptions' => $this->descriptionSet->forType($type, $name),
             'claims' => $this->claimsFor($type, $script),
             'relationshipSuggestions' => $this->relationshipSuggestions($name, $type, $affixes, $this->relationshipCandidateMatches($matches, $instances, $type), $instances),
@@ -115,7 +118,10 @@ final class NameAnalyzer
             ];
         }
 
-        usort($out, static fn (array $a, array $b): int => $b['score'] <=> $a['score']);
+        usort($out, function (array $a, array $b): int {
+            return ($b['score'] <=> $a['score'])
+                ?: ($this->typeSpecificity($b['type']) <=> $this->typeSpecificity($a['type']));
+        });
 
         foreach ($out as &$suggestion) {
             unset($suggestion['score']);
@@ -133,17 +139,26 @@ final class NameAnalyzer
     /**
      * @param list<array{id: string, label: string, description: string}> $matches
      * @param array<string, list<string>> $instances
+     * @param array<string, list<string>> $scripts
+     * @param array<string, list<string>> $nativeLabels
      * @return list<array<string, mixed>>
      */
-    private function shapeMatches(array $matches, array $instances): array
+    private function shapeMatches(array $matches, array $instances, array $scripts = [], array $nativeLabels = [], ?array $detectedScript = null): array
     {
-        return array_map(static fn (array $match): array => $match + [
-            'instanceOf' => $instances[$match['id']] ?? [],
-            'instanceLabels' => array_values(array_map(
-                static fn (string $qid): string => NameTypes::ITEM_LABELS[$qid] ?? $qid,
-                $instances[$match['id']] ?? []
-            )),
-        ], $matches);
+        return array_map(function (array $match) use ($instances, $scripts, $nativeLabels, $detectedScript): array {
+            $id = $match['id'];
+
+            return $match + [
+                'description' => $this->descriptionWithNativeLabel((string) ($match['description'] ?? ''), (string) ($match['label'] ?? ''), $nativeLabels[$id] ?? [], $detectedScript),
+                'instanceOf' => $instances[$id] ?? [],
+                'instanceLabels' => array_values(array_map(
+                    static fn (string $qid): string => NameTypes::ITEM_LABELS[$qid] ?? $qid,
+                    $instances[$id] ?? []
+                )),
+                'scripts' => $scripts[$id] ?? [],
+                'nativeLabels' => $nativeLabels[$id] ?? [],
+            ];
+        }, $matches);
     }
 
     /**
@@ -174,6 +189,41 @@ final class NameAnalyzer
         return NameTypes::TYPE_ITEMS[$type] ?? NameTypes::TYPE_ITEMS[NameTypes::GIVEN_NAME];
     }
 
+    private function typeSpecificity(string $type): int
+    {
+        return match ($type) {
+            NameTypes::MALE_GIVEN_NAME, NameTypes::FEMALE_GIVEN_NAME, NameTypes::UNISEX_GIVEN_NAME => 3,
+            NameTypes::CHINESE_FAMILY_NAME, NameTypes::CHINESE_GIVEN_NAME => 2,
+            NameTypes::FAMILY_NAME => 1,
+            default => 0,
+        };
+    }
+
+    /**
+     * @param list<string> $nativeLabels
+     */
+    private function descriptionWithNativeLabel(string $description, string $label, array $nativeLabels, ?array $detectedScript): string
+    {
+        $detectedScriptName = is_array($detectedScript) ? (string) ($detectedScript['script'] ?? '') : '';
+        if ($detectedScriptName === '') {
+            return $description;
+        }
+
+        foreach ($nativeLabels as $nativeLabel) {
+            if ($nativeLabel === '' || $nativeLabel === $label) {
+                continue;
+            }
+            $nativeScript = $this->scriptDetector->detect($nativeLabel);
+            if (is_array($nativeScript) && (string) ($nativeScript['script'] ?? '') !== $detectedScriptName) {
+                $description = trim(preg_replace('/\s+/u', ' ', $description) ?? $description);
+
+                return $description !== '' ? $description . ' (' . $nativeLabel . ')' : $nativeLabel;
+            }
+        }
+
+        return $description;
+    }
+
     /**
      * @param list<array<string, string>> $affixes
      */
@@ -185,9 +235,11 @@ final class NameAnalyzer
     /**
      * @param list<array{id: string, label: string, description: string}> $matches
      * @param array<string, list<string>> $instances
+     * @param array<string, list<string>> $scripts
+     * @param array<string, list<string>> $nativeLabels
      * @return list<array<string, mixed>>
      */
-    private function sameTypeMatches(array $matches, array $instances, string $selectedType, string $name): array
+    private function sameTypeMatches(array $matches, array $instances, array $scripts, array $nativeLabels, string $selectedType, string $name, ?array $detectedScript): array
     {
         $compatibleItems = $this->compatibleTypeItems($selectedType);
         if (!$compatibleItems) {
@@ -195,12 +247,16 @@ final class NameAnalyzer
         }
 
         $foldedName = $this->foldName($name);
-        $sameType = array_values(array_filter($matches, function (array $match) use ($instances, $compatibleItems, $foldedName): bool {
+        $detectedScriptQid = is_array($detectedScript) ? (string) ($detectedScript['qid'] ?? '') : '';
+        $sameType = array_values(array_filter($matches, function (array $match) use ($instances, $scripts, $compatibleItems, $foldedName, $detectedScriptQid): bool {
+            $matchScripts = $scripts[$match['id']] ?? [];
+
             return array_intersect($compatibleItems, $instances[$match['id']] ?? []) !== []
+                && ($detectedScriptQid === '' || in_array($detectedScriptQid, $matchScripts, true))
                 && $this->foldName((string) $match['label']) === $foldedName;
         }));
 
-        return $this->shapeMatches($sameType, $instances);
+        return $this->shapeMatches($sameType, $instances, $scripts, $nativeLabels, $detectedScript);
     }
 
     /**

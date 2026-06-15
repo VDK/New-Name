@@ -457,6 +457,11 @@ final class HomeController
             font-size: 13px;
         }
 
+        .qid-link {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
         .badges {
             display: flex;
             flex-wrap: wrap;
@@ -1363,7 +1368,7 @@ HTML;
             $label = htmlspecialchars((string) $match['label'], ENT_QUOTES, 'UTF-8');
             $descriptionText = $this->translatedInstanceList($uiLanguage, $match['instanceLabels'] ?? []) ?: (string) $match['description'];
             $description = htmlspecialchars($descriptionText, ENT_QUOTES, 'UTF-8');
-            $rows .= "<tr><td colspan=\"2\"><label class=\"check\"><input type=\"radio\" name=\"existing_item\" value=\"$id\" data-label=\"$label\"><span><strong>$label</strong> <a class=\"meta\" href=\"https://www.wikidata.org/wiki/$id\" target=\"_blank\" rel=\"noopener noreferrer\">($id)</a><br><span class=\"meta\">$description</span></span></label></td></tr>";
+            $rows .= "<tr><td colspan=\"2\"><label class=\"check\"><input type=\"radio\" name=\"existing_item\" value=\"$id\" data-label=\"$label\"><span><strong>$label</strong> <a class=\"qid-link\" href=\"https://www.wikidata.org/wiki/$id\" target=\"_blank\" rel=\"noopener noreferrer\">($id)</a><br><span class=\"meta\">$description</span></span></label></td></tr>";
         }
 
         return <<<HTML
@@ -1745,7 +1750,7 @@ HTML;
     <input id="$safeId" name="apply[]" value="$value" type="checkbox"$checked>
     <span>
         <strong>$property</strong><br>
-        <span class="meta">$targetLabel <a href="https://www.wikidata.org/wiki/$target" target="_blank" rel="noopener noreferrer">($target)</a></span>$typeText
+        <span class="meta">$targetLabel <a class="qid-link" href="https://www.wikidata.org/wiki/$target" target="_blank" rel="noopener noreferrer">($target)</a></span>$typeText
     </span>
 </label>
 HTML;
