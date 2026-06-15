@@ -44,6 +44,7 @@ final class NameTypes
         'Q101352' => 'family name',
         'Q66480858' => 'affixed family name',
         'Q60558422' => 'compound surname',
+        'Q4167410' => 'Wikimedia disambiguation page',
         'Q202444' => 'given name',
         'Q12308941' => 'male given name',
         'Q11879590' => 'female given name',

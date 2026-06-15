@@ -351,7 +351,7 @@ final class WikidataSaveController
                 'label' => 'Label',
                 'language_of_name' => 'language of name',
                 'made_changes_to_item' => 'Changes were made to item',
-                'new_item_can_be_found_at' => 'New item can be found at',
+                'new_item_can_be_found_at' => 'New item at',
                 'on_wikidata' => 'on Wikidata',
                 'mit' => 'MIT licensed',
                 'native_label' => 'native label',

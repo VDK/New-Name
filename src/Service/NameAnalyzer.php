@@ -207,16 +207,20 @@ final class NameAnalyzer
     private function relationshipCandidateMatches(array $matches, array $instances, string $selectedType): array
     {
         $sameType = [];
+        $disambiguation = [];
         $other = [];
         foreach ($matches as $match) {
-            if ($this->isSameType($selectedType, $instances[$match['id']] ?? [])) {
+            $matchInstances = $instances[$match['id']] ?? [];
+            if ($this->isSameType($selectedType, $matchInstances)) {
                 $sameType[] = $match;
+            } elseif ($this->isFamilyNameType($selectedType) && in_array('Q4167410', $matchInstances, true)) {
+                $disambiguation[] = $match;
             } else {
                 $other[] = $match;
             }
         }
 
-        return array_slice([...$sameType, ...array_slice($other, 0, 3)], 0, 8);
+        return array_slice([...$sameType, ...$disambiguation, ...array_slice($other, 0, 3)], 0, 8);
     }
 
     /**
@@ -247,7 +251,7 @@ final class NameAnalyzer
     /**
      * @param list<array{id: string, label: string, description: string}> $matches
      * @param array<string, list<string>> $instances
-     * @return list<array{target: string, targetLabel: string, targetTypes: list<string>, property: string, propertyLabel: string, value: string, reason: string}>
+     * @return list<array{target: string, targetLabel: string, targetTypes: list<string>, property: string, propertyLabel: string, value: string, reason: string, qualifierProperty?: string, qualifierPropertyLabel?: string, qualifierValue?: string, qualifierValueLabel?: string}>
      */
     private function relationshipSuggestions(string $name, string $selectedType, array $matches, array $instances): array
     {
@@ -313,6 +317,26 @@ final class NameAnalyzer
                     'propertyLabel' => 'surname for other gender',
                     'value' => 'new item',
                     'reason' => 'existing family-name item may be a gendered variant',
+                ];
+            }
+
+            if (
+                $foldedLabel === $foldedName
+                && $this->isFamilyNameType($selectedType)
+                && in_array('Q4167410', $matchInstances, true)
+            ) {
+                $suggestions[] = [
+                    'target' => $id,
+                    'targetLabel' => $label,
+                    'targetTypes' => $this->instanceLabels($matchInstances),
+                    'property' => 'P1889',
+                    'propertyLabel' => 'different from',
+                    'value' => 'new item',
+                    'reason' => 'same label is a disambiguation page',
+                    'qualifierProperty' => 'P1013',
+                    'qualifierPropertyLabel' => 'criterion used',
+                    'qualifierValue' => 'Q27924673',
+                    'qualifierValueLabel' => 'family name',
                 ];
             }
         }

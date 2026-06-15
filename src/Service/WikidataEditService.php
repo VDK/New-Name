@@ -15,7 +15,7 @@ final class WikidataEditService
 
     /**
      * @param list<string> $apply
-     * @param list<array{target: string, targetLabel: string, property: string, propertyLabel: string, value: string, reason: string}> $relationships
+     * @param list<array{target: string, targetLabel: string, property: string, propertyLabel: string, value: string, reason: string, qualifierProperty?: string, qualifierValue?: string}> $relationships
      * @return array{entityId: string, mode: string, relatedUpdates: int, warnings: list<string>}
      */
     public function save(string $name, string $displayLabel, string $type, ?string $scriptQid, ?string $languageQid, string $nativeLabelLanguage, ?string $existingItem, array $apply, array $relationships): array
@@ -55,7 +55,7 @@ final class WikidataEditService
             if ($this->hasItemClaim($existingClaims, $relationship['property'], $relationship['target'])) {
                 continue;
             }
-            $data['claims'][] = $this->itemClaim($relationship['property'], $relationship['target']);
+            $data['claims'][] = $this->relationshipClaim($relationship, $relationship['target']);
         }
 
         $params = [
@@ -97,7 +97,7 @@ final class WikidataEditService
                         'action' => 'wbeditentity',
                         'format' => 'json',
                         'id' => $relationship['target'],
-                        'data' => json_encode(['claims' => [$this->itemClaim($relationship['property'], $entityId)]], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE),
+                        'data' => json_encode(['claims' => [$this->relationshipClaim($relationship, $entityId)]], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE),
                         'token' => $token,
                         'summary' => 'New Name: link related name item',
                     ]);
@@ -113,7 +113,7 @@ final class WikidataEditService
 
     private function isSymmetricNameProperty(string $property): bool
     {
-        return in_array($property, ['P460', 'P1560', 'P5278'], true);
+        return in_array($property, ['P460', 'P1560', 'P5278', 'P1889'], true);
     }
 
     /**
@@ -241,25 +241,56 @@ final class WikidataEditService
     }
 
     /**
+     * @param array{property: string, qualifierProperty?: string, qualifierValue?: string} $relationship
      * @return array<string, mixed>
      */
-    private function itemClaim(string $property, string $qid): array
+    private function relationshipClaim(array $relationship, string $targetQid): array
     {
-        return [
-            'mainsnak' => [
-                'snaktype' => 'value',
-                'property' => $property,
-                'datavalue' => [
-                    'value' => [
-                        'entity-type' => 'item',
-                        'numeric-id' => (int) substr($qid, 1),
-                        'id' => $qid,
-                    ],
-                    'type' => 'wikibase-entityid',
-                ],
-            ],
+        $qualifiers = [];
+        $qualifierProperty = (string) ($relationship['qualifierProperty'] ?? '');
+        $qualifierValue = (string) ($relationship['qualifierValue'] ?? '');
+        if (preg_match('/^P\d+$/', $qualifierProperty) && preg_match('/^Q\d+$/', $qualifierValue)) {
+            $qualifiers[] = ['property' => $qualifierProperty, 'value' => $qualifierValue];
+        }
+
+        return $this->itemClaim($relationship['property'], $targetQid, $qualifiers);
+    }
+
+    /**
+     * @param list<array{property: string, value: string}> $qualifiers
+     * @return array<string, mixed>
+     */
+    private function itemClaim(string $property, string $qid, array $qualifiers = []): array
+    {
+        $claim = [
+            'mainsnak' => $this->itemSnak($property, $qid),
             'type' => 'statement',
             'rank' => 'normal',
+        ];
+
+        foreach ($qualifiers as $qualifier) {
+            $claim['qualifiers'][$qualifier['property']][] = $this->itemSnak($qualifier['property'], $qualifier['value']);
+        }
+
+        return $claim;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function itemSnak(string $property, string $qid): array
+    {
+        return [
+            'snaktype' => 'value',
+            'property' => $property,
+            'datavalue' => [
+                'value' => [
+                    'entity-type' => 'item',
+                    'numeric-id' => (int) substr($qid, 1),
+                    'id' => $qid,
+                ],
+                'type' => 'wikibase-entityid',
+            ],
         ];
     }
 

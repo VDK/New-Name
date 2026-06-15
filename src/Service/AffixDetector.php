@@ -105,6 +105,10 @@ final class AffixDetector
             $hits[] = ['kind' => 'language', 'group' => 'fy', 'value' => '-stra', 'confidence' => 'medium'];
         }
 
+        if (mb_strlen($normalized) > 5 && str_ends_with($normalized, 'dorf')) {
+            $hits[] = ['kind' => 'language', 'group' => 'de', 'value' => '-dorf', 'confidence' => 'medium'];
+        }
+
         return $hits;
     }
 
