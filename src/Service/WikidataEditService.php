@@ -24,9 +24,7 @@ final class WikidataEditService
         $entityId = $existingItem ?: null;
         $existingClaims = $entityId ? $this->existingClaims($entityId) : [];
         $data = [
-            'labels' => [
-                'mul' => ['language' => 'mul', 'value' => $displayLabel],
-            ],
+            'labels' => $this->labels($name, $displayLabel, $scriptQid),
             'descriptions' => $this->descriptions($type, $name, $name),
             'claims' => [],
         ];
@@ -116,6 +114,42 @@ final class WikidataEditService
     private function isSymmetricNameProperty(string $property): bool
     {
         return in_array($property, ['P460', 'P1560', 'P5278'], true);
+    }
+
+    /**
+     * @return array<string, array{language: string, value: string}>
+     */
+    private function labels(string $name, string $displayLabel, ?string $scriptQid): array
+    {
+        $labels = [
+            'mul' => ['language' => 'mul', 'value' => $displayLabel],
+        ];
+
+        foreach ($this->languageCodesForScript($scriptQid) as $scriptLanguage) {
+            $labels[$scriptLanguage] = ['language' => $scriptLanguage, 'value' => $name];
+        }
+
+        return $labels;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function languageCodesForScript(?string $scriptQid): array
+    {
+        return match ($scriptQid) {
+            'Q8209' => ['ba', 'be', 'bg', 'ce', 'cv', 'kk', 'kk-cyrl', 'ky', 'mk', 'mn', 'mhr', 'myv', 'os', 'ru', 'rue', 'sah', 'sr', 'sr-ec', 'tg', 'tg-cyrl', 'tt-cyrl', 'udm', 'uk'],
+            'Q8196' => ['ar', 'ary', 'arz', 'ckb', 'fa', 'kk-arab', 'ks-arab', 'ku-arab', 'pnb', 'ps', 'sd', 'ug-arab', 'ur'],
+            'Q33513' => ['he', 'yi'],
+            'Q8222' => ['ko'],
+            'Q38592' => ['hi', 'ks-deva', 'mai', 'mr', 'ne', 'new', 'sa'],
+            'Q8216' => ['el'],
+            'Q8301' => ['ka'],
+            'Q8221' => ['hy'],
+            'Q8201' => ['cdo', 'gan', 'gan-hans', 'gan-hant', 'lzh', 'nan', 'wuu', 'yue', 'zh', 'zh-classical', 'zh-cn', 'zh-hans', 'zh-hant', 'zh-hk', 'zh-min-nan', 'zh-mo', 'zh-my', 'zh-sg', 'zh-tw', 'zh-yue'],
+            'Q48332', 'Q82946' => ['ja'],
+            default => [],
+        };
     }
 
     /**

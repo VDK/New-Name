@@ -716,10 +716,10 @@ final class HomeController
         }
 
         function updateLabelPreview(input) {
-            var preview = document.getElementById('label-preview');
-            if (!preview) return;
             var value = input.value.trim() || input.dataset.originalName || '';
-            preview.textContent = value + ' (mul)';
+            document.querySelectorAll('[data-label-preview="display"]').forEach(function(preview) {
+                preview.textContent = value + ' (' + preview.dataset.labelPreviewLanguage + ')';
+            });
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -1509,9 +1509,12 @@ HTML;
     {
         $checks = '';
         $languages = $this->languages();
+        $labelLanguage = $this->nativeLabelLanguage($language);
 
-        $checks .= $this->staticRow($this->t($uiLanguage, 'label'), $displayLabel . ' (mul)', 'label-preview');
-        $checks .= $this->nativeLabelRow((string) $analysis['name'], $this->nativeLabelLanguage($language), $uiLanguage);
+        foreach ($this->labelRows($analysis, $language, $uiLanguage, $displayLabel) as $labelRow) {
+            $checks .= $labelRow;
+        }
+        $checks .= $this->nativeLabelRow((string) $analysis['name'], $labelLanguage, $uiLanguage);
 
         foreach ($analysis['claims'] as $claim) {
             $title = $this->propertyLabel($uiLanguage, $claim['property'], $claim['propertyLabel']);
@@ -1571,6 +1574,66 @@ HTML;
     private function nativeLabelLanguage(string $language): string
     {
         return $language !== '' ? $language : 'mul';
+    }
+
+    /**
+     * @param array<string, mixed> $analysis
+     * @return list<string>
+     */
+    private function labelRows(array $analysis, string $language, string $uiLanguage, string $displayLabel): array
+    {
+        $name = (string) ($analysis['name'] ?? '');
+        $scriptQid = is_array($analysis['script'] ?? null) ? (string) ($analysis['script']['qid'] ?? '') : '';
+        $labelLanguages = ['mul' => $displayLabel];
+
+        foreach ($this->languageCodesForScript($scriptQid) as $scriptLanguage) {
+            $labelLanguages[$scriptLanguage] = $name;
+        }
+
+        $rows = [];
+        foreach ($labelLanguages as $labelLanguage => $labelValue) {
+            $rows[] = $this->labelRow($uiLanguage, $labelValue, $labelLanguage);
+        }
+
+        return $rows;
+    }
+
+    private function labelRow(string $uiLanguage, string $displayLabel, string $language): string
+    {
+        $safeTitle = htmlspecialchars($this->t($uiLanguage, 'label'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $safeDisplayLabel = htmlspecialchars($displayLabel, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $safeLanguage = htmlspecialchars($language, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $previewAttribute = $language === 'mul' ? ' data-label-preview="display"' : '';
+
+        return <<<HTML
+<div class="check">
+    <span></span>
+    <span>
+        <strong>$safeTitle</strong><br>
+        <span class="meta" data-label-preview-language="$safeLanguage"$previewAttribute>$safeDisplayLabel ($safeLanguage)</span>
+    </span>
+</div>
+HTML;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function languageCodesForScript(string $scriptQid): array
+    {
+        return match ($scriptQid) {
+            'Q8209' => ['ba', 'be', 'bg', 'ce', 'cv', 'kk', 'kk-cyrl', 'ky', 'mk', 'mn', 'mhr', 'myv', 'os', 'ru', 'rue', 'sah', 'sr', 'sr-ec', 'tg', 'tg-cyrl', 'tt-cyrl', 'udm', 'uk'],
+            'Q8196' => ['ar', 'ary', 'arz', 'ckb', 'fa', 'kk-arab', 'ks-arab', 'ku-arab', 'pnb', 'ps', 'sd', 'ug-arab', 'ur'],
+            'Q33513' => ['he', 'yi'],
+            'Q8222' => ['ko'],
+            'Q38592' => ['hi', 'ks-deva', 'mai', 'mr', 'ne', 'new', 'sa'],
+            'Q8216' => ['el'],
+            'Q8301' => ['ka'],
+            'Q8221' => ['hy'],
+            'Q8201' => ['cdo', 'gan', 'gan-hans', 'gan-hant', 'lzh', 'nan', 'wuu', 'yue', 'zh', 'zh-classical', 'zh-cn', 'zh-hans', 'zh-hant', 'zh-hk', 'zh-min-nan', 'zh-mo', 'zh-my', 'zh-sg', 'zh-tw', 'zh-yue'],
+            'Q48332', 'Q82946' => ['ja'],
+            default => [],
+        };
     }
 
     private function nativeLabelRow(string $name, string $language, string $uiLanguage): string
