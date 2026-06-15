@@ -270,9 +270,12 @@ final class NameAnalyzer
             $foldedLabel = $this->foldName($label);
 
             if (
-                $foldedLabel === $foldedName
-                && $label !== $name
+                $label !== $name
                 && $this->isSameType($selectedType, $matchInstances)
+                && (
+                    $foldedLabel === $foldedName
+                    || ($this->isFamilyNameType($selectedType) && $this->isRelatedFamilyNameCandidate($name, $label, $affixes))
+                )
             ) {
                 $suggestions[] = [
                     'target' => $id,
@@ -281,7 +284,7 @@ final class NameAnalyzer
                     'property' => 'P460',
                     'propertyLabel' => 'said to be the same as',
                     'value' => 'new item',
-                    'reason' => 'same folded spelling; likely accent or diacritic variant',
+                    'reason' => $foldedLabel === $foldedName ? 'same folded spelling; likely accent or diacritic variant' : 'related surname spelling found in Wikidata search results',
                 ];
             }
 
@@ -335,25 +338,6 @@ final class NameAnalyzer
             }
         }
 
-        if ($this->isFamilyNameType($selectedType)) {
-            foreach ($this->affixlessFamilyNameMatches($name, $affixes, $matches) as $variant) {
-                $variantInstances = $variant['instances'];
-                $suggestions[] = [
-                    'target' => $variant['id'],
-                    'targetLabel' => $variant['label'],
-                    'targetTypes' => $this->instanceLabels($variantInstances),
-                    'property' => 'P1889',
-                    'propertyLabel' => 'different from',
-                    'value' => 'new item',
-                    'reason' => 'one family name has an affix and the other does not',
-                    'qualifierProperty' => 'P1013',
-                    'qualifierPropertyLabel' => 'criterion used',
-                    'qualifierValue' => 'Q140227247',
-                    'qualifierValueLabel' => 'family name has to use a different item because one name has an affix and the other does not',
-                ];
-            }
-        }
-
         if ($this->isGivenNameType($selectedType)) {
             foreach ($this->genderedVariantMatches($name, $selectedType, $matches) as $variant) {
                 $variantInstances = $variant['instances'];
@@ -384,41 +368,6 @@ final class NameAnalyzer
 
     /**
      * @param list<array<string, string>> $affixes
-     * @param list<array{id: string, label: string, description: string}> $currentMatches
-     * @return list<array{id: string, label: string, description: string, instances: list<string>}>
-     */
-    private function affixlessFamilyNameMatches(string $name, array $affixes, array $currentMatches): array
-    {
-        $variants = $this->affixlessFamilyNameVariants($name, $affixes);
-        if (!$variants) {
-            return [];
-        }
-
-        $currentIds = array_flip(array_column($currentMatches, 'id'));
-        $out = [];
-        foreach ($variants as $variant) {
-            foreach ($this->wikidataClient->searchItems($variant, 'en', 5) as $match) {
-                if (isset($currentIds[$match['id']]) || $this->foldName($match['label']) !== $this->foldName($variant)) {
-                    continue;
-                }
-                $out[$match['id']] = $match;
-            }
-        }
-
-        if (!$out) {
-            return [];
-        }
-
-        $instances = $this->wikidataClient->instanceOf(array_keys($out));
-        $out = array_filter($out, fn (array $match): bool => $this->hasFamilyNameInstance($instances[$match['id']] ?? []));
-
-        return array_values(array_map(static fn (array $match): array => $match + [
-            'instances' => $instances[$match['id']] ?? [],
-        ], $out));
-    }
-
-    /**
-     * @param list<array<string, string>> $affixes
      * @return list<string>
      */
     private function affixlessFamilyNameVariants(string $name, array $affixes): array
@@ -443,6 +392,49 @@ final class NameAnalyzer
         }
 
         return array_values(array_unique($variants));
+    }
+
+    /**
+     * @param list<array<string, string>> $affixes
+     */
+    private function isRelatedFamilyNameCandidate(string $name, string $label, array $affixes): bool
+    {
+        $nameVariants = $this->familyNameComparisonVariants($name, $affixes);
+        $labelVariants = $this->familyNameComparisonVariants($label, []);
+
+        foreach ($nameVariants as $nameVariant) {
+            $foldedNameVariant = $this->foldName($nameVariant);
+            foreach ($labelVariants as $labelVariant) {
+                $foldedLabelVariant = $this->foldName($labelVariant);
+                if ($foldedNameVariant !== '' && $foldedNameVariant === $foldedLabelVariant) {
+                    return true;
+                }
+                if (min(strlen($foldedNameVariant), strlen($foldedLabelVariant)) >= 6 && levenshtein($foldedNameVariant, $foldedLabelVariant) === 1) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param list<array<string, string>> $affixes
+     * @return list<string>
+     */
+    private function familyNameComparisonVariants(string $name, array $affixes): array
+    {
+        $variants = [trim(preg_replace('/\s+/u', ' ', $name) ?? $name)];
+        foreach ($this->affixlessFamilyNameVariants($name, $affixes) as $variant) {
+            $variants[] = $variant;
+        }
+        foreach ($variants as $variant) {
+            foreach ($this->familyNameSpellingVariants($variant) as $spellingVariant) {
+                $variants[] = $spellingVariant;
+            }
+        }
+
+        return array_values(array_unique(array_filter($variants)));
     }
 
     /**
