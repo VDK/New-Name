@@ -15,11 +15,16 @@ final class AffixDetector
             'ter' => ['qid' => 'Q109323372', 'label' => 'ter'],
             "'t" => ['qid' => 'Q4540585', 'label' => "'t"],
         ],
+        'de' => [
+            'von der' => ['qid' => 'Q75135664', 'label' => 'von der'],
+            'von dem' => ['qid' => 'Q83441628', 'label' => 'von dem'],
+            'von' => ['qid' => 'Q70084230', 'label' => 'Von'],
+        ],
     ];
 
     private const PREFIXES = [
         'nl' => ['van der', 'van den', 'van de', 'van het', 'van', 'de', 'den', 'ten', 'ter', "'t", "'s"],
-        'de' => ['von und zu', 'von', 'zu'],
+        'de' => ['von und zu', 'von der', 'von dem', 'von', 'zu'],
         'fr' => ["l'", 'le', 'la', "d'", 'de la', 'du', 'des', 'de'],
         'it' => ['di', 'da', 'della', 'dello', 'degli', 'del'],
         'ar' => ['al', 'el', 'abu', 'ibn', 'bin', 'bint'],
@@ -41,7 +46,7 @@ final class AffixDetector
      */
     public function detect(string $name): array
     {
-        $trimmed = trim(preg_replace('/\s+/u', ' ', $name) ?? $name);
+        $trimmed = $this->normalizeName($name);
         $normalized = mb_strtolower($trimmed);
         $hits = [];
 
@@ -72,6 +77,13 @@ final class AffixDetector
         }
 
         return $hits;
+    }
+
+    private function normalizeName(string $name): string
+    {
+        $normalized = preg_replace('/[\p{Z}\s]+/u', ' ', $name) ?? $name;
+
+        return trim($normalized, " \t\n\r\0\x0B\xC2\xA0");
     }
 
     /**
