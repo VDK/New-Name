@@ -33,11 +33,11 @@ final class LanguageHeuristics
     ];
 
     public const SUFFIXES = [
-        'slavic' => ['ovich', 'evich', 'owicz', 'ewicz', 'vich', 'wicz', 'vic', 'vić', 'ic', 'ić', 'ski', 'ska', 'sky', 'ov', 'ova', 'ev', 'eva', 'in', 'ina'],
+        'slavic' => ['ovich', 'evich', 'owicz', 'ewicz', 'vich', 'wicz', 'vic', 'viÄ‡', 'ic', 'iÄ‡', 'ski', 'ska', 'sky', 'ov', 'ova', 'ev', 'eva', 'in', 'ina'],
         'armenian' => ['ian', 'yan'],
-        'scandinavian' => ['dottir', 'dóttir', 'sen', 'sson', 'son'],
+        'scandinavian' => ['dottir', 'dóttir', 'dÃ³ttir', 'sen', 'sson', 'son', 'zoon', 'zoons', 'søn', 'sonen'],
         'georgian' => ['shvili', 'dze'],
-        'lithuanian' => ['aitis', 'evičius', 'avičius', 'ienė', 'ytė'],
+        'lithuanian' => ['aitis', 'eviÄius', 'aviÄius', 'ienÄ—', 'ytÄ—'],
         'persian' => ['zadeh', 'pour'],
     ];
 
@@ -45,10 +45,21 @@ final class LanguageHeuristics
         ['group' => 'ga', 'value' => "O'", 'confidence' => 'medium', 'subject' => 'name', 'regex' => "/^O['\x{2019}][\p{L}]/u"],
         ['group' => 'gd', 'value' => 'Mac/Mc', 'confidence' => 'low', 'subject' => 'name', 'regex' => '/^Ma?c[\p{Lu}]/u'],
         ['group' => 'gd', 'value' => 'Mac/Mc', 'confidence' => 'low', 'subject' => 'normalized', 'regex' => '/^ma?c[\p{Ll}]/u'],
+        ['group' => 'is', 'value' => 'Icelandic patronymic', 'confidence' => 'medium', 'subject' => 'normalized', 'regex' => '/[\x{00E1}\x{00E9}\x{00ED}\x{00F3}\x{00FA}\x{00FD}\x{00FE}\x{00E6}\x{00F6}].*(?:son|sson)$/u'],
     ];
 
     public const LANGUAGE_SUFFIXES = [
         ['group' => 'fy', 'value' => '-stra', 'confidence' => 'medium', 'suffix' => 'stra'],
+        ['group' => 'is', 'value' => '-dóttir', 'confidence' => 'high', 'suffix' => 'dóttir'],
+        ['group' => 'is', 'value' => '-dottir', 'confidence' => 'high', 'suffix' => 'dottir'],
+        ['group' => 'nl', 'value' => '-zoon', 'confidence' => 'medium', 'suffix' => 'zoon'],
+        ['group' => 'nl', 'value' => '-zoons', 'confidence' => 'medium', 'suffix' => 'zoons'],
+        ['group' => 'nl', 'value' => '-sz', 'confidence' => 'low', 'suffix' => 'sz'],
+        ['group' => 'da', 'value' => '-sen', 'confidence' => 'medium', 'suffix' => 'sen'],
+        ['group' => 'no', 'value' => '-sen', 'confidence' => 'medium', 'suffix' => 'sen'],
+        ['group' => 'sv', 'value' => '-sson', 'confidence' => 'medium', 'suffix' => 'sson'],
+        ['group' => 'da', 'value' => '-søn', 'confidence' => 'medium', 'suffix' => 'søn'],
+        ['group' => 'no', 'value' => '-søn', 'confidence' => 'medium', 'suffix' => 'søn'],
         ['group' => 'de', 'value' => '-dorf', 'confidence' => 'medium', 'suffix' => 'dorf'],
         ['group' => 'de', 'value' => '-dorff', 'confidence' => 'medium', 'suffix' => 'dorff'],
         ['group' => 'de', 'value' => '-stein', 'confidence' => 'medium', 'suffix' => 'stein'],
@@ -78,12 +89,12 @@ final class LanguageHeuristics
         ['group' => 'nl', 'value' => '-kamp', 'confidence' => 'medium', 'suffix' => 'kamp'],
         ['group' => 'nl', 'value' => '-huis', 'confidence' => 'medium', 'suffix' => 'huis'],
         ['group' => 'nl', 'value' => '-horst', 'confidence' => 'medium', 'suffix' => 'horst'],
-        ['group' => 'sv', 'value' => '-ström', 'confidence' => 'medium', 'suffix' => 'ström'],
+        ['group' => 'sv', 'value' => '-strÃ¶m', 'confidence' => 'medium', 'suffix' => 'strÃ¶m'],
         ['group' => 'sv', 'value' => '-gren', 'confidence' => 'medium', 'suffix' => 'gren'],
         ['group' => 'sv', 'value' => '-lund', 'confidence' => 'medium', 'suffix' => 'lund'],
         ['group' => 'sv', 'value' => '-qvist', 'confidence' => 'medium', 'suffix' => 'qvist'],
         ['group' => 'sv', 'value' => '-kvist', 'confidence' => 'medium', 'suffix' => 'kvist'],
         ['group' => 'da', 'value' => '-gaard', 'confidence' => 'medium', 'suffix' => 'gaard'],
-        ['group' => 'no', 'value' => '-gård', 'confidence' => 'medium', 'suffix' => 'gård'],
+        ['group' => 'no', 'value' => '-gÃ¥rd', 'confidence' => 'medium', 'suffix' => 'gÃ¥rd'],
     ];
 }

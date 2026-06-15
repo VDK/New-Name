@@ -131,6 +131,7 @@ final class WikidataSaveController
             'sv' => 'Q9027',
             'da' => 'Q9035',
             'no' => 'Q9043',
+            'is' => 'Q294',
             'fi' => 'Q1412',
             'hu' => 'Q9067',
             'ro' => 'Q7913',
@@ -171,6 +172,7 @@ final class WikidataSaveController
             'Q9027' => 'sv',
             'Q9035' => 'da',
             'Q9043' => 'no',
+            'Q294' => 'is',
             'Q1412' => 'fi',
             'Q9067' => 'hu',
             'Q7913' => 'ro',
@@ -213,6 +215,7 @@ final class WikidataSaveController
             'sv' => 'Swedish',
             'da' => 'Danish',
             'no' => 'Norwegian',
+            'is' => 'Icelandic',
             'fi' => 'Finnish',
             'hu' => 'Hungarian',
             'ro' => 'Romanian',
@@ -265,7 +268,7 @@ final class WikidataSaveController
             return null;
         }
 
-        if (in_array($group, ['nl', 'de', 'ga', 'gd', 'fy', 'sv', 'da', 'no'], true)) {
+        if (in_array($group, ['nl', 'de', 'ga', 'gd', 'fy', 'sv', 'da', 'no', 'is'], true)) {
             return $group;
         }
 

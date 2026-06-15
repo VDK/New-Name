@@ -1409,6 +1409,7 @@ HTML;
             'sv' => ['label' => 'Swedish', 'item' => 'Q9027'],
             'da' => ['label' => 'Danish', 'item' => 'Q9035'],
             'no' => ['label' => 'Norwegian', 'item' => 'Q9043'],
+            'is' => ['label' => 'Icelandic', 'item' => 'Q294'],
             'fi' => ['label' => 'Finnish', 'item' => 'Q1412'],
             'hu' => ['label' => 'Hungarian', 'item' => 'Q9067'],
             'ro' => ['label' => 'Romanian', 'item' => 'Q7913'],
@@ -1442,7 +1443,7 @@ HTML;
             return $this->preferredLanguageAmong($preferredLanguages, ['nl', 'fr', 'es']);
         }
 
-        if (in_array($group, ['nl', 'de', 'ga', 'gd', 'fy', 'sv', 'da', 'no'], true)) {
+        if (in_array($group, ['nl', 'de', 'ga', 'gd', 'fy', 'sv', 'da', 'no', 'is'], true)) {
             return $group;
         }
 
@@ -1730,7 +1731,7 @@ HTML;
     }
 
     /**
-     * @param array{target: string, targetLabel: string, targetTypes?: list<string>, property: string, propertyLabel: string, value: string, reason: string} $suggestion
+     * @param array{target: string, targetLabel: string, targetTypes?: list<string>, property: string, propertyLabel: string, value: string, reason: string, checked?: bool} $suggestion
      */
     private function relationshipCheck(array $suggestion, string $uiLanguage): string
     {
@@ -1743,7 +1744,7 @@ HTML;
         $targetLabel = htmlspecialchars($suggestion['targetLabel'], ENT_QUOTES, 'UTF-8');
         $targetTypes = htmlspecialchars($this->translatedInstanceList($uiLanguage, $suggestion['targetTypes'] ?? []), ENT_QUOTES, 'UTF-8');
         $typeText = $targetTypes !== '' ? '<br><span class="meta">' . $targetTypes . '</span>' : '';
-        $checked = $suggestion['property'] === 'P5278' ? '' : ' checked';
+        $checked = $suggestion['property'] === 'P5278' && empty($suggestion['checked']) ? '' : ' checked';
 
         return <<<HTML
 <label class="check" for="$safeId" data-suggestion-target="$target" data-property="$propertyId">

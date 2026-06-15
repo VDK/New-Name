@@ -410,6 +410,23 @@ final class NameAnalyzer
                 }
             }
         }
+        if ($this->isFamilyNameType($selectedType) && $this->hasIcelandicDottirHint($affixes)) {
+            foreach ($this->genderedVariantMatches($name, $selectedType, $matches, true) as $variant) {
+                $variantInstances = $variant['instances'];
+                if ($this->hasFamilyNameInstance($variantInstances)) {
+                    $suggestions[] = [
+                        'target' => $variant['id'],
+                        'targetLabel' => $variant['label'],
+                        'targetTypes' => $this->instanceLabels($variantInstances),
+                        'property' => 'P5278',
+                        'propertyLabel' => 'surname for other gender',
+                        'value' => 'new item',
+                        'reason' => 'Icelandic -dóttir family name counterpart',
+                        'checked' => true,
+                    ];
+                }
+            }
+        }
 
         $seen = [];
         return array_values(array_filter($suggestions, static function (array $suggestion) use (&$seen): bool {
@@ -512,7 +529,7 @@ final class NameAnalyzer
      * @param list<array{id: string, label: string, description: string}> $currentMatches
      * @return list<array{id: string, label: string, description: string, instances: list<string>}>
      */
-    private function genderedVariantMatches(string $name, string $selectedType, array $currentMatches): array
+    private function genderedVariantMatches(string $name, string $selectedType, array $currentMatches, bool $exactLabel = false): array
     {
         $variants = $this->genderedNameVariants($name, $selectedType);
         if (!$variants) {
@@ -523,7 +540,10 @@ final class NameAnalyzer
         $out = [];
         foreach ($variants as $variant) {
             foreach ($this->wikidataClient->searchItems($variant, 'en', 5) as $match) {
-                if (isset($currentIds[$match['id']]) || $this->foldName($match['label']) !== $this->foldName($variant)) {
+                $labelMatches = $exactLabel
+                    ? mb_strtolower((string) $match['label']) === mb_strtolower($variant)
+                    : $this->foldName($match['label']) === $this->foldName($variant);
+                if (isset($currentIds[$match['id']]) || !$labelMatches) {
                     continue;
                 }
                 $out[$match['id']] = $match;
@@ -568,6 +588,10 @@ final class NameAnalyzer
                 $variants[] = mb_substr($name, 0, -2) . 'a';
             }
         } elseif ($this->isFamilyNameType($selectedType)) {
+            $icelandicSonVariant = $this->icelandicDottirToSonVariant($name);
+            if ($icelandicSonVariant !== null) {
+                $variants[] = $icelandicSonVariant;
+            }
             foreach ($this->familyNameGenderPairs() as [$base, $gendered]) {
                 if (str_ends_with($lower, $gendered) && mb_strlen($name) > mb_strlen($gendered) + 1) {
                     $variants[] = mb_substr($name, 0, -mb_strlen($gendered)) . $base;
@@ -579,6 +603,30 @@ final class NameAnalyzer
         }
 
         return array_values(array_unique(array_filter($variants, static fn (string $variant): bool => $variant !== $name)));
+    }
+
+    private function icelandicDottirToSonVariant(string $name): ?string
+    {
+        $variant = preg_replace('/(?:dottir|d\x{00F3}ttir)$/iu', 'son', $name);
+
+        return is_string($variant) && $variant !== $name ? $variant : null;
+    }
+
+    /**
+     * @param list<array<string, string>> $affixes
+     */
+    private function hasIcelandicDottirHint(array $affixes): bool
+    {
+        foreach ($affixes as $affix) {
+            if (($affix['kind'] ?? '') === 'language' && ($affix['group'] ?? '') === 'is' && str_contains((string) ($affix['value'] ?? ''), 'dottir')) {
+                return true;
+            }
+            if (($affix['kind'] ?? '') === 'language' && ($affix['group'] ?? '') === 'is' && str_contains((string) ($affix['value'] ?? ''), 'dóttir')) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
