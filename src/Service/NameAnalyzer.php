@@ -213,7 +213,7 @@ final class NameAnalyzer
             $matchInstances = $instances[$match['id']] ?? [];
             if ($this->isSameType($selectedType, $matchInstances)) {
                 $sameType[] = $match;
-            } elseif ($this->isFamilyNameType($selectedType) && in_array('Q4167410', $matchInstances, true)) {
+            } elseif ($this->isNameType($selectedType) && in_array('Q4167410', $matchInstances, true)) {
                 $disambiguation[] = $match;
             } else {
                 $other[] = $match;
@@ -322,9 +322,10 @@ final class NameAnalyzer
 
             if (
                 $foldedLabel === $foldedName
-                && $this->isFamilyNameType($selectedType)
+                && $this->isNameType($selectedType)
                 && in_array('Q4167410', $matchInstances, true)
             ) {
+                $qualifier = $this->differentFromQualifier($selectedType);
                 $suggestions[] = [
                     'target' => $id,
                     'targetLabel' => $label,
@@ -335,8 +336,8 @@ final class NameAnalyzer
                     'reason' => 'same label is a disambiguation page',
                     'qualifierProperty' => 'P1013',
                     'qualifierPropertyLabel' => 'criterion used',
-                    'qualifierValue' => 'Q27924673',
-                    'qualifierValueLabel' => 'family name',
+                    'qualifierValue' => $qualifier['qid'],
+                    'qualifierValueLabel' => $qualifier['label'],
                 ];
             }
         }
@@ -564,11 +565,28 @@ final class NameAnalyzer
         ], true);
     }
 
+    private function isNameType(string $type): bool
+    {
+        return $this->isFamilyNameType($type) || $this->isGivenNameType($type);
+    }
+
     /**
      * @param list<string> $instances
      */
     private function hasFamilyNameInstance(array $instances): bool
     {
         return array_intersect(NameTypes::COMPATIBLE_TYPE_ITEMS[NameTypes::FAMILY_NAME], $instances) !== [];
+    }
+
+    /**
+     * @return array{qid: string, label: string}
+     */
+    private function differentFromQualifier(string $selectedType): array
+    {
+        if ($this->isGivenNameType($selectedType)) {
+            return ['qid' => 'Q23765057', 'label' => 'given name'];
+        }
+
+        return ['qid' => 'Q27924673', 'label' => 'family name'];
     }
 }
