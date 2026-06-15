@@ -23,7 +23,7 @@ final class DescriptionSet
         foreach ($descriptions as $language => $description) {
             $value = trim(str_replace('%name%', $name, $description));
             if (!str_contains($description, '%name%') && $this->shouldAppendName($language, $nameScript, $suffixName)) {
-                $value = $this->withNameSuffix($value, $suffixName);
+                $value = $this->withNameSuffix($value, $suffixName, $language);
             }
             $out[$language] = $value;
         }
@@ -114,7 +114,7 @@ final class DescriptionSet
         return $descriptionScript !== $nameScript;
     }
 
-    private function withNameSuffix(string $description, string $name): string
+    private function withNameSuffix(string $description, string $name, string $language): string
     {
         $description = trim(preg_replace('/\s+/u', ' ', $description) ?? $description);
         $name = trim($name);
@@ -125,6 +125,10 @@ final class DescriptionSet
         $quotedName = preg_quote($name, '/');
         $description = preg_replace('/\s*-\s*' . $quotedName . '$/u', '', $description) ?? $description;
         $description = preg_replace('/\s*\(\s*' . $quotedName . '\s*\)$/u', '', $description) ?? $description;
+
+        if (in_array(strtolower(explode('-', $language, 2)[0]), ['uk', 'ru', 'be'], true)) {
+            return trim($description) . ' - ' . $name;
+        }
 
         return trim($description) . ' (' . $name . ')';
     }
