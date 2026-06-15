@@ -21,9 +21,9 @@ final class DescriptionSet
         }
 
         foreach ($descriptions as $language => $description) {
-            $value = str_replace('%name%', $name, $description);
+            $value = trim(str_replace('%name%', $name, $description));
             if (!str_contains($description, '%name%') && $this->shouldAppendName($language, $nameScript, $suffixName)) {
-                $value .= ' (' . $suffixName . ')';
+                $value = $this->withNameSuffix($value, $suffixName);
             }
             $out[$language] = $value;
         }
@@ -114,6 +114,21 @@ final class DescriptionSet
         return $descriptionScript !== $nameScript;
     }
 
+    private function withNameSuffix(string $description, string $name): string
+    {
+        $description = trim(preg_replace('/\s+/u', ' ', $description) ?? $description);
+        $name = trim($name);
+        if ($description === '' || $name === '') {
+            return $description;
+        }
+
+        $quotedName = preg_quote($name, '/');
+        $description = preg_replace('/\s*-\s*' . $quotedName . '$/u', '', $description) ?? $description;
+        $description = preg_replace('/\s*\(\s*' . $quotedName . '\s*\)$/u', '', $description) ?? $description;
+
+        return trim($description) . ' (' . $name . ')';
+    }
+
     private function scriptForLanguage(string $language): string
     {
         $language = strtolower($language);
@@ -169,7 +184,9 @@ final class DescriptionSet
             'bg' => 'Cyrillic',
             'bo' => 'Tibetan',
             'bn' => 'Bengali',
+            'ce' => 'Cyrillic',
             'ckb' => 'Arabic',
+            'cv' => 'Cyrillic',
             'dv' => 'Thaana',
             'dz' => 'Tibetan',
             'fa' => 'Arabic',
@@ -190,6 +207,7 @@ final class DescriptionSet
             'kn' => 'Kannada',
             'kk' => 'Cyrillic',
             'ko' => 'Hangul',
+            'ky' => 'Cyrillic',
             'lo' => 'Lao',
             'lzh' => 'Han',
             'mhr' => 'Cyrillic',
@@ -197,15 +215,18 @@ final class DescriptionSet
             'ml' => 'Malayalam',
             'mn' => 'Cyrillic',
             'my' => 'Myanmar',
+            'myv' => 'Cyrillic',
             'nan' => 'Han',
             'ne' => 'Devanagari',
             'new' => 'Devanagari',
             'nl' => 'Latin',
             'or' => 'Oriya',
+            'os' => 'Cyrillic',
             'pa' => 'Gurmukhi',
             'pnb' => 'Arabic',
             'ps' => 'Arabic',
             'ru' => 'Cyrillic',
+            'rue' => 'Cyrillic',
             'sah' => 'Cyrillic',
             'sat' => 'Ol_Chiki',
             'sd' => 'Arabic',
@@ -215,6 +236,7 @@ final class DescriptionSet
             'te' => 'Telugu',
             'th' => 'Thai',
             'tg' => 'Cyrillic',
+            'tt' => 'Cyrillic',
             'uk' => 'Cyrillic',
             'ur' => 'Arabic',
             'yi' => 'Hebrew',
