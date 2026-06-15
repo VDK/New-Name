@@ -91,20 +91,33 @@ final class RefreshDataCommand extends Command
      */
     private function sparql(string $query): array
     {
-        $url = 'https://query.wikidata.org/sparql?query=' . urlencode($query);
+        $body = http_build_query([
+            'query' => $query,
+            'format' => 'json',
+        ]);
         $context = stream_context_create([
             'http' => [
+                'method' => 'POST',
                 'header' => implode("\r\n", [
                     'Accept: application/sparql-results+json',
+                    'Content-Type: application/x-www-form-urlencoded',
                     'User-Agent: New-Name/0.1 data refresh (https://new-name.toolforge.org/)',
                 ]) . "\r\n",
+                'content' => $body,
+                'ignore_errors' => true,
                 'timeout' => 180,
             ],
         ]);
 
-        $json = @file_get_contents($url, false, $context);
+        $json = @file_get_contents('https://query.wikidata.org/sparql', false, $context);
         if ($json === false) {
-            throw new RuntimeException('SPARQL request failed.');
+            $status = $this->httpStatus($http_response_header ?? []);
+            throw new RuntimeException('SPARQL request failed' . ($status !== '' ? ': ' . $status : '') . '.');
+        }
+
+        $status = $this->httpStatus($http_response_header ?? []);
+        if ($status !== '' && !str_contains($status, ' 2')) {
+            throw new RuntimeException('SPARQL request failed: ' . $status . ' ' . substr(trim($json), 0, 500));
         }
 
         $data = json_decode($json, true);
@@ -113,6 +126,20 @@ final class RefreshDataCommand extends Command
         }
 
         return $data['results']['bindings'] ?? [];
+    }
+
+    /**
+     * @param list<string> $headers
+     */
+    private function httpStatus(array $headers): string
+    {
+        foreach ($headers as $header) {
+            if (str_starts_with($header, 'HTTP/')) {
+                return $header;
+            }
+        }
+
+        return '';
     }
 
     private function tsvValue(string $value): string
@@ -124,7 +151,7 @@ final class RefreshDataCommand extends Command
     {
         return <<<'SPARQL'
 SELECT DISTINCT ?item
-       (COALESCE(?wikimediaCode, ?iso6391, ?iso6393, ?iso6392b, ?iso6392t) AS ?code)
+       ?code
        ?label_en
        ?label_fr
        ?label_de
@@ -136,19 +163,10 @@ SELECT DISTINCT ?item
        ?description_nl
        ?description_es
 WHERE {
-  ?item (wdt:P218|wdt:P219|wdt:P220|wdt:P305|wdt:P424) ?languageCode.
+  ?item wdt:P424 ?code.
   ?item rdfs:label ?label_en FILTER(LANG(?label_en) = "en")
-  ?item wdt:P31/wdt:P279* wd:Q34770.
   FILTER(?item != wd:Q34228)
-  FILTER(!STRSTARTS(LCASE(STR(?languageCode)), "sgn"))
-  MINUS { ?item wdt:P31/wdt:P279* wd:Q34228. }
-  MINUS { ?item wdt:P279* wd:Q34228. }
-
-  OPTIONAL { ?item wdt:P424 ?wikimediaCode. }
-  OPTIONAL { ?item wdt:P218 ?iso6391. }
-  OPTIONAL { ?item wdt:P220 ?iso6393. }
-  OPTIONAL { ?item wdt:P219 ?iso6392b. }
-  OPTIONAL { ?item wdt:P305 ?iso6392t. }
+  FILTER(!STRSTARTS(LCASE(STR(?code)), "sgn"))
 
   OPTIONAL { ?item rdfs:label ?label_fr FILTER(LANG(?label_fr) = "fr") }
   OPTIONAL { ?item rdfs:label ?label_de FILTER(LANG(?label_de) = "de") }
@@ -185,23 +203,14 @@ SPARQL;
     {
         return <<<'SPARQL'
 SELECT DISTINCT ?script ?scriptLabel ?language
-       (COALESCE(?wikimediaCode, ?iso6391, ?iso6393, ?iso6392b, ?iso6392t) AS ?code)
+       ?code
        ?label_en
 WHERE {
-  ?language (wdt:P218|wdt:P219|wdt:P220|wdt:P305|wdt:P424) ?languageCode.
+  ?language wdt:P424 ?code.
   ?language rdfs:label ?label_en FILTER(LANG(?label_en) = "en")
-  ?language wdt:P31/wdt:P279* wd:Q34770.
   ?language wdt:P282 ?script.
   FILTER(?language != wd:Q34228)
-  FILTER(!STRSTARTS(LCASE(STR(?languageCode)), "sgn"))
-  MINUS { ?language wdt:P31/wdt:P279* wd:Q34228. }
-  MINUS { ?language wdt:P279* wd:Q34228. }
-
-  OPTIONAL { ?language wdt:P424 ?wikimediaCode. }
-  OPTIONAL { ?language wdt:P218 ?iso6391. }
-  OPTIONAL { ?language wdt:P220 ?iso6393. }
-  OPTIONAL { ?language wdt:P219 ?iso6392b. }
-  OPTIONAL { ?language wdt:P305 ?iso6392t. }
+  FILTER(!STRSTARTS(LCASE(STR(?code)), "sgn"))
 
   SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
 }
