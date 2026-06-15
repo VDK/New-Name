@@ -664,9 +664,9 @@ final class NameAnalyzer
     private function differentFromQualifier(string $selectedType): array
     {
         if ($this->isGivenNameType($selectedType)) {
-            return ['qid' => 'Q23765057', 'label' => 'given name'];
+            return ['qid' => 'Q23765057', 'label' => 'given name has to use a different item than disambiguation pages'];
         }
 
-        return ['qid' => 'Q27924673', 'label' => 'family name'];
+        return ['qid' => 'Q27924673', 'label' => 'family name has to use a different item than disambiguation page'];
     }
 }
