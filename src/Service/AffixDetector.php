@@ -41,6 +41,21 @@ final class AffixDetector
         'persian' => ['zadeh', 'pour'],
     ];
 
+    private const GERMAN_LANGUAGE_SUFFIXES = [
+        'dorf',
+        'stein',
+        'berg',
+        'burg',
+        'feld',
+        'bach',
+        'wald',
+        'heim',
+        'thal',
+        'stadt',
+        'weiler',
+        'kirch',
+    ];
+
     /**
      * @return array<int, array{kind: string, group: string, value: string, confidence: string, item?: string, itemLabel?: string}>
      */
@@ -105,8 +120,11 @@ final class AffixDetector
             $hits[] = ['kind' => 'language', 'group' => 'fy', 'value' => '-stra', 'confidence' => 'medium'];
         }
 
-        if (mb_strlen($normalized) > 5 && str_ends_with($normalized, 'dorf')) {
-            $hits[] = ['kind' => 'language', 'group' => 'de', 'value' => '-dorf', 'confidence' => 'medium'];
+        foreach (self::GERMAN_LANGUAGE_SUFFIXES as $suffix) {
+            if (mb_strlen($normalized) > mb_strlen($suffix) + 2 && str_ends_with($normalized, $suffix)) {
+                $hits[] = ['kind' => 'language', 'group' => 'de', 'value' => '-' . $suffix, 'confidence' => 'medium'];
+                break;
+            }
         }
 
         return $hits;
