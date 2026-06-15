@@ -47,6 +47,7 @@ final class NameTypes
         'Q4167410' => 'Wikimedia disambiguation page',
         'Q23765057' => 'given name',
         'Q27924673' => 'family name',
+        'Q140227247' => 'family name has to use a different item because one name has an affix and the other does not',
         'Q202444' => 'given name',
         'Q12308941' => 'male given name',
         'Q11879590' => 'female given name',
