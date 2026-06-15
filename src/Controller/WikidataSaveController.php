@@ -265,7 +265,7 @@ final class WikidataSaveController
             return null;
         }
 
-        if (in_array($group, ['nl', 'de', 'ga', 'gd', 'fy'], true)) {
+        if (in_array($group, ['nl', 'de', 'ga', 'gd', 'fy', 'sv', 'da', 'no'], true)) {
             return $group;
         }
 

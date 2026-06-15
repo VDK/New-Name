@@ -1215,11 +1215,9 @@ HTML;
             return $language;
         }
 
-        foreach ($analysis['affixes'] ?? [] as $affix) {
-            $code = is_array($affix) ? $this->languageCodeForAffix($affix, $preferredLanguages) : null;
-            if ($code !== null) {
-                return $code;
-            }
+        $affixCodes = $this->affixLanguageCodes($analysis);
+        if ($affixCodes !== []) {
+            return $this->preferredLanguageAmong($preferredLanguages, $affixCodes) ?? $affixCodes[0];
         }
 
         $textLanguage = $this->languageCodeForTextAndScript((string) ($analysis['name'] ?? ''), $analysis['script'] ?? null, $selectedType);
@@ -1258,7 +1256,7 @@ HTML;
                 continue;
             }
             if ($this->languageCodeForAffix($affix, []) === $resolvedLanguage) {
-                return 'high';
+                return count($this->affixLanguageCodes($analysis)) > 1 ? 'medium' : 'high';
             }
         }
 
@@ -1283,26 +1281,66 @@ HTML;
      */
     private function languageHintCodes(array $analysis): array
     {
+        $hints = $this->affixLanguageCodes($analysis);
+
         $script = is_array($analysis['script'] ?? null) ? (string) $analysis['script']['script'] : '';
         $textLanguage = $this->languageCodeForTextAndScript((string) ($analysis['name'] ?? ''), $analysis['script'] ?? null, (string) ($analysis['selectedType'] ?? ''));
         if ($textLanguage === 'uk') {
-            return ['uk', 'ru', 'bg', 'sr', 'mk', 'be'];
+            return $this->uniqueLanguageHints($hints, ['uk', 'ru', 'bg', 'sr', 'mk', 'be']);
         }
         if ($textLanguage === 'be') {
-            return ['be', 'ru', 'uk', 'bg', 'sr', 'mk'];
+            return $this->uniqueLanguageHints($hints, ['be', 'ru', 'uk', 'bg', 'sr', 'mk']);
         }
         if ($textLanguage === 'nl') {
-            return ['nl', 'en', 'de', 'fr', 'fy'];
+            return $this->uniqueLanguageHints($hints, ['nl', 'en', 'de', 'fr', 'fy']);
         }
         if ($textLanguage === 'sv') {
-            return ['sv', 'da', 'no', 'fi', 'de'];
+            return $this->uniqueLanguageHints($hints, ['sv', 'da', 'no', 'fi', 'de']);
         }
 
-        return match ($script) {
+        return $this->uniqueLanguageHints($hints, match ($script) {
             'Cyrillic' => ['ru', 'uk', 'bg', 'sr', 'mk', 'be'],
             'Latin' => ['en', 'fr', 'de', 'es', 'it', 'nl', 'pt', 'pl', 'cs', 'sv', 'da', 'no', 'fi', 'hu', 'ro'],
             default => [],
-        };
+        });
+    }
+
+    /**
+     * @param list<string> ...$groups
+     * @return list<string>
+     */
+    private function uniqueLanguageHints(array ...$groups): array
+    {
+        $hints = [];
+        foreach ($groups as $group) {
+            foreach ($group as $code) {
+                if (preg_match('/^[a-z-]{2,12}$/', $code) === 1) {
+                    $hints[$code] = $code;
+                }
+            }
+        }
+
+        return array_values($hints);
+    }
+
+    /**
+     * @param array<string, mixed> $analysis
+     * @return list<string>
+     */
+    private function affixLanguageCodes(array $analysis): array
+    {
+        $codes = [];
+        foreach ($analysis['affixes'] ?? [] as $affix) {
+            if (!is_array($affix)) {
+                continue;
+            }
+            $code = $this->languageCodeForAffix($affix, []);
+            if ($code !== null) {
+                $codes[$code] = $code;
+            }
+        }
+
+        return array_values($codes);
     }
 
     /**
@@ -1392,7 +1430,7 @@ HTML;
             return $this->preferredLanguageAmong($preferredLanguages, ['nl', 'fr', 'es']);
         }
 
-        if (in_array($group, ['nl', 'de', 'ga', 'gd', 'fy'], true)) {
+        if (in_array($group, ['nl', 'de', 'ga', 'gd', 'fy', 'sv', 'da', 'no'], true)) {
             return $group;
         }
 

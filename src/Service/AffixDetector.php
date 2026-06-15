@@ -87,9 +87,9 @@ final class AffixDetector
                 ];
                 $key = implode('|', $hit);
                 if (!isset($seen[$key])) {
+                    $seen[$key] = true;
                     $hits[] = $hit;
                 }
-                break;
             }
         }
 
