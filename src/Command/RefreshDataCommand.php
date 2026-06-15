@@ -70,10 +70,12 @@ final class RefreshDataCommand extends Command
         );
         $output->writeln('<info>Updated data/transliteration-gadget.js</info>');
 
+        // Keep descriptions editor-friendly without breaking single-quoted JavaScript strings.
         $this->writeRemoteFile(
             $dataDir . '/autoedit-descriptions.js',
             'https://www.wikidata.org/w/index.php?title=MediaWiki:Gadget-autoEdit.js&action=raw',
-            'window.desclist'
+            'window.desclist',
+            static fn (string $source): string => str_replace("\u{2019}", "\\'", $source)
         );
         $output->writeln('<info>Updated data/autoedit-descriptions.js</info>');
 
@@ -108,11 +110,14 @@ final class RefreshDataCommand extends Command
         }
     }
 
-    private function writeRemoteFile(string $path, string $url, string $mustContain): void
+    private function writeRemoteFile(string $path, string $url, string $mustContain, ?callable $normalize = null): void
     {
         $source = $this->httpGet($url);
         if (!str_contains($source, $mustContain)) {
             throw new RuntimeException('Remote gadget did not contain expected marker: ' . $mustContain);
+        }
+        if ($normalize !== null) {
+            $source = $normalize($source);
         }
 
         $tmp = $path . '.tmp';
