@@ -134,6 +134,7 @@ The edit summary links back to the app URL so Wikidata edits remain attributable
 - `src/Controller/OAuthController.php` handles OAuth login/status/logout.
 - `src/Controller/WikidataSaveController.php` handles save completion.
 - `src/Service/NameAnalyzer.php` performs type, match, and relationship suggestions.
+- `src/Data/LanguageHeuristics.php` keeps prefix, suffix, and pattern hints for likely name languages.
 - `src/Service/WikidataEditService.php` builds and sends Wikidata edits.
 - `src/Service/WikimediaOAuthClient.php` performs OAuth 2.0 API calls.
 - `src/Command/RefreshDataCommand.php` refreshes TSV caches.
