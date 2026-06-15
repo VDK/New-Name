@@ -60,7 +60,7 @@ final class HomeController
         $review = $analysis ? $this->review($request, $analysis, $language, $authorized, $uiLanguage, $preferredLanguages, $transliterator, $scriptLanguages) : '';
         $bodyClass = $analysis ? 'has-review' : 'start';
         $auth = $this->authStatus($request, $authorized, $username, $uiLanguage);
-        $languageSwitch = $this->languageSwitch($request, $uiLanguage);
+        $languageSwitch = $authorized ? '' : $this->languageSwitch($request, $uiLanguage);
         $tagline = htmlspecialchars($this->t($uiLanguage, 'tagline'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $nameLabel = htmlspecialchars($this->t($uiLanguage, 'name'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $analyze = htmlspecialchars($this->t($uiLanguage, 'analyze'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -124,13 +124,19 @@ final class HomeController
 
         .auth-status {
             display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 8px;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
             min-height: 28px;
             margin-bottom: 12px;
             color: var(--muted);
             font-size: 14px;
+        }
+
+        .auth-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .auth-status a {
@@ -153,16 +159,21 @@ final class HomeController
         .language-switch {
             display: flex;
             align-items: center;
-            gap: 6px;
             font-size: 13px;
         }
 
         .language-switch label {
-            color: var(--muted);
-            font-weight: 600;
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
         }
 
         .language-switch select {
+            width: auto;
+            max-width: max-content;
             min-height: 32px;
             padding: 4px 28px 4px 8px;
             border: 1px solid #a2a9b1;
@@ -819,10 +830,10 @@ HTML;
         }
 
         $safeUsername = htmlspecialchars($username !== '' ? $username : 'Wikimedia', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        $loggedInAs = htmlspecialchars($this->t($uiLanguage, 'logged_in_as'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $logout = htmlspecialchars($this->t($uiLanguage, 'log_out'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $languageSwitch = $this->languageSwitch($request, $uiLanguage);
 
-        return '<div class="auth-status"><span>' . $loggedInAs . ' <strong>' . $safeUsername . '</strong></span><a href="index.php/oauth/logout">' . $logout . '</a></div>';
+        return '<div class="auth-status"><div class="auth-line"><strong>' . $safeUsername . '</strong><a href="index.php/oauth/logout">' . $logout . '</a></div>' . $languageSwitch . '</div>';
     }
 
     private function t(string $language, string $key): string
@@ -844,7 +855,6 @@ HTML;
                 'log_in_with_wikimedia' => 'Log in with Wikimedia',
                 'log_in_before_saving' => 'Log in with Wikimedia before saving changes.',
                 'log_out' => 'Log out',
-                'logged_in_as' => 'Logged in as',
                 'mit' => 'MIT licensed',
                 'name' => 'Name',
                 'native_label' => 'native label',
@@ -878,7 +888,6 @@ HTML;
                 'log_in_with_wikimedia' => 'Inloggen met Wikimedia',
                 'log_in_before_saving' => 'Log in met Wikimedia voordat je wijzigingen opslaat.',
                 'log_out' => 'Uitloggen',
-                'logged_in_as' => 'Ingelogd als',
                 'mit' => 'MIT-licentie',
                 'name' => 'Naam',
                 'native_label' => 'native label',
@@ -912,7 +921,6 @@ HTML;
                 'log_in_with_wikimedia' => 'Mit Wikimedia anmelden',
                 'log_in_before_saving' => 'Melde dich mit Wikimedia an, bevor du Änderungen speicherst.',
                 'log_out' => 'Abmelden',
-                'logged_in_as' => 'Angemeldet als',
                 'mit' => 'MIT-lizenziert',
                 'name' => 'Name',
                 'native_label' => 'native label',
@@ -946,7 +954,6 @@ HTML;
                 'log_in_with_wikimedia' => 'Connexion avec Wikimedia',
                 'log_in_before_saving' => 'Connectez-vous avec Wikimedia avant d’enregistrer.',
                 'log_out' => 'Déconnexion',
-                'logged_in_as' => 'Connecté comme',
                 'mit' => 'Licence MIT',
                 'name' => 'Nom',
                 'native_label' => 'native label',
@@ -980,7 +987,6 @@ HTML;
                 'log_in_with_wikimedia' => 'Iniciar sesión con Wikimedia',
                 'log_in_before_saving' => 'Inicia sesión con Wikimedia antes de guardar cambios.',
                 'log_out' => 'Cerrar sesión',
-                'logged_in_as' => 'Sesión iniciada como',
                 'mit' => 'Licencia MIT',
                 'name' => 'Nombre',
                 'native_label' => 'native label',
