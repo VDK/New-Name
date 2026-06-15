@@ -6,6 +6,7 @@ use App\Data\NameTypes;
 use App\Service\NameAnalyzer;
 use App\Service\NameTransliterator;
 use App\Service\ScriptDetector;
+use App\Service\ScriptLanguageLookup;
 use App\Service\WikimediaOAuthClient;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class HomeController
 {
     #[Route('/', name: 'app_home', methods: ['GET'])]
-    public function index(Request $request, NameAnalyzer $analyzer, WikimediaOAuthClient $oauthClient, NameTransliterator $transliterator): Response|RedirectResponse
+    public function index(Request $request, NameAnalyzer $analyzer, WikimediaOAuthClient $oauthClient, NameTransliterator $transliterator, ScriptLanguageLookup $scriptLanguages): Response|RedirectResponse
     {
         $code = (string) $request->query->get('code', '');
         $state = (string) $request->query->get('state', '');
@@ -43,7 +44,7 @@ final class HomeController
             }
         }
 
-        $response = new Response($this->page($request, $name, $analysis, is_string($language) ? $language : '', $authorized, $username, $uiLanguage, $preferredLanguages, $transliterator));
+        $response = new Response($this->page($request, $name, $analysis, is_string($language) ? $language : '', $authorized, $username, $uiLanguage, $preferredLanguages, $transliterator, $scriptLanguages));
         $response->headers->set('Cache-Control', 'no-store, max-age=0');
 
         return $response;
@@ -52,11 +53,11 @@ final class HomeController
     /**
      * @param array<string, mixed>|null $analysis
      */
-    private function page(Request $request, string $name, ?array $analysis, string $language, bool $authorized, string $username, string $uiLanguage, array $preferredLanguages, NameTransliterator $transliterator): string
+    private function page(Request $request, string $name, ?array $analysis, string $language, bool $authorized, string $username, string $uiLanguage, array $preferredLanguages, NameTransliterator $transliterator, ScriptLanguageLookup $scriptLanguages): string
     {
         $safeName = htmlspecialchars($name, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $safeUiLanguage = htmlspecialchars($uiLanguage, ENT_QUOTES, 'UTF-8');
-        $review = $analysis ? $this->review($request, $analysis, $language, $authorized, $uiLanguage, $preferredLanguages, $transliterator) : '';
+        $review = $analysis ? $this->review($request, $analysis, $language, $authorized, $uiLanguage, $preferredLanguages, $transliterator, $scriptLanguages) : '';
         $bodyClass = $analysis ? 'has-review' : 'start';
         $auth = $this->authStatus($request, $authorized, $username, $uiLanguage);
         $languageSwitch = $this->languageSwitch($request, $uiLanguage);
@@ -1006,7 +1007,7 @@ HTML;
     /**
      * @param array<string, mixed> $analysis
      */
-    private function review(Request $request, array $analysis, string $language, bool $authorized, string $uiLanguage, array $preferredLanguages, NameTransliterator $transliterator): string
+    private function review(Request $request, array $analysis, string $language, bool $authorized, string $uiLanguage, array $preferredLanguages, NameTransliterator $transliterator, ScriptLanguageLookup $scriptLanguages): string
     {
         $selectedType = (string) $analysis['selectedType'];
         $resolvedLanguage = $this->resolveLanguage($language, $selectedType, $analysis, $preferredLanguages);
@@ -1016,7 +1017,7 @@ HTML;
         $transliteration = $this->transliterationField((string) $analysis['name'], $analysis['script'] ?? null, $transliterator, $uiLanguage);
         $duplicates = $this->duplicates($analysis, $uiLanguage);
         $displayLabel = $this->defaultTransliteration((string) $analysis['name'], $analysis['script'] ?? null, $transliterator);
-        $checks = $this->checks($analysis, $resolvedLanguage, $uiLanguage, $displayLabel !== '' ? $displayLabel : (string) $analysis['name']);
+        $checks = $this->checks($analysis, $resolvedLanguage, $uiLanguage, $displayLabel !== '' ? $displayLabel : (string) $analysis['name'], $scriptLanguages);
         $safeName = htmlspecialchars((string) $analysis['name'], ENT_QUOTES, 'UTF-8');
         $safeUiLanguage = htmlspecialchars($uiLanguage, ENT_QUOTES, 'UTF-8');
         $action = $this->submitAction($request, $authorized, $uiLanguage);
@@ -1505,13 +1506,13 @@ HTML;
     /**
      * @param array<string, mixed> $analysis
      */
-    private function checks(array $analysis, string $language, string $uiLanguage, string $displayLabel): string
+    private function checks(array $analysis, string $language, string $uiLanguage, string $displayLabel, ScriptLanguageLookup $scriptLanguages): string
     {
         $checks = '';
         $languages = $this->languages();
         $labelLanguage = $this->nativeLabelLanguage($language);
 
-        foreach ($this->labelRows($analysis, $language, $uiLanguage, $displayLabel) as $labelRow) {
+        foreach ($this->labelRows($analysis, $language, $uiLanguage, $displayLabel, $scriptLanguages) as $labelRow) {
             $checks .= $labelRow;
         }
         $checks .= $this->nativeLabelRow((string) $analysis['name'], $labelLanguage, $uiLanguage);
@@ -1580,13 +1581,13 @@ HTML;
      * @param array<string, mixed> $analysis
      * @return list<string>
      */
-    private function labelRows(array $analysis, string $language, string $uiLanguage, string $displayLabel): array
+    private function labelRows(array $analysis, string $language, string $uiLanguage, string $displayLabel, ScriptLanguageLookup $scriptLanguages): array
     {
         $name = (string) ($analysis['name'] ?? '');
         $scriptQid = is_array($analysis['script'] ?? null) ? (string) ($analysis['script']['qid'] ?? '') : '';
         $labelLanguages = ['mul' => $displayLabel];
 
-        foreach ($this->languageCodesForScript($scriptQid) as $scriptLanguage) {
+        foreach ($scriptLanguages->languageCodesForScript($scriptQid) as $scriptLanguage) {
             $labelLanguages[$scriptLanguage] = $name;
         }
 
@@ -1614,26 +1615,6 @@ HTML;
     </span>
 </div>
 HTML;
-    }
-
-    /**
-     * @return list<string>
-     */
-    private function languageCodesForScript(string $scriptQid): array
-    {
-        return match ($scriptQid) {
-            'Q8209' => ['ba', 'be', 'bg', 'ce', 'cv', 'kk', 'kk-cyrl', 'ky', 'mk', 'mn', 'mhr', 'myv', 'os', 'ru', 'rue', 'sah', 'sr', 'sr-ec', 'tg', 'tg-cyrl', 'tt-cyrl', 'udm', 'uk'],
-            'Q8196' => ['ar', 'ary', 'arz', 'ckb', 'fa', 'kk-arab', 'ks-arab', 'ku-arab', 'pnb', 'ps', 'sd', 'ug-arab', 'ur'],
-            'Q33513' => ['he', 'yi'],
-            'Q8222' => ['ko'],
-            'Q38592' => ['hi', 'ks-deva', 'mai', 'mr', 'ne', 'new', 'sa'],
-            'Q8216' => ['el'],
-            'Q8301' => ['ka'],
-            'Q8221' => ['hy'],
-            'Q8201' => ['cdo', 'gan', 'gan-hans', 'gan-hant', 'lzh', 'nan', 'wuu', 'yue', 'zh', 'zh-classical', 'zh-cn', 'zh-hans', 'zh-hant', 'zh-hk', 'zh-min-nan', 'zh-mo', 'zh-my', 'zh-sg', 'zh-tw', 'zh-yue'],
-            'Q48332', 'Q82946' => ['ja'],
-            default => [],
-        };
     }
 
     private function nativeLabelRow(string $name, string $language, string $uiLanguage): string

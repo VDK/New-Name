@@ -94,6 +94,7 @@ The app keeps local TSV caches in `data/`:
 
 - `data/languages.tsv`
 - `data/affixes.tsv`
+- `data/script-languages.tsv`
 
 Refresh them with:
 
@@ -108,6 +109,19 @@ Example cron shape:
 ```cron
 0 3 * * 0 cd /path/to/new-name && php bin/console app:refresh-data
 ```
+
+On Toolforge jobs, make sure the command changes into the Symfony project root before calling `bin/console`; otherwise the job fails with `Could not open input file: bin/console`.
+
+Example Toolforge job shape:
+
+```bash
+toolforge jobs run refresh-data \
+  --command "cd \$HOME/public_html && php bin/console app:refresh-data" \
+  --image php8.2 \
+  --schedule "0 3 * * 0"
+```
+
+If the repository is checked out directly in `$HOME` instead of `$HOME/public_html`, use `cd \$HOME` in that command.
 
 ## OAuth 2.0
 

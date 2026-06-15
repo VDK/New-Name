@@ -66,6 +66,7 @@ final class WikidataClient
         if (!$ids) {
             return [];
         }
+        sort($ids, SORT_NATURAL);
 
         $data = $this->api([
             'action' => 'wbgetentities',
@@ -98,6 +99,7 @@ final class WikidataClient
         if (!$ids) {
             return [];
         }
+        sort($ids, SORT_NATURAL);
 
         $data = $this->api([
             'action' => 'wbgetentities',

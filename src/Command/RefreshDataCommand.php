@@ -46,6 +46,15 @@ final class RefreshDataCommand extends Command
         $this->writeTsv($dataDir . '/affixes.tsv', $this->affixesQuery(), ['item', 'itemLabel', 'class', 'classLabel']);
         $output->writeln('<info>Updated data/affixes.tsv</info>');
 
+        $this->writeTsv($dataDir . '/script-languages.tsv', $this->scriptLanguagesQuery(), [
+            'script',
+            'scriptLabel',
+            'language',
+            'code',
+            'label_en',
+        ]);
+        $output->writeln('<info>Updated data/script-languages.tsv</info>');
+
         return Command::SUCCESS;
     }
 
@@ -169,6 +178,34 @@ SELECT ?item ?itemLabel ?class ?classLabel WHERE {
 
   SERVICE wikibase:label { bd:serviceParam wikibase:language "nl,en". }
 }
+SPARQL;
+    }
+
+    private function scriptLanguagesQuery(): string
+    {
+        return <<<'SPARQL'
+SELECT DISTINCT ?script ?scriptLabel ?language
+       (COALESCE(?wikimediaCode, ?iso6391, ?iso6393, ?iso6392b, ?iso6392t) AS ?code)
+       ?label_en
+WHERE {
+  ?language (wdt:P218|wdt:P219|wdt:P220|wdt:P305|wdt:P424) ?languageCode.
+  ?language rdfs:label ?label_en FILTER(LANG(?label_en) = "en")
+  ?language wdt:P31/wdt:P279* wd:Q34770.
+  ?language wdt:P282 ?script.
+  FILTER(?language != wd:Q34228)
+  FILTER(!STRSTARTS(LCASE(STR(?languageCode)), "sgn"))
+  MINUS { ?language wdt:P31/wdt:P279* wd:Q34228. }
+  MINUS { ?language wdt:P279* wd:Q34228. }
+
+  OPTIONAL { ?language wdt:P424 ?wikimediaCode. }
+  OPTIONAL { ?language wdt:P218 ?iso6391. }
+  OPTIONAL { ?language wdt:P220 ?iso6393. }
+  OPTIONAL { ?language wdt:P219 ?iso6392b. }
+  OPTIONAL { ?language wdt:P305 ?iso6392t. }
+
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}
+ORDER BY ?scriptLabel ?label_en
 SPARQL;
     }
 }

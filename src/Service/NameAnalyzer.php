@@ -24,6 +24,7 @@ final class NameAnalyzer
         $script = $this->scriptDetector->detect($name);
         $affixes = $this->affixDetector->detect($name);
         $matches = $this->wikidataClient->searchItems($name);
+        $instances = [];
 
         if ($selectedType && isset(NameTypes::TYPE_ITEMS[$selectedType])) {
             $type = $selectedType;
@@ -40,7 +41,10 @@ final class NameAnalyzer
             }
         }
 
-        $instances = $this->wikidataClient->instanceOf(array_column($matches, 'id'));
+        $missingInstanceIds = array_values(array_diff(array_column($matches, 'id'), array_keys($instances)));
+        if ($missingInstanceIds) {
+            $instances += $this->wikidataClient->instanceOf($missingInstanceIds);
+        }
 
         return [
             'name' => $name,
