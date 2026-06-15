@@ -90,11 +90,13 @@ On Toolforge, the web document root is normally `public_html`. Deploy the Symfon
 
 ## Data Caches
 
-The app keeps local TSV caches in `data/`:
+The app keeps local TSV and gadget caches in `data/`:
 
 - `data/languages.tsv`
 - `data/affixes.tsv`
 - `data/script-languages.tsv`
+- `data/transliteration-gadget.js`
+- `data/autoedit-descriptions.js`
 
 Refresh them with:
 
@@ -102,7 +104,13 @@ Refresh them with:
 php bin/console app:refresh-data
 ```
 
-This command queries Wikidata Query Service and writes the TSV files atomically. It is intended for a Toolforge cron job.
+This command queries Wikidata Query Service, imports the bundled Wikidata gadget sources, and writes files atomically. It is intended for a Toolforge cron job.
+
+To refresh only the gadget sources:
+
+```bash
+php bin/console app:refresh-data --only-gadgets
+```
 
 On Toolforge, replace the scheduled refresh job with:
 

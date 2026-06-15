@@ -6,18 +6,24 @@ use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 #[AsCommand(
     name: 'app:refresh-data',
-    description: 'Refresh local TSV caches for languages and name affixes from Wikidata Query Service.'
+    description: 'Refresh local TSV and gadget caches from Wikidata.'
 )]
 final class RefreshDataCommand extends Command
 {
     public function __construct(private readonly KernelInterface $kernel)
     {
         parent::__construct();
+    }
+
+    protected function configure(): void
+    {
+        $this->addOption('only-gadgets', null, InputOption::VALUE_NONE, 'Refresh only bundled Wikidata gadget sources.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -27,33 +33,49 @@ final class RefreshDataCommand extends Command
             throw new RuntimeException('Could not create data directory: ' . $dataDir);
         }
 
-        $this->writeTsv($dataDir . '/languages.tsv', $this->languagesQuery(), [
-            'item',
-            'code',
-            'label_en',
-            'label_fr',
-            'label_de',
-            'label_nl',
-            'label_es',
-            'description_en',
-            'description_fr',
-            'description_de',
-            'description_nl',
-            'description_es',
-        ]);
-        $output->writeln('<info>Updated data/languages.tsv</info>');
+        if (!$input->getOption('only-gadgets')) {
+            $this->writeTsv($dataDir . '/languages.tsv', $this->languagesQuery(), [
+                'item',
+                'code',
+                'label_en',
+                'label_fr',
+                'label_de',
+                'label_nl',
+                'label_es',
+                'description_en',
+                'description_fr',
+                'description_de',
+                'description_nl',
+                'description_es',
+            ]);
+            $output->writeln('<info>Updated data/languages.tsv</info>');
 
-        $this->writeTsv($dataDir . '/affixes.tsv', $this->affixesQuery(), ['item', 'itemLabel', 'class', 'classLabel']);
-        $output->writeln('<info>Updated data/affixes.tsv</info>');
+            $this->writeTsv($dataDir . '/affixes.tsv', $this->affixesQuery(), ['item', 'itemLabel', 'class', 'classLabel']);
+            $output->writeln('<info>Updated data/affixes.tsv</info>');
 
-        $this->writeTsv($dataDir . '/script-languages.tsv', $this->scriptLanguagesQuery(), [
-            'script',
-            'scriptLabel',
-            'language',
-            'code',
-            'label_en',
-        ]);
-        $output->writeln('<info>Updated data/script-languages.tsv</info>');
+            $this->writeTsv($dataDir . '/script-languages.tsv', $this->scriptLanguagesQuery(), [
+                'script',
+                'scriptLabel',
+                'language',
+                'code',
+                'label_en',
+            ]);
+            $output->writeln('<info>Updated data/script-languages.tsv</info>');
+        }
+
+        $this->writeRemoteFile(
+            $dataDir . '/transliteration-gadget.js',
+            'https://www.wikidata.org/w/index.php?title=MediaWiki:Gadget-SimpleTransliterate.js&action=raw',
+            'window.transliterateTool'
+        );
+        $output->writeln('<info>Updated data/transliteration-gadget.js</info>');
+
+        $this->writeRemoteFile(
+            $dataDir . '/autoedit-descriptions.js',
+            'https://www.wikidata.org/w/index.php?title=MediaWiki:Gadget-autoEdit.js&action=raw',
+            'window.desclist'
+        );
+        $output->writeln('<info>Updated data/autoedit-descriptions.js</info>');
 
         return Command::SUCCESS;
     }
@@ -84,6 +106,52 @@ final class RefreshDataCommand extends Command
             @unlink($tmp);
             throw new RuntimeException('Could not replace file: ' . $path);
         }
+    }
+
+    private function writeRemoteFile(string $path, string $url, string $mustContain): void
+    {
+        $source = $this->httpGet($url);
+        if (!str_contains($source, $mustContain)) {
+            throw new RuntimeException('Remote gadget did not contain expected marker: ' . $mustContain);
+        }
+
+        $tmp = $path . '.tmp';
+        if (file_put_contents($tmp, $source) === false) {
+            throw new RuntimeException('Could not write temporary file: ' . $tmp);
+        }
+
+        if (!rename($tmp, $path)) {
+            @unlink($tmp);
+            throw new RuntimeException('Could not replace file: ' . $path);
+        }
+    }
+
+    private function httpGet(string $url): string
+    {
+        $context = stream_context_create([
+            'http' => [
+                'method' => 'GET',
+                'header' => implode("\r\n", [
+                    'Accept: text/javascript, text/plain, */*',
+                    'User-Agent: New-Name/0.1 data refresh (https://new-name.toolforge.org/)',
+                ]) . "\r\n",
+                'ignore_errors' => true,
+                'timeout' => 60,
+            ],
+        ]);
+
+        $body = @file_get_contents($url, false, $context);
+        if ($body === false) {
+            $status = $this->httpStatus($http_response_header ?? []);
+            throw new RuntimeException('HTTP request failed' . ($status !== '' ? ': ' . $status : '') . '.');
+        }
+
+        $status = $this->httpStatus($http_response_header ?? []);
+        if ($status !== '' && !str_contains($status, ' 2')) {
+            throw new RuntimeException('HTTP request failed: ' . $status . ' ' . substr(trim($body), 0, 500));
+        }
+
+        return $body;
     }
 
     /**
