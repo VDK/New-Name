@@ -1074,14 +1074,14 @@ HTML;
     {
         $options = '';
         foreach (NameTypes::ACTIVE_TYPES as $type) {
-            $label = NameTypes::LABELS[$type] ?? $type;
+            $label = $this->nameTypeLabel($uiLanguage, $type);
             $isSelected = $type === $selected ? ' selected' : '';
             $options .= '<option value="' . htmlspecialchars($type, ENT_QUOTES, 'UTF-8') . '"' . $isSelected . '>' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</option>';
         }
 
         $safeName = urlencode($name);
         $safeUiLanguage = rawurlencode($uiLanguage);
-        $confidence = $this->typeConfidence($selected);
+        $confidence = $this->confidenceLabel($uiLanguage, $this->typeConfidence($selected));
         $typeLabel = htmlspecialchars($this->t($uiLanguage, 'type'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $confidenceLabel = htmlspecialchars($this->t($uiLanguage, 'confidence'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
@@ -1138,12 +1138,12 @@ HTML;
     {
         $script = $analysis['script'];
         $detected = is_array($script) ? $script['qid'] : '';
-        $confidence = is_array($script) ? $script['confidence'] : 'required';
+        $confidence = $this->confidenceLabel($uiLanguage, is_array($script) ? $script['confidence'] : 'required');
         $options = '';
 
         foreach (ScriptDetector::SCRIPTS as $meta) {
             $selected = $meta['qid'] === $detected ? ' selected' : '';
-            $options .= '<option value="' . htmlspecialchars($meta['qid'], ENT_QUOTES, 'UTF-8') . '"' . $selected . '>' . htmlspecialchars($meta['label'], ENT_QUOTES, 'UTF-8') . '</option>';
+            $options .= '<option value="' . htmlspecialchars($meta['qid'], ENT_QUOTES, 'UTF-8') . '"' . $selected . '>' . htmlspecialchars($this->scriptLabel($uiLanguage, $meta['qid'], $meta['label']), ENT_QUOTES, 'UTF-8') . '</option>';
         }
 
         $writingSystem = htmlspecialchars($this->t($uiLanguage, 'writing_system'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -1178,7 +1178,7 @@ HTML;
         $safeSelectedQid = htmlspecialchars($selected !== '' && isset($languages[$selected]) ? $languages[$selected]['item'] : '', ENT_QUOTES, 'UTF-8');
         $safeSelectedCode = htmlspecialchars($selected !== '' && isset($languages[$selected]) ? $selected : '', ENT_QUOTES, 'UTF-8');
         $safeHints = htmlspecialchars(implode(',', $hintCodes), ENT_QUOTES, 'UTF-8');
-        $safeConfidence = htmlspecialchars($confidence, ENT_QUOTES, 'UTF-8');
+        $safeConfidence = htmlspecialchars($this->confidenceLabel($uiLanguage, $confidence), ENT_QUOTES, 'UTF-8');
         $languageOfName = htmlspecialchars($this->t($uiLanguage, 'language_of_name'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $optional = htmlspecialchars($this->t($uiLanguage, 'optional'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $confidenceLabel = htmlspecialchars($this->t($uiLanguage, 'confidence'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -1361,7 +1361,8 @@ HTML;
         foreach (array_slice($analysis['sameTypeMatches'], 0, 8) as $match) {
             $id = htmlspecialchars((string) $match['id'], ENT_QUOTES, 'UTF-8');
             $label = htmlspecialchars((string) $match['label'], ENT_QUOTES, 'UTF-8');
-            $description = htmlspecialchars((string) $match['description'], ENT_QUOTES, 'UTF-8');
+            $descriptionText = $this->translatedInstanceList($uiLanguage, $match['instanceLabels'] ?? []) ?: (string) $match['description'];
+            $description = htmlspecialchars($descriptionText, ENT_QUOTES, 'UTF-8');
             $rows .= "<tr><td colspan=\"2\"><label class=\"check\"><input type=\"radio\" name=\"existing_item\" value=\"$id\" data-label=\"$label\"><span><strong>$label</strong> <a class=\"meta\" href=\"https://www.wikidata.org/wiki/$id\" target=\"_blank\" rel=\"noopener noreferrer\">($id)</a><br><span class=\"meta\">$description</span></span></label></td></tr>";
         }
 
@@ -1563,7 +1564,11 @@ HTML;
 
         foreach ($analysis['claims'] as $claim) {
             $title = $this->propertyLabel($uiLanguage, $claim['property'], $claim['propertyLabel']);
-            $detail = $claim['valueLabel'];
+            $detail = match ($claim['property']) {
+                'P31' => $this->itemLabel($uiLanguage, (string) $claim['value'], (string) $claim['valueLabel']),
+                'P282' => $this->scriptLabel($uiLanguage, (string) $claim['value'], (string) $claim['valueLabel']),
+                default => $claim['valueLabel'],
+            };
             $checks .= $this->staticRow($title, $detail);
         }
 
@@ -1731,7 +1736,7 @@ HTML;
         $property = htmlspecialchars($this->propertyLabel($uiLanguage, $suggestion['property'], $suggestion['propertyLabel']), ENT_QUOTES, 'UTF-8');
         $target = htmlspecialchars($suggestion['target'], ENT_QUOTES, 'UTF-8');
         $targetLabel = htmlspecialchars($suggestion['targetLabel'], ENT_QUOTES, 'UTF-8');
-        $targetTypes = htmlspecialchars(implode(', ', $suggestion['targetTypes'] ?? []), ENT_QUOTES, 'UTF-8');
+        $targetTypes = htmlspecialchars($this->translatedInstanceList($uiLanguage, $suggestion['targetTypes'] ?? []), ENT_QUOTES, 'UTF-8');
         $typeText = $targetTypes !== '' ? '<br><span class="meta">' . $targetTypes . '</span>' : '';
         $checked = $suggestion['property'] === 'P5278' ? '' : ' checked';
 
@@ -1744,6 +1749,186 @@ HTML;
     </span>
 </label>
 HTML;
+    }
+
+    /**
+     * @param list<string> $labels
+     */
+    private function translatedInstanceList(string $uiLanguage, array $labels): string
+    {
+        $translated = [];
+        foreach ($labels as $label) {
+            $translated[] = $this->itemLabelByEnglish($uiLanguage, (string) $label);
+        }
+
+        return implode(', ', array_values(array_filter(array_unique($translated))));
+    }
+
+    private function nameTypeLabel(string $uiLanguage, string $type): string
+    {
+        return $this->itemLabel($uiLanguage, NameTypes::TYPE_ITEMS[$type] ?? '', NameTypes::LABELS[$type] ?? $type);
+    }
+
+    private function itemLabel(string $uiLanguage, string $qid, string $fallback): string
+    {
+        $labels = [
+            'en' => [
+                'Q101352' => 'family name',
+                'Q66480858' => 'affixed family name',
+                'Q60558422' => 'compound surname',
+                'Q4167410' => 'Wikimedia disambiguation page',
+                'Q202444' => 'given name',
+                'Q12308941' => 'male given name',
+                'Q11879590' => 'female given name',
+                'Q3409032' => 'unisex given name',
+            ],
+            'nl' => [
+                'Q101352' => 'achternaam',
+                'Q66480858' => 'achternaam met tussenvoegsel',
+                'Q60558422' => 'samengestelde achternaam',
+                'Q4167410' => 'Wikimedia-doorverwijspagina',
+                'Q202444' => 'voornaam',
+                'Q12308941' => 'mannelijke voornaam',
+                'Q11879590' => 'vrouwelijke voornaam',
+                'Q3409032' => 'unisex voornaam',
+            ],
+            'de' => [
+                'Q101352' => 'Familienname',
+                'Q66480858' => 'Familienname mit Namenszusatz',
+                'Q60558422' => 'zusammengesetzter Familienname',
+                'Q4167410' => 'Wikimedia-Begriffsklärungsseite',
+                'Q202444' => 'Vorname',
+                'Q12308941' => 'männlicher Vorname',
+                'Q11879590' => 'weiblicher Vorname',
+                'Q3409032' => 'Unisex-Vorname',
+            ],
+            'fr' => [
+                'Q101352' => 'nom de famille',
+                'Q66480858' => 'nom de famille avec particule',
+                'Q60558422' => 'nom de famille composé',
+                'Q4167410' => 'page d’homonymie Wikimedia',
+                'Q202444' => 'prénom',
+                'Q12308941' => 'prénom masculin',
+                'Q11879590' => 'prénom féminin',
+                'Q3409032' => 'prénom épicène',
+            ],
+            'es' => [
+                'Q101352' => 'apellido',
+                'Q66480858' => 'apellido con partícula',
+                'Q60558422' => 'apellido compuesto',
+                'Q4167410' => 'página de desambiguación de Wikimedia',
+                'Q202444' => 'nombre de pila',
+                'Q12308941' => 'nombre masculino',
+                'Q11879590' => 'nombre femenino',
+                'Q3409032' => 'nombre unisex',
+            ],
+        ];
+
+        $uiLanguage = $this->interfaceLanguage($uiLanguage);
+
+        return $labels[$uiLanguage][$qid] ?? $labels['en'][$qid] ?? $fallback;
+    }
+
+    private function itemLabelByEnglish(string $uiLanguage, string $label): string
+    {
+        $qid = array_search($label, NameTypes::ITEM_LABELS, true);
+
+        return is_string($qid) ? $this->itemLabel($uiLanguage, $qid, $label) : $label;
+    }
+
+    private function scriptLabel(string $uiLanguage, string $qid, string $fallback): string
+    {
+        $labels = [
+            'en' => [
+                'Q8201' => 'Chinese characters',
+                'Q8229' => 'Latin script',
+                'Q8209' => 'Cyrillic script',
+                'Q8196' => 'Arabic script',
+                'Q33513' => 'Hebrew alphabet',
+                'Q8222' => 'Hangul',
+                'Q48332' => 'hiragana',
+                'Q82946' => 'katakana',
+                'Q38592' => 'Devanagari',
+                'Q8216' => 'Greek alphabet',
+                'Q8301' => 'Georgian scripts',
+                'Q8221' => 'Armenian alphabet',
+            ],
+            'nl' => [
+                'Q8201' => 'Chinese karakters',
+                'Q8229' => 'Latijns schrift',
+                'Q8209' => 'cyrillisch schrift',
+                'Q8196' => 'Arabisch schrift',
+                'Q33513' => 'Hebreeuws alfabet',
+                'Q8222' => 'Hangul',
+                'Q48332' => 'hiragana',
+                'Q82946' => 'katakana',
+                'Q38592' => 'Devanagari',
+                'Q8216' => 'Grieks alfabet',
+                'Q8301' => 'Georgische schriften',
+                'Q8221' => 'Armeens alfabet',
+            ],
+            'de' => [
+                'Q8201' => 'chinesische Schriftzeichen',
+                'Q8229' => 'lateinische Schrift',
+                'Q8209' => 'kyrillische Schrift',
+                'Q8196' => 'arabische Schrift',
+                'Q33513' => 'hebräisches Alphabet',
+                'Q8222' => 'Hangul',
+                'Q48332' => 'Hiragana',
+                'Q82946' => 'Katakana',
+                'Q38592' => 'Devanagari',
+                'Q8216' => 'griechisches Alphabet',
+                'Q8301' => 'georgische Schriften',
+                'Q8221' => 'armenisches Alphabet',
+            ],
+            'fr' => [
+                'Q8201' => 'caractères chinois',
+                'Q8229' => 'alphabet latin',
+                'Q8209' => 'alphabet cyrillique',
+                'Q8196' => 'alphabet arabe',
+                'Q33513' => 'alphabet hébreu',
+                'Q8222' => 'hangul',
+                'Q48332' => 'hiragana',
+                'Q82946' => 'katakana',
+                'Q38592' => 'devanagari',
+                'Q8216' => 'alphabet grec',
+                'Q8301' => 'écritures géorgiennes',
+                'Q8221' => 'alphabet arménien',
+            ],
+            'es' => [
+                'Q8201' => 'caracteres chinos',
+                'Q8229' => 'alfabeto latino',
+                'Q8209' => 'alfabeto cirílico',
+                'Q8196' => 'alfabeto árabe',
+                'Q33513' => 'alfabeto hebreo',
+                'Q8222' => 'hangul',
+                'Q48332' => 'hiragana',
+                'Q82946' => 'katakana',
+                'Q38592' => 'devanagari',
+                'Q8216' => 'alfabeto griego',
+                'Q8301' => 'escrituras georgianas',
+                'Q8221' => 'alfabeto armenio',
+            ],
+        ];
+
+        $uiLanguage = $this->interfaceLanguage($uiLanguage);
+
+        return $labels[$uiLanguage][$qid] ?? $labels['en'][$qid] ?? $fallback;
+    }
+
+    private function confidenceLabel(string $uiLanguage, string $confidence): string
+    {
+        $labels = [
+            'en' => ['high' => 'high', 'medium' => 'medium', 'low' => 'low', 'required' => 'required'],
+            'nl' => ['high' => 'hoog', 'medium' => 'gemiddeld', 'low' => 'laag', 'required' => 'verplicht'],
+            'de' => ['high' => 'hoch', 'medium' => 'mittel', 'low' => 'niedrig', 'required' => 'erforderlich'],
+            'fr' => ['high' => 'élevée', 'medium' => 'moyenne', 'low' => 'faible', 'required' => 'obligatoire'],
+            'es' => ['high' => 'alta', 'medium' => 'media', 'low' => 'baja', 'required' => 'obligatorio'],
+        ];
+
+        $uiLanguage = $this->interfaceLanguage($uiLanguage);
+
+        return $labels[$uiLanguage][$confidence] ?? $labels['en'][$confidence] ?? $confidence;
     }
 
     private function propertyLabel(string $uiLanguage, string $propertyId, string $fallback): string

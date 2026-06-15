@@ -473,9 +473,10 @@ final class WikidataSaveController
         $homeAction = htmlspecialchars($request->getBasePath() . '/', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $mode = $result['mode'] === 'updated' ? $this->t($uiLanguage, 'updated') : $this->t($uiLanguage, 'created');
         $titleType = $this->completionTypeLabel($uiLanguage, $type);
-        $typeLabel = htmlspecialchars($this->itemDisplayLabel(NameTypes::LABELS[$type] ?? $type, NameTypes::TYPE_ITEMS[$type] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $typeQid = NameTypes::TYPE_ITEMS[$type] ?? '';
+        $typeLabel = htmlspecialchars($this->itemDisplayLabel($this->itemLabel($uiLanguage, $typeQid, NameTypes::LABELS[$type] ?? $type), $typeQid), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $nativeLanguage = htmlspecialchars($nativeLabelLanguage !== '' ? $nativeLabelLanguage : 'mul', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        $script = htmlspecialchars($this->scriptDisplayLabel($scriptQid), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $script = htmlspecialchars($this->scriptDisplayLabel($scriptQid, $uiLanguage), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $language = htmlspecialchars($languageQid ? $this->languageDisplayLabel($languageQid) : $this->t($uiLanguage, 'not_set'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $relatedUpdates = (int) $result['relatedUpdates'];
         $warnings = '';
@@ -675,9 +676,9 @@ HTML;
         return $qid !== '' ? $label . ' (' . $qid . ')' : $label;
     }
 
-    private function scriptDisplayLabel(string $scriptQid): string
+    private function scriptDisplayLabel(string $scriptQid, string $uiLanguage): string
     {
-        return $this->itemDisplayLabel($this->scriptLabel($scriptQid), $scriptQid);
+        return $this->itemDisplayLabel($this->scriptLabel($scriptQid, $uiLanguage), $scriptQid);
     }
 
     private function languageDisplayLabel(string $languageQid): string
@@ -685,8 +686,86 @@ HTML;
         return $this->itemDisplayLabel($this->languageLabel($languageQid), $languageQid);
     }
 
-    private function scriptLabel(string $scriptQid): string
+    private function scriptLabel(string $scriptQid, string $uiLanguage): string
     {
+        $labels = [
+            'en' => [
+                'Q8201' => 'Chinese characters',
+                'Q8229' => 'Latin script',
+                'Q8209' => 'Cyrillic script',
+                'Q8196' => 'Arabic script',
+                'Q33513' => 'Hebrew alphabet',
+                'Q8222' => 'Hangul',
+                'Q48332' => 'hiragana',
+                'Q82946' => 'katakana',
+                'Q38592' => 'Devanagari',
+                'Q8216' => 'Greek alphabet',
+                'Q8301' => 'Georgian scripts',
+                'Q8221' => 'Armenian alphabet',
+            ],
+            'nl' => [
+                'Q8201' => 'Chinese karakters',
+                'Q8229' => 'Latijns schrift',
+                'Q8209' => 'cyrillisch schrift',
+                'Q8196' => 'Arabisch schrift',
+                'Q33513' => 'Hebreeuws alfabet',
+                'Q8222' => 'Hangul',
+                'Q48332' => 'hiragana',
+                'Q82946' => 'katakana',
+                'Q38592' => 'Devanagari',
+                'Q8216' => 'Grieks alfabet',
+                'Q8301' => 'Georgische schriften',
+                'Q8221' => 'Armeens alfabet',
+            ],
+            'de' => [
+                'Q8201' => 'chinesische Schriftzeichen',
+                'Q8229' => 'lateinische Schrift',
+                'Q8209' => 'kyrillische Schrift',
+                'Q8196' => 'arabische Schrift',
+                'Q33513' => 'hebräisches Alphabet',
+                'Q8222' => 'Hangul',
+                'Q48332' => 'Hiragana',
+                'Q82946' => 'Katakana',
+                'Q38592' => 'Devanagari',
+                'Q8216' => 'griechisches Alphabet',
+                'Q8301' => 'georgische Schriften',
+                'Q8221' => 'armenisches Alphabet',
+            ],
+            'fr' => [
+                'Q8201' => 'caractères chinois',
+                'Q8229' => 'alphabet latin',
+                'Q8209' => 'alphabet cyrillique',
+                'Q8196' => 'alphabet arabe',
+                'Q33513' => 'alphabet hébreu',
+                'Q8222' => 'hangul',
+                'Q48332' => 'hiragana',
+                'Q82946' => 'katakana',
+                'Q38592' => 'devanagari',
+                'Q8216' => 'alphabet grec',
+                'Q8301' => 'écritures géorgiennes',
+                'Q8221' => 'alphabet arménien',
+            ],
+            'es' => [
+                'Q8201' => 'caracteres chinos',
+                'Q8229' => 'alfabeto latino',
+                'Q8209' => 'alfabeto cirílico',
+                'Q8196' => 'alfabeto árabe',
+                'Q33513' => 'alfabeto hebreo',
+                'Q8222' => 'hangul',
+                'Q48332' => 'hiragana',
+                'Q82946' => 'katakana',
+                'Q38592' => 'devanagari',
+                'Q8216' => 'alfabeto griego',
+                'Q8301' => 'escrituras georgianas',
+                'Q8221' => 'alfabeto armenio',
+            ],
+        ];
+
+        $uiLanguage = $this->interfaceLanguage($uiLanguage);
+        if (isset($labels[$uiLanguage][$scriptQid])) {
+            return $labels[$uiLanguage][$scriptQid];
+        }
+
         foreach (ScriptDetector::SCRIPTS as $meta) {
             if ($meta['qid'] === $scriptQid) {
                 return $meta['label'];
@@ -694,5 +773,60 @@ HTML;
         }
 
         return $scriptQid !== '' ? $scriptQid : 'not set';
+    }
+
+    private function itemLabel(string $uiLanguage, string $qid, string $fallback): string
+    {
+        $labels = [
+            'en' => [
+                'Q101352' => 'family name',
+                'Q66480858' => 'affixed family name',
+                'Q60558422' => 'compound surname',
+                'Q202444' => 'given name',
+                'Q12308941' => 'male given name',
+                'Q11879590' => 'female given name',
+                'Q3409032' => 'unisex given name',
+            ],
+            'nl' => [
+                'Q101352' => 'achternaam',
+                'Q66480858' => 'achternaam met tussenvoegsel',
+                'Q60558422' => 'samengestelde achternaam',
+                'Q202444' => 'voornaam',
+                'Q12308941' => 'mannelijke voornaam',
+                'Q11879590' => 'vrouwelijke voornaam',
+                'Q3409032' => 'unisex voornaam',
+            ],
+            'de' => [
+                'Q101352' => 'Familienname',
+                'Q66480858' => 'Familienname mit Namenszusatz',
+                'Q60558422' => 'zusammengesetzter Familienname',
+                'Q202444' => 'Vorname',
+                'Q12308941' => 'männlicher Vorname',
+                'Q11879590' => 'weiblicher Vorname',
+                'Q3409032' => 'Unisex-Vorname',
+            ],
+            'fr' => [
+                'Q101352' => 'nom de famille',
+                'Q66480858' => 'nom de famille avec particule',
+                'Q60558422' => 'nom de famille composé',
+                'Q202444' => 'prénom',
+                'Q12308941' => 'prénom masculin',
+                'Q11879590' => 'prénom féminin',
+                'Q3409032' => 'prénom épicène',
+            ],
+            'es' => [
+                'Q101352' => 'apellido',
+                'Q66480858' => 'apellido con partícula',
+                'Q60558422' => 'apellido compuesto',
+                'Q202444' => 'nombre de pila',
+                'Q12308941' => 'nombre masculino',
+                'Q11879590' => 'nombre femenino',
+                'Q3409032' => 'nombre unisex',
+            ],
+        ];
+
+        $uiLanguage = $this->interfaceLanguage($uiLanguage);
+
+        return $labels[$uiLanguage][$qid] ?? $labels['en'][$qid] ?? $fallback;
     }
 }
