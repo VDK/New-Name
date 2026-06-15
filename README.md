@@ -104,24 +104,15 @@ php bin/console app:refresh-data
 
 This command queries Wikidata Query Service and writes the TSV files atomically. It is intended for a Toolforge cron job.
 
-Example cron shape:
-
-```cron
-0 3 * * 0 cd /path/to/new-name && php bin/console app:refresh-data
-```
-
-On Toolforge jobs, make sure the command changes into the Symfony project root before calling `bin/console`; otherwise the job fails with `Could not open input file: bin/console`.
-
-Example Toolforge job shape:
+On Toolforge, replace the scheduled refresh job with:
 
 ```bash
+toolforge jobs delete refresh-data
 toolforge jobs run refresh-data \
-  --command "cd \$HOME/public_html && php bin/console app:refresh-data" \
+  --command "php bin/console app:refresh-data" \
   --image php8.2 \
   --schedule "0 3 * * 0"
 ```
-
-If the repository is checked out directly in `$HOME` instead of `$HOME/public_html`, use `cd \$HOME` in that command.
 
 ## OAuth 2.0
 
