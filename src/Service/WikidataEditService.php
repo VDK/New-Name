@@ -64,7 +64,7 @@ final class WikidataEditService
             'format' => 'json',
             'data' => json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE),
             'token' => $token,
-            'summary' => 'New Name: create or update name item',
+            'summary' => '[[Help:New Name|New Name]]: create or update name item',
         ];
 
         if ($entityId) {
@@ -103,7 +103,7 @@ final class WikidataEditService
                     'id' => $relationship['target'],
                     'data' => json_encode(['claims' => [$this->relationshipClaim($relationship, $entityId)]], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE),
                     'token' => $token,
-                    'summary' => 'New Name: link related name item',
+                    'summary' => '[[Help:New Name|New Name]]: link related name item',
                 ]);
                 $relatedUpdates++;
             } catch (\Throwable $e) {

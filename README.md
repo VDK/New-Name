@@ -6,7 +6,7 @@ The app starts with a single name input, analyzes likely Wikidata properties, ch
 
 Source code: <https://github.com/VDK/New-Name>
 
-Production: <https://new-name.toolforge.org/>
+Production: <https://nn.toolforge.org/>
 
 Created by [Vera de Kok](https://www.veradekok.nl/). Licensed under the MIT License.
 
