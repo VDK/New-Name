@@ -16,9 +16,6 @@ final class DescriptionSet
         $nameScript = $this->scriptForText($suffixName);
 
         $out = [];
-        foreach ($this->descriptionOverrides($type) as $language => $description) {
-            $descriptions[$language] = $description;
-        }
 
         foreach ($descriptions as $language => $description) {
             $value = trim(str_replace('%name%', $name, $description));
@@ -52,19 +49,7 @@ final class DescriptionSet
         return NameTypes::DESCRIPTIONS[$type] ?? NameTypes::DESCRIPTIONS[NameTypes::GIVEN_NAME];
     }
 
-    /**
-     * @return array<string, string>
-     */
-    private function descriptionOverrides(string $type): array
-    {
-        return match ($type) {
-            NameTypes::FAMILY_NAME, NameTypes::CHINESE_FAMILY_NAME => [
-                'nl' => 'achternaam',
-                'pt-br' => 'nome de família',
-            ],
-            default => [],
-        };
-    }
+  
 
     /**
      * @return array<string, array<string, string>>
