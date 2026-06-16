@@ -60,7 +60,7 @@ final class HomeController
             }
         }
 
-        $response = new Response($this->page($request, $name, $analysis, is_string($language) ? $language : '', $authorized, $username, $uiLanguage, $preferredLanguages, $transliterator, $scriptLanguages));
+        $response = new Response($this->page($request, $name, $analysis, is_string($language) ? $language : '', $authorized, $username, $uiLanguage, $preferredLanguages, $languages, $transliterator, $scriptLanguages));
         $response->headers->set('Cache-Control', 'no-store, max-age=0');
 
         return $response;
@@ -69,11 +69,11 @@ final class HomeController
     /**
      * @param array<string, mixed>|null $analysis
      */
-    private function page(Request $request, string $name, ?array $analysis, string $language, bool $authorized, string $username, string $uiLanguage, array $preferredLanguages, NameTransliterator $transliterator, ScriptLanguageLookup $scriptLanguages): string
+    private function page(Request $request, string $name, ?array $analysis, string $language, bool $authorized, string $username, string $uiLanguage, array $preferredLanguages, array $languages,  NameTransliterator $transliterator, ScriptLanguageLookup $scriptLanguages): string
     {
         $safeName = htmlspecialchars($name, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $safeUiLanguage = htmlspecialchars($uiLanguage, ENT_QUOTES, 'UTF-8');
-        $review = $analysis ? $this->review($request, $analysis, $language, $authorized, $uiLanguage, $preferredLanguages, $transliterator, $scriptLanguages) : '';
+        $review = $analysis ? $this->review($request, $analysis, $language, $authorized, $uiLanguage, $preferredLanguages, $languages, $transliterator, $scriptLanguages) : '';
         $bodyClass = $analysis ? 'has-review' : 'start';
         $auth = $this->authStatus($request, $authorized, $username, $uiLanguage);
         $languageSwitch = $authorized ? '' : $this->languageSwitch($request, $uiLanguage);
@@ -1034,10 +1034,16 @@ HTML;
     /**
      * @param array<string, mixed> $analysis
      */
-    private function review(Request $request, array $analysis, string $language, bool $authorized, string $uiLanguage, array $preferredLanguages, NameTransliterator $transliterator, ScriptLanguageLookup $scriptLanguages): string
+    private function review(Request $request, array $analysis, string $language, bool $authorized, string $uiLanguage, array $preferredLanguages, array $languages, NameTransliterator $transliterator, ScriptLanguageLookup $scriptLanguages): string
     {
         $selectedType = (string) $analysis['selectedType'];
-        $resolvedLanguage = $this->resolveLanguage($language, $selectedType, $analysis, $preferredLanguages);
+        $resolvedLanguage = $this->resolveLanguage(
+            $language,
+            $languages,
+            $selectedType,
+            $analysis,
+            $preferredLanguages
+        );
         $type = $this->typeSelect((string) $analysis['selectedType'], (string) $analysis['name'], $uiLanguage);
         $script = $this->scriptSelect($analysis, $uiLanguage);
         $languageSelect = $this->languageSelect($resolvedLanguage, $this->languageHintCodes($analysis), $this->languageConfidence($language, $selectedType, $analysis, $preferredLanguages, $resolvedLanguage), $uiLanguage);
@@ -1236,31 +1242,46 @@ HTML;
     /**
      * @param array<string, int> $preferredLanguages
      */
-    private function resolveLanguage(string $language, array $languages, string $selectedType, array $analysis, array $preferredLanguages): string
-    {
+  private function resolveLanguage(
+        string $language,
+        array $languages,
+        string $selectedType,
+        array $analysis,
+        array $preferredLanguages
+    ): string {
         if ($language !== '') {
             return $language;
         }
 
+        // expliciet meegegeven talen
         if ($languages !== []) {
             return $languages[0];
         }
 
-        if ($preferredLanguages !== []) {
-            return array_key_first($preferredLanguages);
-        }
-
+        // naam-analyse
         $affixCodes = $this->affixLanguageCodes($analysis);
         if ($affixCodes !== []) {
-            return $this->preferredLanguageAmong($preferredLanguages, $affixCodes) ?? $affixCodes[0];
+            return $this->preferredLanguageAmong($preferredLanguages, $affixCodes)
+                ?? $affixCodes[0];
         }
 
-        $textLanguage = $this->languageCodeForTextAndScript((string) ($analysis['name'] ?? ''), $analysis['script'] ?? null, $selectedType);
+        $textLanguage = $this->languageCodeForTextAndScript(
+            (string) ($analysis['name'] ?? ''),
+            $analysis['script'] ?? null,
+            $selectedType
+        );
         if ($textLanguage !== null) {
             return $textLanguage;
         }
 
-        $scriptLanguage = $this->languageCodeForScript($analysis['script'] ?? null);
+        // gebruikersvoorkeuren pas daarna
+        if ($preferredLanguages !== []) {
+            return array_key_first($preferredLanguages);
+        }
+
+        $scriptLanguage = $this->languageCodeForScript(
+            $analysis['script'] ?? null
+        );
         if ($scriptLanguage !== null) {
             return $scriptLanguage;
         }
