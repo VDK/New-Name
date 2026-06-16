@@ -32,11 +32,11 @@ final class HomeController
         $type = $request->query->get('type');
         $language = $request->query->get('language');
 
-        $languages = explode(
-            ',',
-            (string) $request->query->get('languages', '')
-        );
-        
+        $languages = array_values(array_filter(array_map(
+            'trim',
+            explode(',', (string) $request->query->get('languages', ''))
+        )));
+
         $preferredLanguages = $this->preferredLanguages(
             (string) $request->query->get('preferred_languages', '')
         );
@@ -44,7 +44,7 @@ final class HomeController
         if ($preferredLanguages === [] && $languages !== []) {
             $preferredLanguages = array_fill_keys(
                 array_filter($languages),
-                1
+                2
             );
         }
         $uiLanguage = $this->interfaceLanguage((string) $request->query->get('ui', 'en'));
