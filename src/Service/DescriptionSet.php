@@ -59,7 +59,6 @@ final class DescriptionSet
     {
         return match ($type) {
             NameTypes::FAMILY_NAME, NameTypes::CHINESE_FAMILY_NAME => [
-                'hu' => 'családnév',
                 'nl' => 'achternaam',
                 'pt-br' => 'nome de família',
             ],
