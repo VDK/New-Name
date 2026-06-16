@@ -1236,10 +1236,18 @@ HTML;
     /**
      * @param array<string, int> $preferredLanguages
      */
-    private function resolveLanguage(string $language, string $selectedType, array $analysis, array $preferredLanguages): string
+    private function resolveLanguage(string $language, array $languages, string $selectedType, array $analysis, array $preferredLanguages): string
     {
         if ($language !== '') {
             return $language;
+        }
+
+        if ($languages !== []) {
+            return $languages[0];
+        }
+
+        if ($preferredLanguages !== []) {
+            return array_key_first($preferredLanguages);
         }
 
         $affixCodes = $this->affixLanguageCodes($analysis);
