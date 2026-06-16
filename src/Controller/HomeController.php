@@ -1046,7 +1046,17 @@ HTML;
         );
         $type = $this->typeSelect((string) $analysis['selectedType'], (string) $analysis['name'], $uiLanguage);
         $script = $this->scriptSelect($analysis, $uiLanguage);
-        $languageSelect = $this->languageSelect($resolvedLanguage, $this->languageHintCodes($analysis), $this->languageConfidence($language, $selectedType, $analysis, $preferredLanguages, $resolvedLanguage), $uiLanguage);
+        $hintCodes = $this->uniqueLanguageHints(
+            $languages,
+            $this->languageHintCodes($analysis)
+        );
+
+        $languageSelect = $this->languageSelect(
+            $resolvedLanguage,
+            $hintCodes,
+            $this->languageConfidence($language, $selectedType, $analysis, $preferredLanguages, $resolvedLanguage),
+            $uiLanguage
+        );
         $transliteration = $this->transliterationField((string) $analysis['name'], $analysis['script'] ?? null, $transliterator, $uiLanguage);
         $duplicates = $this->duplicates($analysis, $uiLanguage);
         $displayLabel = $this->defaultTransliteration((string) $analysis['name'], $analysis['script'] ?? null, $transliterator);
