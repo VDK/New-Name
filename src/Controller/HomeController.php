@@ -31,7 +31,22 @@ final class HomeController
         $name = trim((string) $request->query->get('name', ''));
         $type = $request->query->get('type');
         $language = $request->query->get('language');
-        $preferredLanguages = $this->preferredLanguages((string) $request->query->get('preferred_languages', ''));
+
+        $languages = explode(
+            ',',
+            (string) $request->query->get('languages', '')
+        );
+        
+        $preferredLanguages = $this->preferredLanguages(
+            (string) $request->query->get('preferred_languages', '')
+        );
+
+        if ($preferredLanguages === [] && $languages !== []) {
+            $preferredLanguages = array_fill_keys(
+                array_filter($languages),
+                1
+            );
+        }
         $uiLanguage = $this->interfaceLanguage((string) $request->query->get('ui', 'en'));
         $analysis = $name !== '' ? $analyzer->analyze($name, is_string($type) ? $type : null) : null;
         $authorized = $oauthClient->isAuthorized();
