@@ -40,7 +40,7 @@ final class WikidataEditService
         if (!$this->hasAnyMonolingualTextClaim($existingClaims, 'P1705')) {
             $data['claims'][] = $this->monolingualTextClaim('P1705', $name, $nativeLabelLanguage !== '' ? $nativeLabelLanguage : 'mul');
         }
-        if ($languageQid && in_array('claim_P407', $apply, true) && !$this->hasItemClaim($existingClaims, 'P407', $languageQid)) {
+        if ($languageQid && !$this->hasItemClaim($existingClaims, 'P407', $languageQid)) {
             $data['claims'][] = $this->itemClaim('P407', $languageQid);
         }
         foreach ($this->appliedItemClaims($apply, 'P7377') as $infixQid) {
@@ -50,7 +50,7 @@ final class WikidataEditService
         }
         foreach ($relationships as $relationship) {
             $applyKey = 'related_' . $relationship['target'] . '_' . $relationship['property'];
-            if (!in_array($applyKey, $apply, true) || !$this->isSymmetricNameProperty($relationship['property'])) {
+            if (!in_array($applyKey, $apply, true) || !$this->isSupportedNameProperty($relationship['property'])) {
                 continue;
             }
             if ($this->hasItemClaim($existingClaims, $relationship['property'], $relationship['target'])) {
@@ -117,6 +117,11 @@ final class WikidataEditService
     private function isSymmetricNameProperty(string $property): bool
     {
         return in_array($property, ['P460', 'P1560', 'P5278', 'P1889'], true);
+    }
+
+    private function isSupportedNameProperty(string $property): bool
+    {
+        return $property === 'P1533' || $this->isSymmetricNameProperty($property);
     }
 
     /**
