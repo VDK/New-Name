@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\OAuthAuthorizationRequired;
 use App\Service\WikimediaOAuthClient;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -63,6 +64,9 @@ final class OAuthController
                 $rights = is_array($userInfo['rights'] ?? null) ? array_values(array_filter($userInfo['rights'], 'is_string')) : [];
                 $canEdit = in_array('edit', $rights, true);
                 $canCreate = in_array('createpage', $rights, true) || in_array('createitem', $rights, true);
+            } catch (OAuthAuthorizationRequired $e) {
+                $authorized = false;
+                $error = $e->getMessage();
             } catch (\Throwable $e) {
                 $error = $e->getMessage();
             }
