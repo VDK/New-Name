@@ -49,6 +49,7 @@ final class LanguageHeuristics
     ];
 
     public const LANGUAGE_SUFFIXES = [
+        ['group' => 'en', 'value' => '-ey', 'confidence' => 'low', 'suffix' => 'ey'],
         ['group' => 'fy', 'value' => '-stra', 'confidence' => 'medium', 'suffix' => 'stra'],
         ['group' => 'is', 'value' => '-dóttir', 'confidence' => 'high', 'suffix' => 'dóttir'],
         ['group' => 'is', 'value' => '-dottir', 'confidence' => 'high', 'suffix' => 'dottir'],
@@ -64,6 +65,7 @@ final class LanguageHeuristics
         ['group' => 'de', 'value' => '-dorff', 'confidence' => 'medium', 'suffix' => 'dorff'],
         ['group' => 'de', 'value' => '-stein', 'confidence' => 'medium', 'suffix' => 'stein'],
         ['group' => 'nl', 'value' => '-stein', 'confidence' => 'low', 'suffix' => 'stein'],
+        ['group' => 'de', 'value' => '-mann', 'confidence' => 'medium', 'suffix' => 'mann'],
         ['group' => 'de', 'value' => '-berg', 'confidence' => 'medium', 'suffix' => 'berg'],
         ['group' => 'nl', 'value' => '-berg', 'confidence' => 'medium', 'suffix' => 'berg'],
         ['group' => 'sv', 'value' => '-berg', 'confidence' => 'medium', 'suffix' => 'berg'],

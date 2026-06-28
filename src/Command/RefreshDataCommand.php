@@ -237,13 +237,12 @@ SELECT DISTINCT ?item
        ?description_es
 WHERE {
   ?item wdt:P424 ?code.
+  ?item wdt:P31/wdt:P279* wd:Q1288568.
+  FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q34228. }
   ?item rdfs:label ?label_en FILTER(LANG(?label_en) = "en")
-  FILTER(?item != wd:Q34228)
-  FILTER(!STRSTARTS(LCASE(STR(?code)), "sgn"))
-
-  OPTIONAL { ?item rdfs:label ?label_fr FILTER(LANG(?label_fr) = "fr") }
-  OPTIONAL { ?item rdfs:label ?label_de FILTER(LANG(?label_de) = "de") }
-  OPTIONAL { ?item rdfs:label ?label_nl FILTER(LANG(?label_nl) = "nl") }
+  ?item rdfs:label ?label_fr FILTER(LANG(?label_fr) = "fr")
+  ?item rdfs:label ?label_de FILTER(LANG(?label_de) = "de")
+  ?item rdfs:label ?label_nl FILTER(LANG(?label_nl) = "nl")
   OPTIONAL { ?item rdfs:label ?label_es FILTER(LANG(?label_es) = "es") }
   OPTIONAL { ?item schema:description ?description_en FILTER(LANG(?description_en) = "en") }
   OPTIONAL { ?item schema:description ?description_fr FILTER(LANG(?description_fr) = "fr") }
@@ -280,10 +279,10 @@ SELECT DISTINCT ?script ?scriptLabel ?language
        ?label_en
 WHERE {
   ?language wdt:P424 ?code.
+  ?language wdt:P31/wdt:P279* wd:Q1288568.
+  FILTER NOT EXISTS { ?language wdt:P31/wdt:P279* wd:Q34228. }
   ?language rdfs:label ?label_en FILTER(LANG(?label_en) = "en")
   ?language wdt:P282 ?script.
-  FILTER(?language != wd:Q34228)
-  FILTER(!STRSTARTS(LCASE(STR(?code)), "sgn"))
 
   SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
 }

@@ -1,6 +1,6 @@
 # New Name
 
-New Name is a small Symfony application for creating and updating Wikidata items for given names and family names.
+New Name is a small Symfony application for creating and updating Wikidata items for given and family names.
 
 The app starts with a single name input, analyzes likely Wikidata properties, checks for existing same-type items, and prepares a create/update edit using Wikimedia OAuth 2.0.
 
@@ -26,6 +26,13 @@ Created by [Vera de Kok](https://www.veradekok.nl/). Licensed under the MIT Lice
   - `instance of (P31)`
   - `writing system (P282)`
 - Optionally adds `language of work or name (P407)`.
+- Adds an existing given- or family-name item to matching person items:
+  - `given name (P735)` with optional `series ordinal (P1545)`
+  - `family name (P734)`
+  - `second family name in Spanish name (P1950)` only for Spanish name items
+  - `first family name in Portuguese name (P9139)` only for Portuguese name items
+  - person suggestions must contain the name in the name item's writing system; `mul` labels are accepted only for Latin-script names
+  - added statements cite `based on heuristic (P887): inferred from person's full name (Q97033143)`
 - Uses local TSV caches for language and affix lookup.
 
 ## Requirements
@@ -85,6 +92,14 @@ Production is intended to run at:
 ```text
 https://new-name.toolforge.org/
 ```
+
+The public `type` query parameter uses compact values:
+
+```text
+family, given, male, female, unisex
+```
+
+`type=family` skips given/family type classification. `type=given` compares only given-name subtypes, including unisex when Wikidata provides explicit evidence.
 
 On Toolforge, the web document root is normally `public_html`. Deploy the Symfony public entrypoint there, for example by copying or symlinking the contents of `public/` into `public_html/` according to the tool account setup.
 

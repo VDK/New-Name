@@ -24,7 +24,7 @@ final class LanguageSearchController
         $seen = [];
 
         foreach ($rows as $row) {
-            if (isset($seen[$row['id']]) || $row['label_en'] === '' || $this->isSignLanguage($row)) {
+            if (isset($seen[$row['id']]) || $row['label_en'] === '') {
                 continue;
             }
 
@@ -39,7 +39,10 @@ final class LanguageSearchController
             ])));
 
             $isHint = in_array($row['code'], $hints, true);
-            if (!$isHint && (mb_strlen($query) < 2 || !str_contains($haystack, $query))) {
+            if ($query === '' && !$isHint) {
+                continue;
+            }
+            if ($query !== '' && !str_contains($haystack, $query)) {
                 continue;
             }
 
@@ -83,7 +86,7 @@ final class LanguageSearchController
         $code = mb_strtolower($row['code']);
         $hintIndex = array_search($code, $hints, true);
         if (is_int($hintIndex)) {
-            $score += 300 - $hintIndex;
+            $score += $query === '' ? 300 - $hintIndex : max(5, 30 - $hintIndex);
         }
         if ($code === $query) {
             $score += 240;
@@ -111,20 +114,6 @@ final class LanguageSearchController
             static fn (string $code): string => mb_strtolower(trim($code)),
             explode(',', $hints)
         )), static fn (string $code): bool => preg_match('/^[a-z-]{2,12}$/', $code) === 1));
-    }
-
-    /**
-     * @param array<string, string> $row
-     */
-    private function isSignLanguage(array $row): bool
-    {
-        foreach (['label_en', 'label_fr', 'label_de', 'label_nl', 'label_es'] as $column) {
-            if (str_contains(mb_strtolower($row[$column]), 'sign language')) {
-                return true;
-            }
-        }
-
-        return str_starts_with(mb_strtolower($row['code']), 'sgn');
     }
 
     private function interfaceLanguage(string $language): string

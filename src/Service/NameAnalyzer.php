@@ -17,37 +17,76 @@ final class NameAnalyzer
     /**
      * @return array<string, mixed>
      */
-    public function analyze(string $name, ?string $selectedType = null): array
+    public function analyze(string $name, ?string $selectedType = null, ?string $transliteration = null, ?string $selectedItemId = null): array
     {
         $name = trim(preg_replace('/\s+/u', ' ', $name) ?? $name);
+        $transliteration = trim(preg_replace('/\s+/u', ' ', $transliteration ?? '') ?? ($transliteration ?? ''));
+        $selectedItemId = strtoupper(trim($selectedItemId ?? ''));
+        if (preg_match('/^Q\d+$/', $selectedItemId) !== 1) {
+            $selectedItemId = '';
+        }
         $selectedType = $this->normalizeSelectedType($selectedType);
         $script = $this->scriptDetector->detect($name);
         $affixes = $this->affixDetector->detect($name);
         $matches = $this->wikidataClient->searchItems($name);
-        $instances = [];
+        if ($transliteration !== '' && $this->foldName($transliteration) !== $this->foldName($name)) {
+            $matches = $this->mergeMatches($matches, $this->wikidataClient->searchItems($transliteration));
+        }
+        $analysisData = $this->wikidataClient->itemAnalysisData(array_column($matches, 'id'));
+        $instances = $analysisData['instances'];
 
-        if ($selectedType && isset(NameTypes::TYPE_ITEMS[$selectedType])) {
+        if ($selectedType === NameTypes::GIVEN_SCOPE) {
+            $suggestions = $this->suggestTypes($name, $script, $affixes, $matches, $instances, [
+                NameTypes::GIVEN_NAME,
+                NameTypes::MALE_GIVEN_NAME,
+                NameTypes::FEMALE_GIVEN_NAME,
+                NameTypes::UNISEX_GIVEN_NAME,
+            ]);
+            $type = $suggestions[0]['type'] ?? NameTypes::GIVEN_NAME;
+            if ($this->shouldUseExactNameFallback($name, $affixes)) {
+                $matches = $this->mergeMatches($matches, $this->wikidataClient->exactNameMatches($name, $this->rootTypeItem($type), $matches, $instances));
+            }
+        } elseif ($selectedType && isset(NameTypes::TYPE_ITEMS[$selectedType])) {
             $type = $selectedType;
             $suggestions = [];
-            if ($this->shouldUseExactNameFallback($name, $affixes)) {
-                $matches = $this->mergeMatches($matches, $this->wikidataClient->exactNameMatches($name, $this->rootTypeItem($type)));
+            $matches = $this->mergeMatches($matches, $this->wikidataClient->exactNameMatches($name, $this->rootTypeItem($type), $matches, $instances));
+            if ($this->isNameType($type)) {
+                $oppositeRootType = $this->isGivenNameType($type)
+                    ? NameTypes::TYPE_ITEMS[NameTypes::FAMILY_NAME]
+                    : NameTypes::TYPE_ITEMS[NameTypes::GIVEN_NAME];
+                $matches = $this->mergeMatches($matches, $this->wikidataClient->exactNameMatches($name, $oppositeRootType, $matches, $instances, false));
             }
         } else {
-            $instances = $this->wikidataClient->instanceOf(array_column($matches, 'id'));
             $suggestions = $this->suggestTypes($name, $script, $affixes, $matches, $instances);
             $type = $suggestions[0]['type'] ?? NameTypes::GIVEN_NAME;
             if ($this->shouldUseExactNameFallback($name, $affixes)) {
-                $matches = $this->mergeMatches($matches, $this->wikidataClient->exactNameMatches($name, $this->rootTypeItem($type)));
+                $matches = $this->mergeMatches($matches, $this->wikidataClient->exactNameMatches($name, $this->rootTypeItem($type), $matches, $instances));
             }
         }
 
-        $missingInstanceIds = array_values(array_diff(array_column($matches, 'id'), array_keys($instances)));
-        if ($missingInstanceIds) {
-            $instances += $this->wikidataClient->instanceOf($missingInstanceIds);
+        $missingDataIds = array_values(array_diff(array_column($matches, 'id'), array_keys($analysisData['instances'])));
+        if ($missingDataIds) {
+            $extraData = $this->wikidataClient->itemAnalysisData($missingDataIds);
+            foreach ($analysisData as $key => $values) {
+                $analysisData[$key] += $extraData[$key] ?? [];
+            }
         }
         $matchIds = array_column($matches, 'id');
-        $scripts = $this->wikidataClient->itemClaims($matchIds, 'P282');
-        $nativeLabels = $this->wikidataClient->nativeLabels($matchIds);
+        $instances = $analysisData['instances'];
+        $scripts = $analysisData['scripts'];
+        $nativeLabels = $analysisData['nativeLabels'];
+        $mulLabels = $analysisData['mulLabels'];
+        foreach ($matches as $match) {
+            $id = (string) ($match['id'] ?? '');
+            $embeddedNativeLabel = $this->nativeLabelFromDescription(
+                (string) ($match['description'] ?? ''),
+                (string) ($match['label'] ?? ''),
+                $script
+            );
+            if ($id !== '' && $embeddedNativeLabel !== null) {
+                $nativeLabels[$id] = [$embeddedNativeLabel];
+            }
+        }
 
         return [
             'name' => $name,
@@ -56,21 +95,27 @@ final class NameAnalyzer
             'suggestions' => $suggestions,
             'script' => $script,
             'affixes' => $affixes,
-            'matches' => $this->shapeMatches($matches, $instances, $scripts, $nativeLabels, $script),
-            'sameTypeMatches' => $this->sameTypeMatches($matches, $instances, $scripts, $nativeLabels, $type, $name, $script),
+            'matches' => $this->shapeMatches($matches, $instances, $scripts, $nativeLabels, $mulLabels, $script),
+            'sameTypeMatches' => $this->sameTypeMatches($matches, $instances, $scripts, $nativeLabels, $mulLabels, $type, $name, $script),
             'descriptions' => $this->descriptionSet->forType($type, $name),
             'claims' => $this->claimsFor($type, $script),
-            'relationshipSuggestions' => $this->relationshipSuggestions($name, $type, $affixes, $this->relationshipCandidateMatches($matches, $instances, $type), $instances),
+            'relationshipSuggestions' => $this->relationshipSuggestions(
+                $name,
+                $type,
+                $affixes,
+                $this->relationshipCandidateMatches($matches, $instances, $type),
+                $instances,
+                $scripts,
+                is_array($script) ? (string) ($script['qid'] ?? '') : '',
+                $transliteration !== '' ? [$transliteration] : [],
+                $selectedItemId
+            ),
         ];
     }
 
     private function normalizeSelectedType(?string $selectedType): ?string
     {
-        return match ($selectedType) {
-            NameTypes::CHINESE_FAMILY_NAME => NameTypes::FAMILY_NAME,
-            NameTypes::CHINESE_GIVEN_NAME => NameTypes::GIVEN_NAME,
-            default => in_array($selectedType, NameTypes::ACTIVE_TYPES, true) ? $selectedType : null,
-        };
+        return NameTypes::fromUrl($selectedType);
     }
 
     /**
@@ -80,28 +125,40 @@ final class NameAnalyzer
      * @param array<string, list<string>> $instances
      * @return list<array{type: string, label: string, confidence: string, reasons: list<string>}>
      */
-    private function suggestTypes(string $name, ?array $script, array $affixes, array $matches, array $instances): array
+    private function suggestTypes(string $name, ?array $script, array $affixes, array $matches, array $instances, ?array $candidateTypes = null): array
     {
+        $candidateTypes ??= NameTypes::ACTIVE_TYPES;
         $scores = [];
-        foreach (NameTypes::ACTIVE_TYPES as $type) {
+        foreach ($candidateTypes as $type) {
             $scores[$type] = ['score' => 0, 'reasons' => []];
         }
 
         foreach ($matches as $match) {
             $id = $match['id'];
             foreach ($instances[$id] ?? [] as $instance) {
-                foreach (NameTypes::ACTIVE_TYPES as $type) {
-                    if (in_array($instance, $this->compatibleTypeItems($type), true)) {
+                foreach ($candidateTypes as $type) {
+                    if ($instance === (NameTypes::TYPE_ITEMS[$type] ?? '')) {
                         $scores[$type]['score'] += 50;
                         $scores[$type]['reasons'][] = $id . ' is already a ' . (NameTypes::LABELS[$type] ?? $type);
+                    } elseif (in_array($instance, $this->compatibleTypeItems($type), true)) {
+                        $scores[$type]['score'] += 10;
+                        $scores[$type]['reasons'][] = $id . ' has a compatible name type';
                     }
                 }
             }
         }
 
-        if ($affixes) {
+        if ($affixes && isset($scores[NameTypes::FAMILY_NAME])) {
             $scores[NameTypes::FAMILY_NAME]['score'] += 20;
             $scores[NameTypes::FAMILY_NAME]['reasons'][] = 'family-name affix pattern detected';
+        }
+        if (
+            isset($scores[NameTypes::FEMALE_GIVEN_NAME])
+            && preg_match('/a$/iu', $name) === 1
+            && mb_strlen($name) >= 3
+        ) {
+            $scores[NameTypes::FEMALE_GIVEN_NAME]['score'] += 20;
+            $scores[NameTypes::FEMALE_GIVEN_NAME]['reasons'][] = 'name ending in -a is commonly feminine';
         }
 
         $out = [];
@@ -143,9 +200,9 @@ final class NameAnalyzer
      * @param array<string, list<string>> $nativeLabels
      * @return list<array<string, mixed>>
      */
-    private function shapeMatches(array $matches, array $instances, array $scripts = [], array $nativeLabels = [], ?array $detectedScript = null): array
+    private function shapeMatches(array $matches, array $instances, array $scripts = [], array $nativeLabels = [], array $mulLabels = [], ?array $detectedScript = null): array
     {
-        return array_map(function (array $match) use ($instances, $scripts, $nativeLabels, $detectedScript): array {
+        return array_map(function (array $match) use ($instances, $scripts, $nativeLabels, $mulLabels, $detectedScript): array {
             $id = $match['id'];
 
             return $match + [
@@ -157,6 +214,7 @@ final class NameAnalyzer
                 )),
                 'scripts' => $scripts[$id] ?? [],
                 'nativeLabels' => $nativeLabels[$id] ?? [],
+                'mulLabel' => $mulLabels[$id] ?? '',
             ];
         }, $matches);
     }
@@ -213,6 +271,9 @@ final class NameAnalyzer
             if ($nativeLabel === '' || $nativeLabel === $label) {
                 continue;
             }
+            if (str_contains($description, $nativeLabel)) {
+                return $description;
+            }
             $nativeScript = $this->scriptDetector->detect($nativeLabel);
             if (is_array($nativeScript) && (string) ($nativeScript['script'] ?? '') !== $detectedScriptName) {
                 $description = trim(preg_replace('/\s+/u', ' ', $description) ?? $description);
@@ -222,6 +283,28 @@ final class NameAnalyzer
         }
 
         return $description;
+    }
+
+    private function nativeLabelFromDescription(string $description, string $label, ?array $detectedScript): ?string
+    {
+        $detectedScriptName = is_array($detectedScript) ? (string) ($detectedScript['script'] ?? '') : '';
+        if ($detectedScriptName === '' || $detectedScriptName === 'Latin' || $description === '') {
+            return null;
+        }
+
+        preg_match_all('/[\(\x{FF08}]([^\(\)\x{FF08}\x{FF09}]+)[\)\x{FF09}]/u', $description, $matches);
+        foreach ($matches[1] ?? [] as $candidate) {
+            $candidate = trim((string) $candidate);
+            if ($candidate === '' || $candidate === $label) {
+                continue;
+            }
+            $candidateScript = $this->scriptDetector->detect($candidate);
+            if (is_array($candidateScript) && (string) ($candidateScript['script'] ?? '') === $detectedScriptName) {
+                return $candidate;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -239,7 +322,7 @@ final class NameAnalyzer
      * @param array<string, list<string>> $nativeLabels
      * @return list<array<string, mixed>>
      */
-    private function sameTypeMatches(array $matches, array $instances, array $scripts, array $nativeLabels, string $selectedType, string $name, ?array $detectedScript): array
+    private function sameTypeMatches(array $matches, array $instances, array $scripts, array $nativeLabels, array $mulLabels, string $selectedType, string $name, ?array $detectedScript): array
     {
         $compatibleItems = $this->compatibleTypeItems($selectedType);
         if (!$compatibleItems) {
@@ -256,7 +339,7 @@ final class NameAnalyzer
                 && $this->foldName((string) $match['label']) === $foldedName;
         }));
 
-        return $this->shapeMatches($sameType, $instances, $scripts, $nativeLabels, $detectedScript);
+        return $this->shapeMatches($sameType, $instances, $scripts, $nativeLabels, $mulLabels, $detectedScript);
     }
 
     /**
@@ -267,12 +350,18 @@ final class NameAnalyzer
     private function relationshipCandidateMatches(array $matches, array $instances, string $selectedType): array
     {
         $sameType = [];
+        $otherNameType = [];
         $disambiguation = [];
         $other = [];
         foreach ($matches as $match) {
             $matchInstances = $instances[$match['id']] ?? [];
             if ($this->isSameType($selectedType, $matchInstances)) {
                 $sameType[] = $match;
+            } elseif (
+                ($this->isGivenNameType($selectedType) && $this->hasFamilyNameInstance($matchInstances))
+                || ($this->isFamilyNameType($selectedType) && $this->hasGivenNameInstance($matchInstances))
+            ) {
+                $otherNameType[] = $match;
             } elseif ($this->isNameType($selectedType) && in_array('Q4167410', $matchInstances, true)) {
                 $disambiguation[] = $match;
             } else {
@@ -280,7 +369,7 @@ final class NameAnalyzer
             }
         }
 
-        return array_slice([...$sameType, ...$disambiguation, ...array_slice($other, 0, 3)], 0, 8);
+        return array_slice([...$sameType, ...$otherNameType, ...$disambiguation, ...array_slice($other, 0, 3)], 0, 10);
     }
 
     /**
@@ -312,26 +401,37 @@ final class NameAnalyzer
      * @param list<array{id: string, label: string, description: string}> $matches
      * @param array<string, list<string>> $instances
      * @param list<array<string, string>> $affixes
-     * @return list<array{target: string, targetLabel: string, targetTypes: list<string>, property: string, propertyLabel: string, value: string, reason: string, qualifierProperty?: string, qualifierPropertyLabel?: string, qualifierValue?: string, qualifierValueLabel?: string}>
+     * @return list<array{target: string, targetLabel: string, targetTypes: list<string>, property: string, propertyLabel: string, value: string, reason: string, direction?: string, qualifierProperty?: string, qualifierPropertyLabel?: string, qualifierValue?: string, qualifierValueLabel?: string}>
      */
-    private function relationshipSuggestions(string $name, string $selectedType, array $affixes, array $matches, array $instances): array
+    private function relationshipSuggestions(string $name, string $selectedType, array $affixes, array $matches, array $instances, array $scripts, string $selectedScriptQid, array $alternativeNames = [], string $selectedItemId = ''): array
     {
         $suggestions = [];
         $foldedName = $this->foldName($name);
+        $comparisonNames = array_values(array_unique(array_filter([$name, ...$alternativeNames])));
 
         foreach ($matches as $match) {
             $id = $match['id'];
+            if ($id === $selectedItemId) {
+                continue;
+            }
             $label = $match['label'];
             $matchInstances = $instances[$id] ?? [];
             $foldedLabel = $this->foldName($label);
 
+            $sameSpelling = false;
+            foreach ($comparisonNames as $comparisonName) {
+                if ($foldedLabel === $this->foldName($comparisonName)) {
+                    $sameSpelling = true;
+                    break;
+                }
+            }
+            $relatedFamilySpelling = $this->isFamilyNameType($selectedType)
+                && $this->isRelatedFamilyNameCandidate($name, $label, $affixes);
+
             if (
                 $label !== $name
                 && $this->isSameType($selectedType, $matchInstances)
-                && (
-                    $foldedLabel === $foldedName
-                    || ($this->isFamilyNameType($selectedType) && $this->isRelatedFamilyNameCandidate($name, $label, $affixes))
-                )
+                && ($sameSpelling || $relatedFamilySpelling)
             ) {
                 $suggestions[] = [
                     'target' => $id,
@@ -340,7 +440,7 @@ final class NameAnalyzer
                     'property' => 'P460',
                     'propertyLabel' => 'said to be the same as',
                     'value' => 'new item',
-                    'reason' => $foldedLabel === $foldedName ? 'same folded spelling; likely accent or diacritic variant' : 'related surname spelling found in Wikidata search results',
+                    'reason' => $sameSpelling ? 'same folded spelling or transliteration' : 'related surname spelling found in Wikidata search results',
                 ];
             }
 
@@ -360,7 +460,29 @@ final class NameAnalyzer
                 ];
             }
 
-            if ($this->isGivenNameType($selectedType) && $this->isOtherGenderGivenName($selectedType, $matchInstances)) {
+            if (
+                $foldedLabel === $foldedName
+                && $this->isFamilyNameType($selectedType)
+                && $this->hasGivenNameInstance($matchInstances)
+            ) {
+                $suggestions[] = [
+                    'target' => $id,
+                    'targetLabel' => $label,
+                    'targetTypes' => $this->instanceLabels($matchInstances),
+                    'property' => 'P1533',
+                    'propertyLabel' => 'given name equivalent',
+                    'value' => 'new item',
+                    'direction' => 'target',
+                    'reason' => 'This statement is stored on the given-name item. After saving this family name, the given-name item will be updated to point to it.',
+                ];
+            }
+
+            if (
+                $this->isGivenNameType($selectedType)
+                && $selectedScriptQid !== ''
+                && in_array($selectedScriptQid, $scripts[$id] ?? [], true)
+                && $this->isOtherGenderGivenName($selectedType, $matchInstances)
+            ) {
                 $suggestions[] = [
                     'target' => $id,
                     'targetLabel' => $label,
@@ -397,7 +519,11 @@ final class NameAnalyzer
         if ($this->isGivenNameType($selectedType)) {
             foreach ($this->genderedVariantMatches($name, $selectedType, $matches) as $variant) {
                 $variantInstances = $variant['instances'];
-                if ($this->isOtherGenderGivenName($selectedType, $variantInstances)) {
+                if (
+                    $selectedScriptQid !== ''
+                    && in_array($selectedScriptQid, $variant['scripts'] ?? [], true)
+                    && $this->isOtherGenderGivenName($selectedType, $variantInstances)
+                ) {
                     $suggestions[] = [
                         'target' => $variant['id'],
                         'targetLabel' => $variant['label'],
@@ -515,19 +641,29 @@ final class NameAnalyzer
      */
     private function familyNameSpellingVariants(string $name): array
     {
-        if (preg_match('/dorff$/iu', $name) === 1) {
-            return [preg_replace('/dorff$/iu', 'dorf', $name) ?? $name];
-        }
-        if (preg_match('/dorf$/iu', $name) === 1) {
-            return [$name . 'f'];
+        $variants = [];
+
+        if (preg_match('/ff$/iu', $name) === 1) {
+            $variants[] = preg_replace('/ff$/iu', 'f', $name) ?? $name;
+        } elseif (preg_match('/f$/iu', $name) === 1) {
+            $variants[] = $name . 'f';
         }
 
-        return [];
+        if (preg_match('/mann$/iu', $name) === 1) {
+            $variants[] = preg_replace('/mann$/iu', 'man', $name) ?? $name;
+        } elseif (preg_match('/man$/iu', $name) === 1) {
+            $variants[] = $name . 'n';
+        }
+
+        return array_values(array_unique(array_filter(
+            $variants,
+            static fn (string $variant): bool => $variant !== $name
+        )));
     }
 
     /**
      * @param list<array{id: string, label: string, description: string}> $currentMatches
-     * @return list<array{id: string, label: string, description: string, instances: list<string>}>
+     * @return list<array{id: string, label: string, description: string, instances: list<string>, scripts: list<string>}>
      */
     private function genderedVariantMatches(string $name, string $selectedType, array $currentMatches, bool $exactLabel = false): array
     {
@@ -555,9 +691,11 @@ final class NameAnalyzer
         }
 
         $instances = $this->wikidataClient->instanceOf(array_keys($out));
+        $scripts = $this->wikidataClient->itemClaims(array_keys($out), 'P282');
 
         return array_values(array_map(static fn (array $match): array => $match + [
             'instances' => $instances[$match['id']] ?? [],
+            'scripts' => $scripts[$match['id']] ?? [],
         ], $out));
     }
 
@@ -752,6 +890,14 @@ final class NameAnalyzer
     private function hasFamilyNameInstance(array $instances): bool
     {
         return array_intersect(NameTypes::COMPATIBLE_TYPE_ITEMS[NameTypes::FAMILY_NAME], $instances) !== [];
+    }
+
+    /**
+     * @param list<string> $instances
+     */
+    private function hasGivenNameInstance(array $instances): bool
+    {
+        return array_intersect(NameTypes::COMPATIBLE_TYPE_ITEMS[NameTypes::GIVEN_NAME], $instances) !== [];
     }
 
     /**

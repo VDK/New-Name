@@ -1,7 +1,5 @@
 script	scriptLabel	language	code	label_en
 http://www.wikidata.org/entity/Q139030056	Q139030056	http://www.wikidata.org/entity/Q33578	ig	Igbo
-http://www.wikidata.org/entity/Q30588252	Q30588252	http://www.wikidata.org/entity/Q14759	ase	American Sign Language
-http://www.wikidata.org/entity/Q2639681	Abakada alphabet	http://www.wikidata.org/entity/Q33284	bcl	Central Bikol
 http://www.wikidata.org/entity/Q19606346	Adlam	http://www.wikidata.org/entity/Q33454	ff	Fula
 http://www.wikidata.org/entity/Q19606346	Adlam	http://www.wikidata.org/entity/Q3915357	fuf	Pular
 http://www.wikidata.org/entity/Q4058023	Adyghe alphabet	http://www.wikidata.org/entity/Q27776	ady	Adyghe
@@ -15,12 +13,10 @@ http://www.wikidata.org/entity/Q4062913	Altai alphabet	http://www.wikidata.org/e
 http://www.wikidata.org/entity/Q2212449	Arabic Braille	http://www.wikidata.org/entity/Q13955	ar	Arabic
 http://www.wikidata.org/entity/Q8196	Arabic alphabet	http://www.wikidata.org/entity/Q56499	arq	Algerian Arabic
 http://www.wikidata.org/entity/Q8196	Arabic alphabet	http://www.wikidata.org/entity/Q13955	ar	Arabic
-http://www.wikidata.org/entity/Q8196	Arabic alphabet	http://www.wikidata.org/entity/Q199700	ar	Arabic Wikipedia
 http://www.wikidata.org/entity/Q8196	Arabic alphabet	http://www.wikidata.org/entity/Q9292	az	Azerbaijani
 http://www.wikidata.org/entity/Q8196	Arabic alphabet	http://www.wikidata.org/entity/Q257829	bqi	Bakhtiari
 http://www.wikidata.org/entity/Q8196	Arabic alphabet	http://www.wikidata.org/entity/Q33025	bej	Beja
 http://www.wikidata.org/entity/Q8196	Arabic alphabet	http://www.wikidata.org/entity/Q49741	tzm	Central Atlas Tamazight
-http://www.wikidata.org/entity/Q8196	Arabic alphabet	http://www.wikidata.org/entity/Q2374285	arz	Egyptian Arabic Wikipedia
 http://www.wikidata.org/entity/Q8196	Arabic alphabet	http://www.wikidata.org/entity/Q56475	ha	Hausa
 http://www.wikidata.org/entity/Q8196	Arabic alphabet	http://www.wikidata.org/entity/Q56232	acm	Iraqi Arabic
 http://www.wikidata.org/entity/Q8196	Arabic alphabet	http://www.wikidata.org/entity/Q36094	kr	Kanuri
@@ -30,8 +26,6 @@ http://www.wikidata.org/entity/Q8196	Arabic alphabet	http://www.wikidata.org/ent
 http://www.wikidata.org/entity/Q8196	Arabic alphabet	http://www.wikidata.org/entity/Q9255	ky	Kyrgyz
 http://www.wikidata.org/entity/Q8196	Arabic alphabet	http://www.wikidata.org/entity/Q56593	apc	Levantine Arabic
 http://www.wikidata.org/entity/Q8196	Arabic alphabet	http://www.wikidata.org/entity/Q56426	ary	Moroccan Arabic
-http://www.wikidata.org/entity/Q8196	Arabic alphabet	http://www.wikidata.org/entity/Q97393767	ary	Moroccan Arabic Wikipedia
-http://www.wikidata.org/entity/Q8196	Arabic alphabet	http://www.wikidata.org/entity/Q20442276	lrc	Northern Luri Wikipedia
 http://www.wikidata.org/entity/Q8196	Arabic alphabet	http://www.wikidata.org/entity/Q58680	ps	Pashto
 http://www.wikidata.org/entity/Q8196	Arabic alphabet	http://www.wikidata.org/entity/Q33274	shy	Shawiya
 http://www.wikidata.org/entity/Q8196	Arabic alphabet	http://www.wikidata.org/entity/Q34053	sgh	Shughni
@@ -54,72 +48,46 @@ http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/en
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q29919	arz	Egyptian Arabic
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q33657	glk	Gilaki
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q33522	kbd	Kabardian
-http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q64362994	ks-arab	Kashmiri in Arabic script
-http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q64362991	kk-arab	Kazakh in Arabic script
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q938216	khw	Khowar
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q36209	kum	Kumyk
-http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q64362996	ku-arab	Kurdish in Arabic script
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q36163	ku	Kurmanji
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q56483	lki	Laki
-http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q107526440	ms-arab	Malay in Jawi script
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q56312	mwr	Marwari
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q13356	mzn	Mazanderani
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q56426	ary	Moroccan Arabic
-http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q107548681	oak	Noakhali
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q19933293	lrc	Northern Luri
-http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q36730	ota	Ottoman Turkish
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q58680	ps	Pashto
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q9168	fa	Persian
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q3915357	fuf	Pular
-http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q135196777	sgh-arab	Shughni in Arabic script
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q36811	ckb	Sorani
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q1496597	sdh	Southern Kurdish
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q1066787	uzs	Southern Uzbek
-http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q135972638	shi-arab	Tachelhit in Arabic script
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q34318	tly	Talysh
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q5885	ta	Tamil
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q34152	shi	Tashelhit
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q56240	tu	Tunisian Arabic
-http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q64362981	aeb-arab	Tunisian Arabic in Arabic script
 http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q13263	ug	Uyghur
-http://www.wikidata.org/entity/Q1828555	Arabic script	http://www.wikidata.org/entity/Q135183640	wbl-arab	Wakhi in Arab script
-http://www.wikidata.org/entity/Q30016797	Arabic-script alphabet	http://www.wikidata.org/entity/Q95397566	ky-arab	Kyrgyz Arabic alphabet
 http://www.wikidata.org/entity/Q11932	Armenian alphabet	http://www.wikidata.org/entity/Q8785	hy	Armenian
 http://www.wikidata.org/entity/Q11932	Armenian alphabet	http://www.wikidata.org/entity/Q180945	hyw	Western Armenian
 http://www.wikidata.org/entity/Q2866751	Asomtavruli	http://www.wikidata.org/entity/Q8108	ka	Georgian
 http://www.wikidata.org/entity/Q2866751	Asomtavruli	http://www.wikidata.org/entity/Q13359	xmf	Mingrelian
 http://www.wikidata.org/entity/Q191272	Assamese alphabet	http://www.wikidata.org/entity/Q29401	as	Assamese
-http://www.wikidata.org/entity/Q191272	Assamese alphabet	http://www.wikidata.org/entity/Q8559119	as	Assamese Wikipedia
 http://www.wikidata.org/entity/Q4055408	Avar alphabet	http://www.wikidata.org/entity/Q29561	av	Avar
 http://www.wikidata.org/entity/Q4829157	Avoiuli	http://www.wikidata.org/entity/Q35452	bi	Bislama
 http://www.wikidata.org/entity/Q137732829	Azerbaijani Braille	http://www.wikidata.org/entity/Q9292	az	Azerbaijani
-http://www.wikidata.org/entity/Q794182	Aztec script	http://www.wikidata.org/entity/Q13300	nah	nahuatl
 http://www.wikidata.org/entity/Q3530287	Aṅga-lipi	http://www.wikidata.org/entity/Q28378	anp	Angika
 http://www.wikidata.org/entity/Q16948817	Balbodh	http://www.wikidata.org/entity/Q1571	mr	Marathi
 http://www.wikidata.org/entity/Q804984	Balinese	http://www.wikidata.org/entity/Q33070	ban	Balinese
-http://www.wikidata.org/entity/Q804984	Balinese	http://www.wikidata.org/entity/Q107387552	ban	Balinese Wikisource
-http://www.wikidata.org/entity/Q804984	Balinese	http://www.wikidata.org/entity/Q107530457	ban-bali	Balinese in Balinese script
 http://www.wikidata.org/entity/Q123734863	Balochi Cyrillic Alphabet	http://www.wikidata.org/entity/Q33049	bal	Balochi
 http://www.wikidata.org/entity/Q113557400	Balochi Roman Orthography	http://www.wikidata.org/entity/Q33049	bal	Balochi
-http://www.wikidata.org/entity/Q113557400	Balochi Roman Orthography	http://www.wikidata.org/entity/Q12645561	bgn	Western Balochi
 http://www.wikidata.org/entity/Q113557437	Balochi Standard Orthography	http://www.wikidata.org/entity/Q33049	bal	Balochi
-http://www.wikidata.org/entity/Q113557437	Balochi Standard Orthography	http://www.wikidata.org/entity/Q12645561	bgn	Western Balochi
 http://www.wikidata.org/entity/Q756802	Bangla alphabet	http://www.wikidata.org/entity/Q9610	bn	Bangla
-http://www.wikidata.org/entity/Q756802	Bangla alphabet	http://www.wikidata.org/entity/Q427715	bn	Bangla Wikipedia
-http://www.wikidata.org/entity/Q756802	Bangla alphabet	http://www.wikidata.org/entity/Q114570460	bn	Bangla Wikiquote
-http://www.wikidata.org/entity/Q756802	Bangla alphabet	http://www.wikidata.org/entity/Q20726423	bn	Bangla Wikisource
-http://www.wikidata.org/entity/Q756802	Bangla alphabet	http://www.wikidata.org/entity/Q54598336	bn	Bangla Wikivoyage
-http://www.wikidata.org/entity/Q756802	Bangla alphabet	http://www.wikidata.org/entity/Q1287192	bpy	Bishnupriya Manipuri Wikipedia
-http://www.wikidata.org/entity/Q756802	Bangla alphabet	http://www.wikidata.org/entity/Q107530840	ccp-beng	Chakma in Bengali script
 http://www.wikidata.org/entity/Q756802	Bangla alphabet	http://www.wikidata.org/entity/Q33173	ctg	Chittagonian
 http://www.wikidata.org/entity/Q756802	Bangla alphabet	http://www.wikidata.org/entity/Q33965	sat	Santali
-http://www.wikidata.org/entity/Q756802	Bangla alphabet	http://www.wikidata.org/entity/Q107550055	sat-beng	Santali in Bengali script
 http://www.wikidata.org/entity/Q12438487	Bangla–Assamese script	http://www.wikidata.org/entity/Q37059	bpy	Bishnupriya Manipuri
 http://www.wikidata.org/entity/Q12438487	Bangla–Assamese script	http://www.wikidata.org/entity/Q33270	hoc	Ho
-http://www.wikidata.org/entity/Q12438487	Bangla–Assamese script	http://www.wikidata.org/entity/Q107548681	oak	Noakhali
 http://www.wikidata.org/entity/Q12438487	Bangla–Assamese script	http://www.wikidata.org/entity/Q33965	sat	Santali
 http://www.wikidata.org/entity/Q12438487	Bangla–Assamese script	http://www.wikidata.org/entity/Q2044560	syl	Sylheti
-http://www.wikidata.org/entity/Q12438487	Bangla–Assamese script	http://www.wikidata.org/entity/Q107549714	syl-beng	Sylheti in Bengali-Assamese script
 http://www.wikidata.org/entity/Q791275	Basque alphabet	http://www.wikidata.org/entity/Q8752	eu	Basque
 http://www.wikidata.org/entity/Q51592	Batak script	http://www.wikidata.org/entity/Q2891049	btm	Mandailing Batak
 http://www.wikidata.org/entity/Q51592	Batak script	http://www.wikidata.org/entity/Q33017	bbc	Toba Batak
@@ -128,25 +96,19 @@ http://www.wikidata.org/entity/Q812124	Baybayin	http://www.wikidata.org/entity/Q
 http://www.wikidata.org/entity/Q792216	Belarusian Cyrillic alphabet	http://www.wikidata.org/entity/Q9091	be	Belarusian
 http://www.wikidata.org/entity/Q2532709	Berber Latin alphabet	http://www.wikidata.org/entity/Q33274	shy	Shawiya
 http://www.wikidata.org/entity/Q126897123	Blackfoot syllabics	http://www.wikidata.org/entity/Q33060	bla	Blackfoot
-http://www.wikidata.org/entity/Q185083	Brahmi	http://www.wikidata.org/entity/Q36727	pi	Pali
 http://www.wikidata.org/entity/Q9147416	Breton alphabet	http://www.wikidata.org/entity/Q12107	br	Breton
 http://www.wikidata.org/entity/Q113301414	Brolikva	http://www.wikidata.org/entity/Q33202	brh	Brahui
 http://www.wikidata.org/entity/Q2226591	Bulgarian Braille	http://www.wikidata.org/entity/Q7918	bg	Bulgarian
 http://www.wikidata.org/entity/Q164436	Bulgarian alphabet	http://www.wikidata.org/entity/Q7918	bg	Bulgarian
 http://www.wikidata.org/entity/Q9228	Burmese	http://www.wikidata.org/entity/Q5330390	kjp	Eastern Pwo
 http://www.wikidata.org/entity/Q854968	Burmese alphabet	http://www.wikidata.org/entity/Q9228	my	Burmese
-http://www.wikidata.org/entity/Q854968	Burmese alphabet	http://www.wikidata.org/entity/Q113161446	blk	Pa'O Wikipedia
 http://www.wikidata.org/entity/Q854968	Burmese alphabet	http://www.wikidata.org/entity/Q3450749	rki	Rakhine
-http://www.wikidata.org/entity/Q854968	Burmese alphabet	http://www.wikidata.org/entity/Q134442659	shn	Shan Wikinews
-http://www.wikidata.org/entity/Q854968	Burmese alphabet	http://www.wikidata.org/entity/Q58832948	shn	Shan Wikipedia
-http://www.wikidata.org/entity/Q854968	Burmese alphabet	http://www.wikidata.org/entity/Q130548871	tdd	Tai Nüa Wikipedia
 http://www.wikidata.org/entity/Q2479183	Canadian Aboriginal syllabics	http://www.wikidata.org/entity/Q33390	cr	Cree
-http://www.wikidata.org/entity/Q2479183	Canadian Aboriginal syllabics	http://www.wikidata.org/entity/Q64427348	ike-cans	Eastern Canadian Inuktut in Aboriginal syllabics
 http://www.wikidata.org/entity/Q2479183	Canadian Aboriginal syllabics	http://www.wikidata.org/entity/Q29921	iu	Inuktitut
 http://www.wikidata.org/entity/Q2479183	Canadian Aboriginal syllabics	http://www.wikidata.org/entity/Q1704302	nsk	Naskapi
 http://www.wikidata.org/entity/Q2479183	Canadian Aboriginal syllabics	http://www.wikidata.org/entity/Q33875	ojb	Ojibwe
-http://www.wikidata.org/entity/Q13586477	Cantonese Braille	http://www.wikidata.org/entity/Q9186	yue	Cantonese
 http://www.wikidata.org/entity/Q13586477	Cantonese Braille	http://www.wikidata.org/entity/Q9186	zh-yue	Cantonese
+http://www.wikidata.org/entity/Q13586477	Cantonese Braille	http://www.wikidata.org/entity/Q9186	yue	Cantonese
 http://www.wikidata.org/entity/Q13586477	Cantonese Braille	http://www.wikidata.org/entity/Q7033959	yue	Yue Chinese
 http://www.wikidata.org/entity/Q13586477	Cantonese Braille	http://www.wikidata.org/entity/Q7033959	zh-yue	Yue Chinese
 http://www.wikidata.org/entity/Q124567526	Cassidy/JLU orthography	http://www.wikidata.org/entity/Q35939	jam	Jamaican Patois
@@ -155,117 +117,67 @@ http://www.wikidata.org/entity/Q610822	Catalan alphabet	http://www.wikidata.org/
 http://www.wikidata.org/entity/Q1059328	Chakma script	http://www.wikidata.org/entity/Q32952	ccp	Chakma
 http://www.wikidata.org/entity/Q720454	Chechen writing	http://www.wikidata.org/entity/Q33350	ce	Chechen
 http://www.wikidata.org/entity/Q26549	Cherokee syllabary	http://www.wikidata.org/entity/Q33388	chr	Cherokee
-http://www.wikidata.org/entity/Q26549	Cherokee syllabary	http://www.wikidata.org/entity/Q8576237	chr	Cherokee Wikipedia
 http://www.wikidata.org/entity/Q8201	Chinese characters	http://www.wikidata.org/entity/Q9186	yue	Cantonese
 http://www.wikidata.org/entity/Q8201	Chinese characters	http://www.wikidata.org/entity/Q9186	zh-yue	Cantonese
 http://www.wikidata.org/entity/Q8201	Chinese characters	http://www.wikidata.org/entity/Q7850	zh	Chinese
-http://www.wikidata.org/entity/Q8201	Chinese characters	http://www.wikidata.org/entity/Q33109483	zh	Chinese Wikibooks
-http://www.wikidata.org/entity/Q8201	Chinese characters	http://www.wikidata.org/entity/Q30239	zh	Chinese Wikipedia
-http://www.wikidata.org/entity/Q8201	Chinese characters	http://www.wikidata.org/entity/Q24238024	zh	Chinese Wikivoyage
-http://www.wikidata.org/entity/Q8201	Chinese characters	http://www.wikidata.org/entity/Q37041	lzh	Classical Chinese
 http://www.wikidata.org/entity/Q8201	Chinese characters	http://www.wikidata.org/entity/Q36455	cdo	Eastern Min
 http://www.wikidata.org/entity/Q8201	Chinese characters	http://www.wikidata.org/entity/Q33475	gan	Gan Chinese
 http://www.wikidata.org/entity/Q8201	Chinese characters	http://www.wikidata.org/entity/Q33375	hak	Hakka Chinese
-http://www.wikidata.org/entity/Q8201	Chinese characters	http://www.wikidata.org/entity/Q1378484	zh-classical	Literary Chinese Wikipedia
-http://www.wikidata.org/entity/Q8201	Chinese characters	http://www.wikidata.org/entity/Q846630	cdo	Min Dong Wikipedia
 http://www.wikidata.org/entity/Q8201	Chinese characters	http://www.wikidata.org/entity/Q36495	nan	Southern Min
 http://www.wikidata.org/entity/Q8201	Chinese characters	http://www.wikidata.org/entity/Q36495	zh-min-nan	Southern Min
 http://www.wikidata.org/entity/Q8201	Chinese characters	http://www.wikidata.org/entity/Q34290	wuu	Wu Chinese
 http://www.wikidata.org/entity/Q259575	Chuvash alphabet	http://www.wikidata.org/entity/Q33348	cv	Chuvash
-http://www.wikidata.org/entity/Q2003257	Cirth	http://www.wikidata.org/entity/Q56383	qya	Quenya
-http://www.wikidata.org/entity/Q2003257	Cirth	http://www.wikidata.org/entity/Q56437	sjn	Sindarin
-http://www.wikidata.org/entity/Q321083	Coptic script	http://www.wikidata.org/entity/Q36155	cop	Coptic
-http://www.wikidata.org/entity/Q259139	Cree syllabics	http://www.wikidata.org/entity/Q8561582	cr	Cree Wikipedia
-http://www.wikidata.org/entity/Q39132363	Crimean Tatar Cyrillic alphabet	http://www.wikidata.org/entity/Q107557467	crh-cyrl	Crimean Tatar in Cyrillic script
-http://www.wikidata.org/entity/Q38893333	Crimean Tatar Latin alphabet	http://www.wikidata.org/entity/Q107557485	crh-latn	Crimean Tatar in Latin script
-http://www.wikidata.org/entity/Q3138753	Cursive hieroglyphs	http://www.wikidata.org/entity/Q657330	egy-x-middle	Middle Egyptian
-http://www.wikidata.org/entity/Q3138753	Cursive hieroglyphs	http://www.wikidata.org/entity/Q447117	egy-x-old	Old Egyptian
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q27567	abq	Abaza
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q5111	ab	Abkhaz
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q3568035	ab	Abkhaz Wikipedia
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q27776	ady	Adyghe
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q22676953	ady	Adyghe Wikipedia
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q64362980	ady-cyrl	Adyghe in Cyrillic script
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q105630329	alt	Altai Wikipedia
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q29561	av	Avar
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q5652665	av	Avar Wikipedia
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q9292	az	Azerbaijani
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q107549766	az-cyrl	Azerbaijani in Cyrillic script
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q33256	sgh-ba	Bartangi
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q13389	ba	Bashkir
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q33109687	ba	Bashkir Wikibooks
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q58209	ba	Bashkir Wikipedia
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q8937989	be-tarask	Belarusian (Taraškievica) Wikipedia
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q877583	be	Belarusian Wikipedia
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q122311452	be	Belarusian Wikipedias
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q122311452	be-tarask	Belarusian Wikipedias
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q7918	bg	Bulgarian
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q33109157	bg	Bulgarian Wiktionary
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q33120	bxr	Buryat
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q33350	ce	Chechen
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q33170	ckt	Chukchi
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q33251	cu	Church Slavonic
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q33348	cv	Chuvash
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q58215	cv	Chuvash Wikipedia
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q107557467	crh-cyrl	Crimean Tatar in Cyrillic script
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q32332	dar	Dargwa
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q29952	myv	Erzya
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q33457	gag	Gagauz
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q1776032	mrj	Hill Mari
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q33509	inh	Ingush
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q47099246	inh	Ingush Wikipedia
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q135415260	isk-cyrl	Ishkashimi in Cyrillic
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q36196	lad	Judaeo-Spanish
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q33522	kbd	Kabardian
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q64362989	kbd-cyrl	Kabardian in Cyrillic script
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q33634	xal	Kalmyk
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q33714	krc	Karachay-Balkar
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q33541	kaa	Karakalpak
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q9252	kk	Kazakh
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q64362992	kk-cyrl	Kazakh in Cyrillic script
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q2562249	sgh-kh	Khufi
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q33656	sjd	Kildin Sami
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q36126	kv	Komi
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q925661	kv	Komi Wikipedia
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q56318	koi	Komi-Permyak
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q36209	kum	Kumyk
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q36368	ku	Kurdish
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q36163	ku	Kurmanji
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q9255	ky	Kyrgyz
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q94989582	ky-cyrl	Kyrgyz in Cyrillic script
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q31746	lez	Lezgian
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q146803	lfn	Lingua Franca Nova
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q9296	mk	Macedonian
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q3906614	mhr	Meadow Mari
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q64362998	ruq-cyrl	Megleno-Romanian in Cyrillic script
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q13343	mdf	Moksha
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q3568049	mo	Moldovan Wikipedia
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q9246	mn	Mongolian
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q36452	yrk	Nenets
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q33871	nog	Nogai
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q86679962	urj-koo	Old Komi
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q3356620	sgh-ro	Oroshori
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q3356620	sgh-oro	Oroshori
+http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q3356620	sgh-ro	Oroshori
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q33968	os	Ossetian
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q9168	fa	Persian
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q36748	pnt	Pontic Greek
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q13201	rmy	Romani
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q2597566	sgh-ru	Rushani
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q7737	ru	Russian
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q206855	ru	Russian Wikipedia
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q26245	rue	Rusyn
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q58781	rue	Rusyn Wikipedia
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q9301	sh	Serbo-Croatian
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q58679	sh	Serbo-Croatian Wikipedia
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q34053	sgh	Shughni
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q135196765	sgh-cyrl	Shughni in Cyrillic
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q1991779	alt	Southern Altai
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q9260	tg	Tajik
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q64363004	tg-cyrl	Tajik in Cyrillic script
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q34318	tly	Talysh
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q107526557	tly-cyrl	Talysh in Cyrillic script
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q25285	tt	Tatar
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q39132549	tt-cyrl	Tatar in Cyrillic script
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q36656	sjt	Ter Sami
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q9267	tk	Turkmen
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q34119	tyv	Tuvan
@@ -273,45 +185,30 @@ http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/ent
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q8798	uk	Ukrainian
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q13263	ug	Uyghur
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q9264	uz	Uzbek
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q64363006	uz-cyrl	Uzbek in Cyrillic script
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q34208	wbl	Wakhi
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q135183505	wbl-cyrl	Wakhi in Cyrillic
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q117808046	kbd	Wiktionary Kabardian
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q134706143	yai-cyrl	Yaghnobi Cyrillic alphabet
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q34299	sah	Yakut
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q225594	sah	Yakut Wikipedia
-http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q135415035	yah-cyrl	Yazghulami in Cyrillic
 http://www.wikidata.org/entity/Q8209	Cyrillic script	http://www.wikidata.org/entity/Q34186	yah	Yazgulyam
 http://www.wikidata.org/entity/Q2733076	Czech Braille	http://www.wikidata.org/entity/Q9056	cs	Czech
 http://www.wikidata.org/entity/Q76228	Czech alphabet	http://www.wikidata.org/entity/Q9056	cs	Czech
 http://www.wikidata.org/entity/Q912455	Dano-Norwegian alphabet	http://www.wikidata.org/entity/Q25167	nb	Bokmål
 http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q28378	anp	Angika
 http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q29579	awa	Awadhi
-http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q94694371	awa	Awadhi Wikipedia
-http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q20726423	bn	Bangla Wikisource
 http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q33268	bho	Bhojpuri
 http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q33268	bh	Bhojpuri
 http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q33223	brx	Bodo
 http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q18415595	dty	Doteli
-http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q29048035	dty	Doteli Wikipedia
 http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q46728	hif	Fiji Hindi
 http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q33295	fj	Fijian
 http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q5575236	gom	Goan Konkani
-http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q20726662	gom	Goan Konkani Wikipedia
-http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q64362984	gom-deva	Goan Konkani in Devanagari script
-http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q1568	hi	Hindi
 http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q33270	hoc	Ho
-http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q64362995	ks-deva	Kashmiri in Devanagari script
 http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q33728	mag	Magahi
 http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q36109	mai	Maithili
 http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q56312	mwr	Marwari
 http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q33823	ne	Nepali
 http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q33979	new	Newar
 http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q13201	rmy	Romani
-http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q11059	sa	Sanskrit
 http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q33965	sat	Santali
 http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q2044560	syl	Sylheti
-http://www.wikidata.org/entity/Q38592	Devanagari	http://www.wikidata.org/entity/Q123848480	syl-deva	Sylheti in Devanagari script
 http://www.wikidata.org/entity/Q116688933	Devanagari Sindhi	http://www.wikidata.org/entity/Q33997	sd	Sindhi
 http://www.wikidata.org/entity/Q3307073	Dhives Akuru	http://www.wikidata.org/entity/Q32656	dv	Maldivian
 http://www.wikidata.org/entity/Q48734357	Dunging script	http://www.wikidata.org/entity/Q33424	iba	Iban
@@ -319,27 +216,12 @@ http://www.wikidata.org/entity/Q5316025	Duployan shorthand	http://www.wikidata.o
 http://www.wikidata.org/entity/Q2297077	Dutch alphabet	http://www.wikidata.org/entity/Q7411	nl	Dutch
 http://www.wikidata.org/entity/Q137731311	Dutch eight-dot Braille	http://www.wikidata.org/entity/Q7411	nl	Dutch
 http://www.wikidata.org/entity/Q2748494	Dutch six-dot Braille	http://www.wikidata.org/entity/Q7411	nl	Dutch
-http://www.wikidata.org/entity/Q442244	Early Cyrillic alphabet	http://www.wikidata.org/entity/Q33251	cu	Church Slavonic
-http://www.wikidata.org/entity/Q442244	Early Cyrillic alphabet	http://www.wikidata.org/entity/Q111524983	cu-num	Slavonic numerals
-http://www.wikidata.org/entity/Q188519	Egyptian Demotic	http://www.wikidata.org/entity/Q36765	egy-x-demotic	Demotic Egyptian
-http://www.wikidata.org/entity/Q208111	Egyptian hieratic	http://www.wikidata.org/entity/Q1852329	egy-x-late	Late Egyptian
-http://www.wikidata.org/entity/Q208111	Egyptian hieratic	http://www.wikidata.org/entity/Q657330	egy-x-middle	Middle Egyptian
-http://www.wikidata.org/entity/Q208111	Egyptian hieratic	http://www.wikidata.org/entity/Q447117	egy-x-old	Old Egyptian
-http://www.wikidata.org/entity/Q132659	Egyptian hieroglyphs	http://www.wikidata.org/entity/Q1852329	egy-x-late	Late Egyptian
-http://www.wikidata.org/entity/Q132659	Egyptian hieroglyphs	http://www.wikidata.org/entity/Q657330	egy-x-middle	Middle Egyptian
-http://www.wikidata.org/entity/Q132659	Egyptian hieroglyphs	http://www.wikidata.org/entity/Q447117	egy-x-old	Old Egyptian
-http://www.wikidata.org/entity/Q2005583	Elder Futhark	http://www.wikidata.org/entity/Q10860505	frk	Frankish
 http://www.wikidata.org/entity/Q5378197	English Braille	http://www.wikidata.org/entity/Q1860	en	English
-http://www.wikidata.org/entity/Q754673	English alphabet	http://www.wikidata.org/entity/Q44679	en-au	Australian English
 http://www.wikidata.org/entity/Q754673	English alphabet	http://www.wikidata.org/entity/Q1860	en	English
-http://www.wikidata.org/entity/Q754673	English alphabet	http://www.wikidata.org/entity/Q23580217	en-eu	European English
 http://www.wikidata.org/entity/Q4532731	Eskimo alphabet	http://www.wikidata.org/entity/Q29921	iu	Inuktitut
 http://www.wikidata.org/entity/Q17089158	Esperanto Braille	http://www.wikidata.org/entity/Q143	eo	Esperanto
 http://www.wikidata.org/entity/Q607188	Esperanto alphabet	http://www.wikidata.org/entity/Q143	eo	Esperanto
-http://www.wikidata.org/entity/Q607188	Esperanto alphabet	http://www.wikidata.org/entity/Q21281269	eo	Esperanto Wikinews
 http://www.wikidata.org/entity/Q17005381	Estonian Braille	http://www.wikidata.org/entity/Q9072	et	Estonian
-http://www.wikidata.org/entity/Q3510984	Estrangela	http://www.wikidata.org/entity/Q33538	syc	Syriac
-http://www.wikidata.org/entity/Q271565	Etruscan alphabet	http://www.wikidata.org/entity/Q35726	ett	Etruscan
 http://www.wikidata.org/entity/Q137733205	Ewe Braille	http://www.wikidata.org/entity/Q30005	ee	Ewe
 http://www.wikidata.org/entity/Q278446	Filipino alphabet	http://www.wikidata.org/entity/Q33239	ceb	Cebuano
 http://www.wikidata.org/entity/Q278446	Filipino alphabet	http://www.wikidata.org/entity/Q35978	hil	Hiligaynon
@@ -347,83 +229,49 @@ http://www.wikidata.org/entity/Q278446	Filipino alphabet	http://www.wikidata.org
 http://www.wikidata.org/entity/Q278446	Filipino alphabet	http://www.wikidata.org/entity/Q33879	pag	Pangasinan
 http://www.wikidata.org/entity/Q278446	Filipino alphabet	http://www.wikidata.org/entity/Q34057	tl	Tagalog
 http://www.wikidata.org/entity/Q18691434	Finnish alphabet	http://www.wikidata.org/entity/Q13357	fit	Meänkieli
-http://www.wikidata.org/entity/Q3317362	Foochow Romanized	http://www.wikidata.org/entity/Q846630	cdo	Min Dong Wikipedia
 http://www.wikidata.org/entity/Q13092897	Formal Javanese Spelling	http://www.wikidata.org/entity/Q33549	jv	Javanese
 http://www.wikidata.org/entity/Q3909779	French Braille	http://www.wikidata.org/entity/Q150	fr	French
 http://www.wikidata.org/entity/Q755124	French alphabet	http://www.wikidata.org/entity/Q150	fr	French
+http://www.wikidata.org/entity/Q755124	French alphabet	http://www.wikidata.org/entity/Q33850	fr-x-nrm	Norman
 http://www.wikidata.org/entity/Q755124	French alphabet	http://www.wikidata.org/entity/Q33850	nrm	Norman
 http://www.wikidata.org/entity/Q755124	French alphabet	http://www.wikidata.org/entity/Q33850	nrf	Norman
-http://www.wikidata.org/entity/Q755124	French alphabet	http://www.wikidata.org/entity/Q33850	fr-x-nrm	Norman
 http://www.wikidata.org/entity/Q137733093	Ga Braille	http://www.wikidata.org/entity/Q33287	gaa	Ga
 http://www.wikidata.org/entity/Q30344912	Gaelic alphabet	http://www.wikidata.org/entity/Q9314	gd	Scottish Gaelic
 http://www.wikidata.org/entity/Q1432616	Gaelic type	http://www.wikidata.org/entity/Q9142	ga	Irish
-http://www.wikidata.org/entity/Q754989	Gaj's Latin alphabet	http://www.wikidata.org/entity/Q9303	bs	Bosnian
 http://www.wikidata.org/entity/Q754989	Gaj's Latin alphabet	http://www.wikidata.org/entity/Q6654	hr	Croatian
-http://www.wikidata.org/entity/Q754989	Gaj's Latin alphabet	http://www.wikidata.org/entity/Q9299	sr	Serbian
 http://www.wikidata.org/entity/Q754989	Gaj's Latin alphabet	http://www.wikidata.org/entity/Q9301	sh	Serbo-Croatian
 http://www.wikidata.org/entity/Q3095302	Garay	http://www.wikidata.org/entity/Q34257	wo	Wolof
 http://www.wikidata.org/entity/Q11300624	Georgian Braille	http://www.wikidata.org/entity/Q8108	ka	Georgian
 http://www.wikidata.org/entity/Q161428	Georgian scripts	http://www.wikidata.org/entity/Q8108	ka	Georgian
 http://www.wikidata.org/entity/Q161428	Georgian scripts	http://www.wikidata.org/entity/Q1160372	lzz	Laz
 http://www.wikidata.org/entity/Q161428	Georgian scripts	http://www.wikidata.org/entity/Q13359	xmf	Mingrelian
-http://www.wikidata.org/entity/Q161428	Georgian scripts	http://www.wikidata.org/entity/Q2029239	xmf	Mingrelian Wikipedia
 http://www.wikidata.org/entity/Q2605738	German Braille	http://www.wikidata.org/entity/Q188	de	German
-http://www.wikidata.org/entity/Q912243	German alphabet	http://www.wikidata.org/entity/Q125258960	de-be	Belgian German
 http://www.wikidata.org/entity/Q912243	German alphabet	http://www.wikidata.org/entity/Q188	de	German
 http://www.wikidata.org/entity/Q912243	German alphabet	http://www.wikidata.org/entity/Q152965	sli	Silesian German
 http://www.wikidata.org/entity/Q257634	Geʽez script	http://www.wikidata.org/entity/Q27811	aa	Afar
 http://www.wikidata.org/entity/Q257634	Geʽez script	http://www.wikidata.org/entity/Q28244	am	Amharic
-http://www.wikidata.org/entity/Q257634	Geʽez script	http://www.wikidata.org/entity/Q35667	gez	Ge'ez
 http://www.wikidata.org/entity/Q257634	Geʽez script	http://www.wikidata.org/entity/Q33864	om	Oromo
 http://www.wikidata.org/entity/Q257634	Geʽez script	http://www.wikidata.org/entity/Q33786	sid	Sidamo
-http://www.wikidata.org/entity/Q257634	Geʽez script	http://www.wikidata.org/entity/Q131443928	tig	Tigre Wikipedia
 http://www.wikidata.org/entity/Q257634	Geʽez script	http://www.wikidata.org/entity/Q34124	ti	Tigrinya
-http://www.wikidata.org/entity/Q145625	Glagolitic	http://www.wikidata.org/entity/Q33251	cu	Church Slavonic
-http://www.wikidata.org/entity/Q145625	Glagolitic	http://www.wikidata.org/entity/Q111524983	cu-num	Slavonic numerals
-http://www.wikidata.org/entity/Q467784	Gothic script	http://www.wikidata.org/entity/Q35722	got	Gothic
 http://www.wikidata.org/entity/Q5599416	Great Lakes Algonquian syllabary	http://www.wikidata.org/entity/Q33875	ojb	Ojibwe
-http://www.wikidata.org/entity/Q8216	Greek alphabet	http://www.wikidata.org/entity/Q35497	grc	Ancient Greek
-http://www.wikidata.org/entity/Q8216	Greek alphabet	http://www.wikidata.org/entity/Q245899	el-cy	Cypriot Greek
 http://www.wikidata.org/entity/Q8216	Greek alphabet	http://www.wikidata.org/entity/Q33457	gag	Gagauz
 http://www.wikidata.org/entity/Q8216	Greek alphabet	http://www.wikidata.org/entity/Q9129	el	Greek
-http://www.wikidata.org/entity/Q8216	Greek alphabet	http://www.wikidata.org/entity/Q11918	el	Greek Wikipedia
 http://www.wikidata.org/entity/Q8216	Greek alphabet	http://www.wikidata.org/entity/Q36510	el	Modern Greek
 http://www.wikidata.org/entity/Q8216	Greek alphabet	http://www.wikidata.org/entity/Q36748	pnt	Pontic Greek
-http://www.wikidata.org/entity/Q8216	Greek alphabet	http://www.wikidata.org/entity/Q89575308	el	Wikimedia Community User Group Greece wiki
 http://www.wikidata.org/entity/Q9147423	Greenlandic alphabet	http://www.wikidata.org/entity/Q25355	kl	Greenlandic
 http://www.wikidata.org/entity/Q17054063	Guarani Braille	http://www.wikidata.org/entity/Q35876	gn	Guarani
 http://www.wikidata.org/entity/Q149044	Guarani alphabet	http://www.wikidata.org/entity/Q35876	gn	Guarani
 http://www.wikidata.org/entity/Q733944	Gujarati	http://www.wikidata.org/entity/Q5137	gu	Gujarati
-http://www.wikidata.org/entity/Q733944	Gujarati	http://www.wikidata.org/entity/Q3180306	gu	Gujarati Wikipedia
 http://www.wikidata.org/entity/Q733944	Gujarati	http://www.wikidata.org/entity/Q33997	sd	Sindhi
-http://www.wikidata.org/entity/Q689894	Gurmukhi	http://www.wikidata.org/entity/Q33109212	pa	Panjabi Wiktionary
-http://www.wikidata.org/entity/Q689894	Gurmukhi	http://www.wikidata.org/entity/Q1754193	pa	Punjabi Gurmukhi Wikipedia
-http://www.wikidata.org/entity/Q689894	Gurmukhi	http://www.wikidata.org/entity/Q28861316	pa	Punjabi Gurmukhi Wikisource
-http://www.wikidata.org/entity/Q689894	Gurmukhi	http://www.wikidata.org/entity/Q33109599	pa	Punjabi Wikibooks
-http://www.wikidata.org/entity/Q5644311	HamNoSys	http://www.wikidata.org/entity/Q33282	gsg	German Sign Language
-http://www.wikidata.org/entity/Q8222	Hangul	http://www.wikidata.org/entity/Q485492	ko-gyg	Gyeonggi Korean
 http://www.wikidata.org/entity/Q8222	Hangul	http://www.wikidata.org/entity/Q9176	ko	Korean
-http://www.wikidata.org/entity/Q8222	Hangul	http://www.wikidata.org/entity/Q33109504	ko	Korean Wikibooks
-http://www.wikidata.org/entity/Q8222	Hangul	http://www.wikidata.org/entity/Q33109765	ko	Korean Wikiquote
-http://www.wikidata.org/entity/Q8222	Hangul	http://www.wikidata.org/entity/Q33110343	ko	Korean Wikiversity
-http://www.wikidata.org/entity/Q8222	Hangul	http://www.wikidata.org/entity/Q33109108	ko	Korean Wiktionary
-http://www.wikidata.org/entity/Q8222	Hangul	http://www.wikidata.org/entity/Q18784	ko-kp	North Korean standard language
-http://www.wikidata.org/entity/Q8222	Hangul	http://www.wikidata.org/entity/Q18795	ko-kr	South Korean standard language
-http://www.wikidata.org/entity/Q485619	Hanja	http://www.wikidata.org/entity/Q485492	ko-gyg	Gyeonggi Korean
 http://www.wikidata.org/entity/Q485619	Hanja	http://www.wikidata.org/entity/Q9176	ko	Korean
-http://www.wikidata.org/entity/Q15901848	Hanji character	http://www.wikidata.org/entity/Q3239456	zh-min-nan	Min Nan Wikipedia
 http://www.wikidata.org/entity/Q137733709	Hausa Braille	http://www.wikidata.org/entity/Q56475	ha	Hausa
 http://www.wikidata.org/entity/Q16983490	Hawaiian Braille	http://www.wikidata.org/entity/Q33569	haw	Hawaiian
 http://www.wikidata.org/entity/Q1110078	Hawaiian alphabet	http://www.wikidata.org/entity/Q33569	haw	Hawaiian
-http://www.wikidata.org/entity/Q33513	Hebrew alphabet	http://www.wikidata.org/entity/Q1982248	hbo	Biblical Hebrew
 http://www.wikidata.org/entity/Q33513	Hebrew alphabet	http://www.wikidata.org/entity/Q9288	he	Hebrew
-http://www.wikidata.org/entity/Q33513	Hebrew alphabet	http://www.wikidata.org/entity/Q21281273	he	Hebrew Wikinews
-http://www.wikidata.org/entity/Q33513	Hebrew alphabet	http://www.wikidata.org/entity/Q199913	he	Hebrew Wikipedia
 http://www.wikidata.org/entity/Q33513	Hebrew alphabet	http://www.wikidata.org/entity/Q56593	apc	Levantine Arabic
 http://www.wikidata.org/entity/Q33513	Hebrew alphabet	http://www.wikidata.org/entity/Q9260	tg	Tajik
 http://www.wikidata.org/entity/Q33513	Hebrew alphabet	http://www.wikidata.org/entity/Q8641	yi	Yiddish
-http://www.wikidata.org/entity/Q33513	Hebrew alphabet	http://www.wikidata.org/entity/Q1968379	yi	Yiddish Wikipedia
-http://www.wikidata.org/entity/Q106644552	Hebrew-script-based alphabet	http://www.wikidata.org/entity/Q36196	lad	Judaeo-Spanish
 http://www.wikidata.org/entity/Q106644552	Hebrew-script-based alphabet	http://www.wikidata.org/entity/Q8641	yi	Yiddish
 http://www.wikidata.org/entity/Q94693685	Hill Mari alphabet	http://www.wikidata.org/entity/Q1776032	mrj	Hill Mari
 http://www.wikidata.org/entity/Q18785079	Hinghwa Romanized	http://www.wikidata.org/entity/Q56583	cpx	Pu-Xian Min
@@ -433,31 +281,16 @@ http://www.wikidata.org/entity/Q5985754	Icelandic Braille	http://www.wikidata.or
 http://www.wikidata.org/entity/Q372785	Icelandic alphabet	http://www.wikidata.org/entity/Q294	is	Icelandic
 http://www.wikidata.org/entity/Q137733729	Igbo Braille	http://www.wikidata.org/entity/Q33578	ig	Igbo
 http://www.wikidata.org/entity/Q96381940	Igbo alphabet	http://www.wikidata.org/entity/Q33578	ig	Igbo
-http://www.wikidata.org/entity/Q26978	Imperial Aramaic alphabet	http://www.wikidata.org/entity/Q28602	arc	Aramaic
-http://www.wikidata.org/entity/Q1097432	Interlingua alphabet	http://www.wikidata.org/entity/Q35934	ia	Interlingua
 http://www.wikidata.org/entity/Q2274646	Inuktitut syllabics	http://www.wikidata.org/entity/Q29921	iu	Inuktitut
 http://www.wikidata.org/entity/Q6070551	Irish Braille	http://www.wikidata.org/entity/Q9142	ga	Irish
 http://www.wikidata.org/entity/Q16987661	Italian Braille	http://www.wikidata.org/entity/Q652	it	Italian
 http://www.wikidata.org/entity/Q550383	Italian alphabet	http://www.wikidata.org/entity/Q652	it	Italian
 http://www.wikidata.org/entity/Q16210190	Iñupiaq Braille	http://www.wikidata.org/entity/Q27183	ik	Iñupiaq
-http://www.wikidata.org/entity/Q190502	Japanese writing system	http://www.wikidata.org/entity/Q33109449	ja	Japanese Wikibooks
-http://www.wikidata.org/entity/Q190502	Japanese writing system	http://www.wikidata.org/entity/Q21281275	ja	Japanese Wikinews
-http://www.wikidata.org/entity/Q190502	Japanese writing system	http://www.wikidata.org/entity/Q177837	ja	Japanese Wikipedia
-http://www.wikidata.org/entity/Q190502	Japanese writing system	http://www.wikidata.org/entity/Q33109767	ja	Japanese Wikiquote
-http://www.wikidata.org/entity/Q190502	Japanese writing system	http://www.wikidata.org/entity/Q24577671	ja	Japanese Wikisource
-http://www.wikidata.org/entity/Q190502	Japanese writing system	http://www.wikidata.org/entity/Q33109119	ja	Japanese Wiktionary
 http://www.wikidata.org/entity/Q190502	Japanese writing system	http://www.wikidata.org/entity/Q34233	ryu	Okinawan
 http://www.wikidata.org/entity/Q879704	Javanese script	http://www.wikidata.org/entity/Q33549	jv	Javanese
-http://www.wikidata.org/entity/Q879704	Javanese script	http://www.wikidata.org/entity/Q3477935	jv	Javanese Wikipedia
-http://www.wikidata.org/entity/Q879704	Javanese script	http://www.wikidata.org/entity/Q107586427	jv	Javanese Wikisource
-http://www.wikidata.org/entity/Q879704	Javanese script	http://www.wikidata.org/entity/Q33109138	jv	Javanese Wiktionary
 http://www.wikidata.org/entity/Q879704	Javanese script	http://www.wikidata.org/entity/Q36213	mad	Madurese
 http://www.wikidata.org/entity/Q83942	Jawi	http://www.wikidata.org/entity/Q9237	ms	Malay
-http://www.wikidata.org/entity/Q83942	Jawi	http://www.wikidata.org/entity/Q125581426	ms	Malay Wikisource
-http://www.wikidata.org/entity/Q83942	Jawi	http://www.wikidata.org/entity/Q107526440	ms-arab	Malay in Jawi script
 http://www.wikidata.org/entity/Q83942	Jawi	http://www.wikidata.org/entity/Q13324	min	Minangkabau
-http://www.wikidata.org/entity/Q83942	Jawi	http://www.wikidata.org/entity/Q15065	ms-my	Standard Malay
-http://www.wikidata.org/entity/Q83942	Jawi	http://www.wikidata.org/entity/Q123474569	zsm	Standard Malay
 http://www.wikidata.org/entity/Q83942	Jawi	http://www.wikidata.org/entity/Q34142	tsg	Tausug
 http://www.wikidata.org/entity/Q117087673	Jawoë	http://www.wikidata.org/entity/Q27683	ace	Acehnese
 http://www.wikidata.org/entity/Q4206602	Kabardian script	http://www.wikidata.org/entity/Q33522	kbd	Kabardian
@@ -467,268 +300,128 @@ http://www.wikidata.org/entity/Q1253814	Kaithi	http://www.wikidata.org/entity/Q3
 http://www.wikidata.org/entity/Q1253814	Kaithi	http://www.wikidata.org/entity/Q36109	mai	Maithili
 http://www.wikidata.org/entity/Q839666	Kannada script	http://www.wikidata.org/entity/Q5575236	gom	Goan Konkani
 http://www.wikidata.org/entity/Q839666	Kannada script	http://www.wikidata.org/entity/Q33673	kn	Kannada
-http://www.wikidata.org/entity/Q839666	Kannada script	http://www.wikidata.org/entity/Q24577672	kn	Kannada Wikisource
 http://www.wikidata.org/entity/Q839666	Kannada script	http://www.wikidata.org/entity/Q34251	tcy	Tulu
-http://www.wikidata.org/entity/Q839666	Kannada script	http://www.wikidata.org/entity/Q26235862	tcy	Tulu Wikipedia
-http://www.wikidata.org/entity/Q839666	Kannada script	http://www.wikidata.org/entity/Q131277462	tcy	Tulu Wikisource
 http://www.wikidata.org/entity/Q4214937	Karelian alphabets	http://www.wikidata.org/entity/Q36584	olo	Livvi-Karelian
 http://www.wikidata.org/entity/Q975802	Kawi script	http://www.wikidata.org/entity/Q33549	jv	Javanese
-http://www.wikidata.org/entity/Q90681452	Kazakh Arabic alphabet	http://www.wikidata.org/entity/Q64362991	kk-arab	Kazakh in Arabic script
 http://www.wikidata.org/entity/Q17006785	Kazakh Braille	http://www.wikidata.org/entity/Q9252	kk	Kazakh
 http://www.wikidata.org/entity/Q4494892	Khakas alphabet	http://www.wikidata.org/entity/Q33575	kjh	Khakas
-http://www.wikidata.org/entity/Q1054190	Khmer	http://www.wikidata.org/entity/Q9205	km	Khmer
+http://www.wikidata.org/entity/Q1054190	Khmer script	http://www.wikidata.org/entity/Q9205	km	Khmer
 http://www.wikidata.org/entity/Q1740656	Khojki	http://www.wikidata.org/entity/Q33997	sd	Sindhi
 http://www.wikidata.org/entity/Q6834828	Khowar alphabet	http://www.wikidata.org/entity/Q938216	khw	Khowar
 http://www.wikidata.org/entity/Q6402810	Khudabadi	http://www.wikidata.org/entity/Q33997	sd	Sindhi
 http://www.wikidata.org/entity/Q126672684	Kleinschmidt orthography	http://www.wikidata.org/entity/Q25355	kl	Greenlandic
 http://www.wikidata.org/entity/Q6427218	Koleluttu	http://www.wikidata.org/entity/Q5885	ta	Tamil
 http://www.wikidata.org/entity/Q4247037	Kumyk alphabet	http://www.wikidata.org/entity/Q36209	kum	Kumyk
-http://www.wikidata.org/entity/Q3678406	Kurdish Arabic alphabet	http://www.wikidata.org/entity/Q64362996	ku-arab	Kurdish in Arabic script
 http://www.wikidata.org/entity/Q3678406	Kurdish Arabic alphabet	http://www.wikidata.org/entity/Q36811	ckb	Sorani
 http://www.wikidata.org/entity/Q1416219	Kurdish alphabets	http://www.wikidata.org/entity/Q36811	ckb	Sorani
 http://www.wikidata.org/entity/Q4253343	Lak script	http://www.wikidata.org/entity/Q36206	lbe	Lak
 http://www.wikidata.org/entity/Q1815229	Lao	http://www.wikidata.org/entity/Q33335	kjg	Khmu
 http://www.wikidata.org/entity/Q1815229	Lao	http://www.wikidata.org/entity/Q9211	lo	Lao
-http://www.wikidata.org/entity/Q41670	Latin alphabet	http://www.wikidata.org/entity/Q33151	bjn	Banjar
 http://www.wikidata.org/entity/Q41670	Latin alphabet	http://www.wikidata.org/entity/Q33845	nap	Intermediate Southern Italian
-http://www.wikidata.org/entity/Q41670	Latin alphabet	http://www.wikidata.org/entity/Q397	la	Latin
 http://www.wikidata.org/entity/Q41670	Latin alphabet	http://www.wikidata.org/entity/Q1641543	rgn	Romagnol
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q197936	abe	Abenaki
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q56648	bsa	Abinomn
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q27683	ace	Acehnese
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3957795	ace	Acehnese Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q27811	aa	Afar
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q14196	af	Afrikaans
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q766705	af	Afrikaans Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34737	agq	Aghem
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q27969	ain	Ainu
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q28026	ak	Akan
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q113819406	akk-latn	Akkadian in Latin Script
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q8773	akl	Aklanon
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1815020	akz	Alabama
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q208533	sq	Albanian Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q131339	gsw	Alemannic
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q131339	als	Alemannic
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1211233	als	Alemannic Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q8786	gsw-fr	Alsatian
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q7976	en-us	American English
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35132	ami	Amis
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q109660988	ami	Amis Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35022	gcf	Antillean Creole
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q8765	an	Aragonese
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1147071	an	Aragonese Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q958414	aro	Araona
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q29316	rup	Aromanian
+http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q15087	frp	Arpitan language
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q29507	ast	Asturian
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1071918	ast	Asturian Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q715766	tay	Atayal
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q105723660	tay	Atayal Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q56590	atj	Atikamekw
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q30286865	atj	Atikamekw Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q44679	en-au	Australian English
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q306626	de-at	Austrian German
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q4627	ay	Aymara
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3826575	ay	Aymara Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q9292	az	Azerbaijani
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q58251	az	Azerbaijani Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33070	ban	Balinese
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q70885480	ban	Balinese Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q107387552	ban	Balinese Wikisource
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33243	bm	Bambara
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q20726423	bn	Bangla Wikisource
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33219	jv-x-bms	Banyumasan
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33219	map-bms	Banyumasan
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q8752	eu	Basque
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q207260	eu	Basque Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q51977600	eu	Basque Wikisource
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q64362983	bbc-latn	Batak Toba in Latin script
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q29540	bar	Bavarian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33025	bej	Beja
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1404296	nl-be	Belgian Dutch
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q815549	fr-be	Belgian French
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q138207770	li-be	Belgian Limburgish
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q138536541	lb-be	Belgian Luxembourgish
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q138533712	wa-be	Belgian Walloon
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q108055510	art-bel	Belter Creole
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q2669891	lmo-x-berg	Bergamasque
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35452	bi	Bislama
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q686210	art-bsp	Black Speech
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33060	bla	Blackfoot
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q25167	nb	Bokmål
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q2909283	art-blk	Bolak
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1047829	bs	Bosnian Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q750553	pt-br	Brazilian Portuguese
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q24577649	br	Breton Wikisource
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q7979	en-gb	British English
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q4097773	bug	Buginese Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33190	bug	Bugis
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q56505	bnn	Bunun
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q216286	bsk	Burushaski
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33120	bxr	Buryat
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q880301	frc	Cajun French
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q44676	en-ca	Canadian English
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1450506	fr-ca	Canadian French
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35963	kea	Cape Verdean Creole
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q2937525	cps	Capisnon
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q28427	cal	Carolinian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q5045611	rmc	Carpathian Romani
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q199693	ca	Catalan Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q21117	esu	Central Alaskan Yup'ik
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q49741	tzm	Central Atlas Tamazight
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q131924193	bcl	Central Bikol Wikisource
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q104778147	bcl	Central Bikol Wiktionary
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33262	ch	Chamorro
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33350	ce	Chechen
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33388	chr	Cherokee
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33273	ny	Chewa
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q8561552	ny	Chewa Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33265	chy	Cheyenne
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q8561491	chy	Cheyenne Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35173	chn	Chinook Jargon
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q32979	cho	Choctaw
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33251	cu	Church Slavonic
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35179	ctu	Ch’ol
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36745	rar	Cook Islands Maori
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q25289	kw	Cornish
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33111	co	Corsican
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33109634	co	Corsican Wikibooks
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3111179	co	Corsican Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33110269	co	Corsican Wikiquote
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33109186	co	Corsican Wiktionary
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33390	cr	Cree
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3706583	lmo-x-cremish	Cremish
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33357	crh	Crimean Tatar
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q107557485	crh-latn	Crimean Tatar in Latin script
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q203488	hr	Croatian Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q191168	cs	Czech Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q16735590	cs	Czech Wikisource
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q123351833	dga	Dagaare Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q32238	dag	Dagbanli
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q107379932	dag	Dagbanli Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35527	dlm	Dalmatian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q9035	da	Danish
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q181163	da	Danish Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q32332	dar	Dargwa
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q2665761	unm	Delaware
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q56466	din	Dinka
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33013	dua	Duala
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q138208298	li-nl	Dutch Limburgish
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q516137	nds-nl	Dutch Low Saxon
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q22000234	nl	Dutch Wikibooks
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q21281276	nl	Dutch Wikinews
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q10000	nl	Dutch Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33109764	nl	Dutch Wikiquote
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q24577681	nl	Dutch Wikisource
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q24238011	nl	Dutch Wikivoyage
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q499344	gmw-x-ecg	East Central German
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q64362987	ike-latn	Eastern Canadian Inuktut in Latin script
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36455	cdo	Eastern Min
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35377	efi	Efik
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1057898	egl	Emilian
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q242648	eml	Emilian–Romagnol
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q22000859	en	English Wikibooks
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q21281268	en	English Wikinews
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q328	en	English Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q15156406	en	English Wikisource
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q190551	eo	Esperanto Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q104114893	eo	Esperanto Wikivoyage
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q9072	et	Estonian
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q200060	et	Estonian Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33109786	et	Estonian Wikiquote
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q30005	ee	Ewe
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q30007	ext	Extremaduran
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q27480	eya	Eyak
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q117805986	fat	Fante Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q116927552	gur	Farefare Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q25258	fo	Faroese
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q8042979	fo	Faroese Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q24577660	fo	Faroese Wikisource
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33109248	fo	Faroese Wiktionary
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q8562481	hif	Fiji Hindi Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q64362986	hif-latn	Fiji Hindi in Latin script
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33295	fj	Fijian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1412	fi	Finnish
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q175482	fi	Finnish Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33291	fon	Fon
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q122930671	fon	Fon Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q15087	frp	Franco-Provençal language
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q10860505	frk	Frankish
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q21281272	fr	French Wikinews
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q8447	fr	French Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q24577055	fr	French Wikiquote
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q22001373	fr	French Wiktionary
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33441	fur	Friulian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33454	ff	Fula
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33287	gaa	Ga
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33457	gag	Gagauz
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q9307	gl	Galician
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q841208	gl	Galician Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q21281266	de	German Wikinews
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q48183	de	German Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q22001381	de	German Wikiversity
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q5555465	gpe	Ghanaian Pidgin English
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q120400616	gpe	Ghanaian Pidgin Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q181037	aln	Gheg
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33587	ki	Gikuyu
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q30898	gil	Gilbertese
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q5575236	gom	Goan Konkani
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q20726662	gom	Goan Konkani Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q64362985	gom-latn	Goan Konkani in Latin script
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q2501174	gor	Gorontalo
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q52048523	gor	Gorontalo Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3568042	kl	Greenlandic Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3807895	gn	Guarani Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q56428	nrf-gg	Guernésiais
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1363072	gcr	Guianan Creole
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q74731437	gcr	Guianan Creole Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3111668	guw	Gun
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q117808670	guw	Gun Wikinews
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q111343484	guw	Gun Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33303	hai	Haida
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33491	ht	Haitian Creole
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3250286	cnh	Hakha–Chin
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q56475	ha	Hausa
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q8563393	ha	Hausa Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33315	hz	Herero
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33617	ho	Hiri Motu
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q117674271	hit-latn	Hittite in Latin Script
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33270	hoc	Ho
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q10974017	var	Huarijio
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q6094343	qwh	Huaylas Quechua
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33109447	hu	Hungarian Wikibooks
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33109709	hu	Hungarian Wikinews
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q53464	hu	Hungarian Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33109759	hu	Hungarian Wikiquote
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q304049	hrx	Hunsrik
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33424	iba	Iban
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q294	is	Icelandic
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q718394	is	Icelandic Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35847	mis-idn	Idiom Neutral
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35224	io	Ido
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35936	ilo	Ilocano
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33462	smn	Inari Sami
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q100154036	smn	Inari Sami Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q9240	id	Indonesian
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q155214	id	Indonesian Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q131387001	id	Indonesian Wikivoyage
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13351	moe	Innu-aimun
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35934	ia	Interlingua
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35850	ie	Interlingue
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33845	nap	Intermediate Southern Italian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q29921	iu	Inuktitut
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q9142	ga	Irish
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q135415262	isk-latn	Ishkashimi in Latin script
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q11920	it	Italian Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q27183	ik	Iñupiaq
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35939	jam	Jamaican Patois
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3915769	jax	Jambi Malay
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33549	jv	Javanese
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3477935	jv	Javanese Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q107586427	jv	Javanese Wikisource
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33109138	jv	Javanese Wiktionary
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q137924376	kaj	Jju Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36196	lad	Judaeo-Spanish
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1340322	jut	Jutlandic
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q56430	nrf-je	Jèrriais
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33522	kbd	Kabardian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35475	kbp	Kabiye
@@ -736,376 +429,226 @@ http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q5317225	dtp	Kadazandusun
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q2665734	kgp	Kaingang
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36094	kr	Kanuri
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36121	pam	Kapampangan
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q588620	pam	Kapampangan Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35115	cak	Kaqchikel
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33714	krc	Karachay-Balkar
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33541	kaa	Karakalpak
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q125573400	kaa	Karakalpak Wiktionary
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33557	krl	Karelian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33690	csb	Kashubian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q9252	kk	Kazakh
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q64362993	kk-latn	Kazakh in Latin script
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3195442	kvr	Kerinci
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33584	kha	Khasi
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33573	rw	Kinyarwanda
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33583	rn	Kirundi
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33702	kg	Kongo
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34806	bss	Kose
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1377116	avk	Kotava
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q97393723	avk	Kotava Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35655	ses	Koyraboro Senni
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35744	kri	Krio
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36209	kum	Kumyk
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36368	ku	Kurdish
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q64362997	ku-latn	Kurdish in Latin script
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36163	ku	Kurmanji
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33434	kut	Kutenai
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q165795	fkv	Kven
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1405077	kj	Kwanyama
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q4624	ksh	Kölsch
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36494	quc	K’iche’
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36202	lld	Ladin
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q98442371	lld	Ladin Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q56483	lki	Laki
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33537	lkt	Lakota
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36212	ltg	Latgalian
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q56649449	es-419	Latin American Spanish
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q12237	la	Latin Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q770547	lvk	Lavukaleve
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1160372	lzz	Laz
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q56593	apc	Levantine Arabic
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36106	lij	Ligurian
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q97568657	lij	Ligurian Wikisource
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q102172	li	Limburgish
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q2328409	li	Limburgish Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36217	ln	Lingala
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q146803	lfn	Lingua Franca Nova
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q52047822	lfn	Lingua Franca Nova Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33698	liv	Livonian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36584	olo	Livvi-Karelian
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q27102215	olo	Livvi-Karelian Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36350	jbo	Lojban
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33754	lmo	Lombard
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3913160	lmo	Lombard Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q25433	nds	Low German
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q4925786	nds	Low German Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13286	dsb	Lower Sorbian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33628	loz	Lozi
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34173	lua	Luba-Kasai
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33368	lg	Luganda
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q56322	smj	Lule Sami
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q950058	lb	Luxembourgish Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36213	mad	Madurese
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q104115350	mad	Madurese Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q497345	vmf	Main-Franconian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q7930	mg	Malagasy
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3123304	mg	Malagasy Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q9237	ms	Malay
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q845993	ms	Malay Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3180091	mt	Maltese Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q12175	gv	Manx
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33730	arn	Mapudungun
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q4175893	mrh	Mara
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36280	mh	Marshallese
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33661	mfe	Mauritian Creole
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36228	maz	Mazahua
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q64362999	ruq-latn	Megleno-Romanian in Latin script
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13365	mwv	Mentawai
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13357	fit	Meänkieli
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13321	mic	Mi'kmaq
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36395	enm	Middle English
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1473289	frm	Middle French
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q837985	gmh	Middle High German
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q505674	gml	Middle Low German
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q547462	lmo-x-milanese	Milanese
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13324	min	Minangkabau
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13330	mwl	Mirandese
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1516803	miq	Miskito
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36147	lus	Mizo
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q56422	lij-mc	Monégasque
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36096	mos	Mooré
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q851355	art-mun	Mundolinco
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q523014	mus	Muscogee
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q615660	mui	Musi
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q2732019	mi	Māori Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q316939	art-nav	Na'vi
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13307	na	Nauruan
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3753095	na	Nauruan Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13310	nv	Navajo
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1186896	ppl	Nawat
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q137928727	ppl	Nawat Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33900	ng	Ndonga
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q66587539	nap	Neapolitan Wikisource
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q2992872	nij	Ngaju
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34333	yrl	Nheengatu
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q2407831	nia	Nias
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q104778087	nia	Nias Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q104778106	nia	Nias Wiktionary
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q113576853	pcm	Nigerian Pidgin Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33790	niu	Niuean
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q107548681	oak	Noakhali
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33871	nog	Nogai
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q7049771	nys	Noongar
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3568051	nrm	Norman Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q28224	frr	North Frisian
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q8669146	frr	North Frisian Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33947	se	Northern Sami
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33109657	se	Northern Sami Wikibooks
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q4115441	se	Northern Sami Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33890	nso	Northern Sotho
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q9043	no	Norwegian
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33109122	no	Norwegian (Bokmål) Wiktionary
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q2349453	nn	Norwegian (Nynorsk) Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q32176383	no	Norwegian Wikipedia (Bokmål and Riksmål)
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q191769	nn	Norwegian Wikipedias
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q191769	no	Norwegian Wikipedias
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36738	nov	Novial
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q25164	nn	Nynorsk
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q2393095	ood	O'odham
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q14185	oc	Occitan
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q595628	oc	Occitan Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33875	ojb	Ojibwe
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q42365	ang	Old English
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q8558960	ang	Old English Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35222	fro	Old French
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35218	goh	Old High German
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35505	non	Old Norse
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35501	prg	Old Prussian
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q2417210	http://www.wikidata.org/.well-known/genid/0b854c51289f7f37b64b7cdc86ea02bb	Old Swedish
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33864	om	Oromo
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3356620	sgh-ro	Oroshori
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3356620	sgh-oro	Oroshori
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q2600085	osa	Osage
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q107530022	osa-latn	Osage in Latin script
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36355	ote	Otomi
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q715755	pwn	Paiwan
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q109661042	pwn	Paiwan Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q23014	pfl	Palatinate German
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13358221	pfl	Palatinate German Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33879	pag	Pangasinan
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q12265494	pag	Pangasinan Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33856	pap	Papiamento
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q10729616	aoc	Pemon
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q22711	pdc	Pennsylvania German
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q9168	fa	Persian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34024	pcd	Picard
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q15085	pms	Piedmontese
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3046353	pms	Piedmontese Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q54893569	pms	Piedmontese Wikisource
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36699	pis	Pijin
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q2982063	pjt	Pitjantjatjara
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36554	pih	Pitkern
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1751432	pdt	Plautdietsch
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q809	pl	Polish
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1551807	pl	Polish Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33109097	pl	Polish Wiktionary
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36748	pnt	Pontic Greek
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q5146	pt	Portuguese
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q22000456	pt	Portuguese Wikibooks
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q11921	pt	Portuguese Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3915357	fuf	Pular
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q688309	rm-puter	Putèr
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q5218	qu	Quechua
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1377618	qu	Quechua Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q56383	qya	Quenya
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q584983	lag	Rangi
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13198	rcf	Reunionese Creole
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q32145	ksh	Ripuarian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1641543	rgn	Romagnol
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13201	rmy	Romani
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q7913	ro	Romanian
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33109512	ro	Romanian Wikibooks
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q21281281	ro	Romanian Wikinews
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q199864	ro	Romanian Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33109790	ro	Romanian Wikiquote
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q24577683	ro	Romanian Wikisource
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q24238019	ro	Romanian Wikivoyage
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33109121	ro	Romanian Wiktionary
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13199	rm	Romansh
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q49232	dru	Rukai
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q2597566	sgh-ru	Rushani
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3006285	acf	Saint Lucian Creole
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q716695	xsy	Saisiyat
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q718269	szy	Sakizaya
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q74732560	szy	Sakizaya Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34011	sm	Samoan
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q213434	bat-smg	Samogitian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33954	sg	Sango
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33965	sat	Santali
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33976	sc	Sardinian
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3568059	sc	Sardinian Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q845441	sdc	Sassarese
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q27154	stq	Saterland Frisian
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3568040	stq	Saterland Frisian Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q14549	sco	Scots
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1444686	sco	Scots Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q9314	gd	Scottish Gaelic
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q716686	trv	Seediq
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q105975521	trv	Seediq Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q21161949	sr-el	Serbian in Latin script
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q9301	sh	Serbo-Croatian
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q58679	sh	Serbo-Croatian Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36583	sei	Seri
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34340	st	Sesotho
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34015	crs	Seychellois Creole
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q64363002	shy-latn	Shawiya in Latin script
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36705	sth	Shelta
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3069598	scz	Shetlandic
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34004	sn	Shona
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34053	sgh	Shughni
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q135196768	sgh-latn	Shughni in Latin script
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33973	scn	Sicilian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33786	sid	Sidamo
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q30319	szl	Silesian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q152965	sli	Silesian German
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q21480034	simple	Simple English
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q21480034	en-simple	Simple English
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q21480034	en-x-simple	Simple English
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q200183	simple	Simple English Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q56437	sjn	Sindarin
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3027953	srq	Sirionó
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13271	sms	Skolt Sami
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q9058	sk	Slovak
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q9063	sl	Slovene
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q14380	sl	Slovene Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13275	so	Somali
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q25442	wen	Sorbian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36785	nr	Southern Ndebele
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36806	qu	Southern Quechua
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13293	sma	Southern Sami
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1321	es	Spanish
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q8449	es	Spanish Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q33989	srn	Sranan Tongo
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q15065	ms-my	Standard Malay
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q123474569	zsm	Standard Malay
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q107549870	sux-latn	Sumerian in Latin script
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34002	su	Sundanese
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q966609	su	Sundanese Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q690216	rm-surmiran	Surmiran
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q688348	rm-sursilv	Sursilvan
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q688272	rm-sutsilv	Sutsilvan
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q7838	sw	Swahili
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34014	ss	Swazi
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q9027	sv	Swedish
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q169514	sv	Swedish Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q387066	als	Swiss German
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1366643	de-ch	Swiss High German
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q2044560	syl	Sylheti
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q120142383	syl-latn	Sylheti in Latin script
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q64363000	shi-latn	Tachelhit in Latin script
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34128	ty	Tahitian
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3568061	ty	Tahitian Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1975271	tvx	Taivoan
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q9260	tg	Tajik
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q64363005	tg-latn	Tajik in Latin script
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1063911	tzl	Talossan
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34318	tly	Talysh
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q122212356	tly	Talysh Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36807	tar	Tarahumara
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q695526	nap-x-tara	Tarantino
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q695526	it-x-tara	Tarantino
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q695526	roa-tara	Tarantino
+http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q695526	nap-x-tara	Tarantino
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34174	rif	Tarifit
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34152	shi	Tashelhit
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q39134544	tt-latn	Tatar in Latin script
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34142	tsg	Tausug
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q35573	hus	Teenek
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34125	tet	Tetum
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q27792	tli	Tlingit
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34159	tpi	Tok Pisin
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36846	tok	Toki Pona
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q137040693	tok	Toki Pona Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34094	to	Tongan
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34327	ts	Tsonga
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34137	tn	Tswana
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34138	tum	Tumbuka
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q56240	tu	Tunisian Arabic
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q64362982	aeb-latn	Tunisian Arabic in Latin script
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q56944	tup	Tupi
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q9267	tk	Turkmen
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34040	tru	Turoyo
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34055	tvl	Tuvaluan
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34119	tyv	Tuvan
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36850	tw	Twi
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q8575885	tw	Twi Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3912765	kcg	Tyap
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q112042422	kcg	Tyap Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q112126994	kcg	Tyap Wiktionary
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q56415	sju	Ume Sami
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13248	hsb	Upper Sorbian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13263	ug	Uyghur
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q9264	uz	Uzbek
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q64363007	uz-latn	Uzbek in Latin script
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q32641	ca-valencia	Valencian
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q690226	rm-vallader	Vallader
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q32704	ve	Venda
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q32724	vec	Venetian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q32747	vep	Veps
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q9199	vi	Vietnamese
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36986	vo	Volapük
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q32858	vot	Votic
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q32762	fiu-vro	Võro
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1585232	fiu-vro	Võro Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34208	wbl	Wakhi
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q135183554	wbl-latn	Wakhi in Latin script
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36979	wls	Wallisian
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34219	wa	Walloon
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1132977	wa	Walloon Wikipedia
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q104115883	wa	Walloon Wikisource
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q17041139	wa	Walloon alphabet
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34279	war	Waray
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1648786	war	Waray Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q891085	guc	Wayuu
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q116927536	guc	Wayuu Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q9309	cy	Welsh
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q848525	cy	Welsh Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q2880037	bdr	West Coast Bajau
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q100103	vls	West Flemish
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q3568038	vls	West Flemish Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q27175	fy	West Frisian
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q2602203	fy	West Frisian Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q36943	wal	Wolayttattuwa
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34257	wo	Wolof
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q56485	wym	Wymysorys
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13218	xh	Xhosa
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q134706150	yai-latn	Yaghnobi Latin alphabet
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q12953315	yav	Yangben
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34029	yap	Yapese
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q135415037	yah-latn	Yazghulami in Latin script
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q34186	yah	Yazgulyam
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1365342	yec	Yenish
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13354	yua	Yucatec Maya
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q32174903	cbk-x-zam	Zamboanga Chavacano
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q32174903	cbk-zam	Zamboanga Chavacano
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q10199	diq	Zazaki
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q104778212	diq	Zazaki Wiktionary
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q237409	zea	Zeelandic
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q2111591	zea	Zeelandic Wikipedia
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13216	za	Zhuang
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q10179	zu	Zulu
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q10188	zun	Zuni
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q1163234	la-x-medieval	medieval Latin
-http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q13300	nah	nahuatl
 http://www.wikidata.org/entity/Q8229	Latin script	http://www.wikidata.org/entity/Q254950	ovd	Övdalian
 http://www.wikidata.org/entity/Q6497326	Latvian Braille	http://www.wikidata.org/entity/Q9078	lv	Latvian
 http://www.wikidata.org/entity/Q1193493	Latvian alphabet	http://www.wikidata.org/entity/Q9078	lv	Latvian
 http://www.wikidata.org/entity/Q19572613	Leke	http://www.wikidata.org/entity/Q5330390	kjp	Eastern Pwo
-http://www.wikidata.org/entity/Q190102	Linear B	http://www.wikidata.org/entity/Q35497	grc	Ancient Greek
 http://www.wikidata.org/entity/Q6648359	Lithuanian Braille	http://www.wikidata.org/entity/Q9083	lt	Lithuanian
 http://www.wikidata.org/entity/Q1271025	Lithuanian alphabet	http://www.wikidata.org/entity/Q9083	lt	Lithuanian
-http://www.wikidata.org/entity/Q3115632	Lojban alphabet	http://www.wikidata.org/entity/Q36350	jbo	Lojban
-http://www.wikidata.org/entity/Q1074947	Lontara	http://www.wikidata.org/entity/Q4097773	bug	Buginese Wikipedia
 http://www.wikidata.org/entity/Q1074947	Lontara	http://www.wikidata.org/entity/Q33190	bug	Bugis
 http://www.wikidata.org/entity/Q9147420	Lower Sorbian alphabet	http://www.wikidata.org/entity/Q13286	dsb	Lower Sorbian
 http://www.wikidata.org/entity/Q16249632	Luxembourgish Braille	http://www.wikidata.org/entity/Q9051	lb	Luxembourgish
 http://www.wikidata.org/entity/Q9147435	Luxembourgish alphabet	http://www.wikidata.org/entity/Q9051	lb	Luxembourgish
 http://www.wikidata.org/entity/Q2092163	Macedonian alphabet	http://www.wikidata.org/entity/Q9296	mk	Macedonian
 http://www.wikidata.org/entity/Q2673515	Malay alphabet	http://www.wikidata.org/entity/Q9237	ms	Malay
-http://www.wikidata.org/entity/Q2673515	Malay alphabet	http://www.wikidata.org/entity/Q125581426	ms	Malay Wikisource
 http://www.wikidata.org/entity/Q1164129	Malayalam script	http://www.wikidata.org/entity/Q5575236	gom	Goan Konkani
 http://www.wikidata.org/entity/Q1164129	Malayalam script	http://www.wikidata.org/entity/Q36236	ml	Malayalam
-http://www.wikidata.org/entity/Q1164129	Malayalam script	http://www.wikidata.org/entity/Q874555	ml	Malayalam Wikipedia
 http://www.wikidata.org/entity/Q1164129	Malayalam script	http://www.wikidata.org/entity/Q34251	tcy	Tulu
 http://www.wikidata.org/entity/Q6744782	Maltese Braille	http://www.wikidata.org/entity/Q9166	mt	Maltese
 http://www.wikidata.org/entity/Q2335779	Maltese alphabet	http://www.wikidata.org/entity/Q9166	mt	Maltese
@@ -1113,8 +656,6 @@ http://www.wikidata.org/entity/Q122888	Manchu alphabet	http://www.wikidata.org/e
 http://www.wikidata.org/entity/Q4281436	Mari alphabet	http://www.wikidata.org/entity/Q3906614	mhr	Meadow Mari
 http://www.wikidata.org/entity/Q3297091	Masaba	http://www.wikidata.org/entity/Q33243	bm	Bambara
 http://www.wikidata.org/entity/Q2981413	Meetei Mayek	http://www.wikidata.org/entity/Q33868	mni	Meitei
-http://www.wikidata.org/entity/Q2981413	Meetei Mayek	http://www.wikidata.org/entity/Q105631325	mni	Meitei Wikipedia
-http://www.wikidata.org/entity/Q2981413	Meetei Mayek	http://www.wikidata.org/entity/Q105631321	mni	Meitei Wiktionary
 http://www.wikidata.org/entity/Q60664313	Mirandes alphabet	http://www.wikidata.org/entity/Q13330	mwl	Mirandese
 http://www.wikidata.org/entity/Q930193	Mistralian norm	http://www.wikidata.org/entity/Q14185	oc	Occitan
 http://www.wikidata.org/entity/Q3317411	Mkhedruli	http://www.wikidata.org/entity/Q8108	ka	Georgian
@@ -1122,21 +663,14 @@ http://www.wikidata.org/entity/Q3317411	Mkhedruli	http://www.wikidata.org/entity
 http://www.wikidata.org/entity/Q476647	Molodtsov alphabet	http://www.wikidata.org/entity/Q36126	kv	Komi
 http://www.wikidata.org/entity/Q476647	Molodtsov alphabet	http://www.wikidata.org/entity/Q56318	koi	Komi-Permyak
 http://www.wikidata.org/entity/Q13349	Mon	http://www.wikidata.org/entity/Q5330390	kjp	Eastern Pwo
-http://www.wikidata.org/entity/Q13349	Mon	http://www.wikidata.org/entity/Q100271134	mnw-pi	Mon-Pali
 http://www.wikidata.org/entity/Q1055705	Mongolian	http://www.wikidata.org/entity/Q33120	bxr	Buryat
 http://www.wikidata.org/entity/Q1055705	Mongolian	http://www.wikidata.org/entity/Q33638	mnc	Manchu
 http://www.wikidata.org/entity/Q1055705	Mongolian	http://www.wikidata.org/entity/Q9246	mn	Mongolian
-http://www.wikidata.org/entity/Q94691838	Montenegrin Cyrillic alphabet	http://www.wikidata.org/entity/Q8821	cnr	Montenegrin
-http://www.wikidata.org/entity/Q94691836	Montenegrin Latin alphabet	http://www.wikidata.org/entity/Q8821	cnr	Montenegrin
 http://www.wikidata.org/entity/Q43887939	Mon–Burmese script	http://www.wikidata.org/entity/Q9228	my	Burmese
-http://www.wikidata.org/entity/Q43887939	Mon–Burmese script	http://www.wikidata.org/entity/Q4614845	my	Burmese Wikipedia
-http://www.wikidata.org/entity/Q43887939	Mon–Burmese script	http://www.wikidata.org/entity/Q125581427	my	Burmese Wikisource
 http://www.wikidata.org/entity/Q43887939	Mon–Burmese script	http://www.wikidata.org/entity/Q7121294	blk	Pa'O
-http://www.wikidata.org/entity/Q43887939	Mon–Burmese script	http://www.wikidata.org/entity/Q135750447	rki	Rakhine Wikipedia
 http://www.wikidata.org/entity/Q27956191	Muscogee alphabet	http://www.wikidata.org/entity/Q523014	mus	Muscogee
 http://www.wikidata.org/entity/Q6950616	Māori Braille	http://www.wikidata.org/entity/Q36451	mi	Māori
 http://www.wikidata.org/entity/Q21662393	Māori writing system	http://www.wikidata.org/entity/Q36451	mi	Māori
-http://www.wikidata.org/entity/Q1771720	Narkamauka	http://www.wikidata.org/entity/Q877583	be	Belarusian Wikipedia
 http://www.wikidata.org/entity/Q1133121	Nastaʿlīq	http://www.wikidata.org/entity/Q257829	bqi	Bakhtiari
 http://www.wikidata.org/entity/Q48813897	Navajo Braille	http://www.wikidata.org/entity/Q13310	nv	Navajo
 http://www.wikidata.org/entity/Q19604693	Nenets alphabet	http://www.wikidata.org/entity/Q36452	yrk	Nenets
@@ -1148,35 +682,20 @@ http://www.wikidata.org/entity/Q6472444	Northern Sami orthography	http://www.wik
 http://www.wikidata.org/entity/Q3346505	Nuskhuri	http://www.wikidata.org/entity/Q8108	ka	Georgian
 http://www.wikidata.org/entity/Q3346505	Nuskhuri	http://www.wikidata.org/entity/Q13359	xmf	Mingrelian
 http://www.wikidata.org/entity/Q1062587	N’ko	http://www.wikidata.org/entity/Q33243	bm	Bambara
-http://www.wikidata.org/entity/Q1062587	N’ko	http://www.wikidata.org/entity/Q68669691	nqo	N'Ko Wikipedia
 http://www.wikidata.org/entity/Q1062587	N’ko	http://www.wikidata.org/entity/Q18546266	nqo	N’Ko
 http://www.wikidata.org/entity/Q1760127	Odia	http://www.wikidata.org/entity/Q33270	hoc	Ho
 http://www.wikidata.org/entity/Q1760127	Odia	http://www.wikidata.org/entity/Q33810	or	Odia
 http://www.wikidata.org/entity/Q1760127	Odia	http://www.wikidata.org/entity/Q33965	sat	Santali
 http://www.wikidata.org/entity/Q4926681	Ojibwe writing system	http://www.wikidata.org/entity/Q33875	ojb	Ojibwe
 http://www.wikidata.org/entity/Q2599096	Okinawan scripts	http://www.wikidata.org/entity/Q34233	ryu	Okinawan
-http://www.wikidata.org/entity/Q56743290	Okrand notation	http://www.wikidata.org/entity/Q10134	tlh	Klingon
-http://www.wikidata.org/entity/Q56743290	Okrand notation	http://www.wikidata.org/entity/Q107550949	tlh-latn	Klingon in Okrand notation
 http://www.wikidata.org/entity/Q201688	Ol Chiki	http://www.wikidata.org/entity/Q33965	sat	Santali
-http://www.wikidata.org/entity/Q201688	Ol Chiki	http://www.wikidata.org/entity/Q55950814	sat	Santali Wikipedia
 http://www.wikidata.org/entity/Q113557468	Old Balochi Orthography	http://www.wikidata.org/entity/Q33049	bal	Balochi
-http://www.wikidata.org/entity/Q113557468	Old Balochi Orthography	http://www.wikidata.org/entity/Q12645561	bgn	Western Balochi
 http://www.wikidata.org/entity/Q446224	Old Hungarian	http://www.wikidata.org/entity/Q9067	hu	Hungarian
 http://www.wikidata.org/entity/Q4301931	Old Mon script	http://www.wikidata.org/entity/Q13349	mnw	Mon
-http://www.wikidata.org/entity/Q4301931	Old Mon script	http://www.wikidata.org/entity/Q72145810	mnw	Mon Wikipedia
-http://www.wikidata.org/entity/Q4301931	Old Mon script	http://www.wikidata.org/entity/Q105977225	mnw	Mon Wiktionary
-http://www.wikidata.org/entity/Q4301931	Old Mon script	http://www.wikidata.org/entity/Q100271134	mnw-pi	Mon-Pali
 http://www.wikidata.org/entity/Q147899	Old Permic alphabet	http://www.wikidata.org/entity/Q36126	kv	Komi
-http://www.wikidata.org/entity/Q147899	Old Permic alphabet	http://www.wikidata.org/entity/Q86679962	urj-koo	Old Komi
-http://www.wikidata.org/entity/Q1471822	Old Persian cuneiform	http://www.wikidata.org/entity/Q35225	peo	Old Persian
-http://www.wikidata.org/entity/Q5058305	Old Turkic script	http://www.wikidata.org/entity/Q34988	otk	Old Turkic
 http://www.wikidata.org/entity/Q7105529	Osage	http://www.wikidata.org/entity/Q2600085	osa	Osage
 http://www.wikidata.org/entity/Q1377866	Osmanya	http://www.wikidata.org/entity/Q13275	so	Somali
 http://www.wikidata.org/entity/Q4337657	Ossetian Cyrillic alphabet	http://www.wikidata.org/entity/Q33968	os	Ossetian
-http://www.wikidata.org/entity/Q1992372	Ottoman Turkish alphabet	http://www.wikidata.org/entity/Q36730	ota	Ottoman Turkish
-http://www.wikidata.org/entity/Q440608	Paleo-Hebrew alphabet	http://www.wikidata.org/entity/Q1982248	hbo	Biblical Hebrew
-http://www.wikidata.org/entity/Q17538100	Palmyrene script	http://www.wikidata.org/entity/Q1510113	sem-x-palmyren	Palmyrene Aramaic
-http://www.wikidata.org/entity/Q116451	Pegon alphabet	http://www.wikidata.org/entity/Q33151	bjn	Banjar
 http://www.wikidata.org/entity/Q116451	Pegon alphabet	http://www.wikidata.org/entity/Q33549	jv	Javanese
 http://www.wikidata.org/entity/Q744068	Persian alphabet	http://www.wikidata.org/entity/Q9292	az	Azerbaijani
 http://www.wikidata.org/entity/Q744068	Persian alphabet	http://www.wikidata.org/entity/Q178440	fa-af	Dari
@@ -1184,55 +703,32 @@ http://www.wikidata.org/entity/Q744068	Persian alphabet	http://www.wikidata.org/
 http://www.wikidata.org/entity/Q744068	Persian alphabet	http://www.wikidata.org/entity/Q35373	kmz	Khorasani Turkic
 http://www.wikidata.org/entity/Q744068	Persian alphabet	http://www.wikidata.org/entity/Q13356	mzn	Mazanderani
 http://www.wikidata.org/entity/Q744068	Persian alphabet	http://www.wikidata.org/entity/Q9168	fa	Persian
-http://www.wikidata.org/entity/Q744068	Persian alphabet	http://www.wikidata.org/entity/Q4115463	ckb	Sorani Kurdish Wikipedia
 http://www.wikidata.org/entity/Q744068	Persian alphabet	http://www.wikidata.org/entity/Q1066787	uzs	Southern Uzbek
 http://www.wikidata.org/entity/Q744068	Persian alphabet	http://www.wikidata.org/entity/Q9260	tg	Tajik
 http://www.wikidata.org/entity/Q112887344	Perso-Arabic script	http://www.wikidata.org/entity/Q33202	brh	Brahui
 http://www.wikidata.org/entity/Q112887344	Perso-Arabic script	http://www.wikidata.org/entity/Q33871	nog	Nogai
 http://www.wikidata.org/entity/Q112887344	Perso-Arabic script	http://www.wikidata.org/entity/Q9267	tk	Turkmen
 http://www.wikidata.org/entity/Q559173	Pe̍h-ōe-jī	http://www.wikidata.org/entity/Q33375	hak	Hakka Chinese
-http://www.wikidata.org/entity/Q559173	Pe̍h-ōe-jī	http://www.wikidata.org/entity/Q3239456	zh-min-nan	Min Nan Wikipedia
 http://www.wikidata.org/entity/Q559173	Pe̍h-ōe-jī	http://www.wikidata.org/entity/Q36495	nan	Southern Min
 http://www.wikidata.org/entity/Q559173	Pe̍h-ōe-jī	http://www.wikidata.org/entity/Q36495	zh-min-nan	Southern Min
 http://www.wikidata.org/entity/Q17054819	Philippine Braille	http://www.wikidata.org/entity/Q33239	ceb	Cebuano
 http://www.wikidata.org/entity/Q17054819	Philippine Braille	http://www.wikidata.org/entity/Q35936	ilo	Ilocano
-http://www.wikidata.org/entity/Q26752	Phoenician script	http://www.wikidata.org/entity/Q1982248	hbo	Biblical Hebrew
-http://www.wikidata.org/entity/Q26752	Phoenician script	http://www.wikidata.org/entity/Q36734	phn	Phoenician
-http://www.wikidata.org/entity/Q26752	Phoenician script	http://www.wikidata.org/entity/Q535958	xpu	Punic
-http://www.wikidata.org/entity/Q540987	Portuguese alphabet	http://www.wikidata.org/entity/Q750553	pt-br	Brazilian Portuguese
 http://www.wikidata.org/entity/Q540987	Portuguese alphabet	http://www.wikidata.org/entity/Q5146	pt	Portuguese
 http://www.wikidata.org/entity/Q96409076	Quechua alphabet	http://www.wikidata.org/entity/Q6094343	qwh	Huaylas Quechua
 http://www.wikidata.org/entity/Q2385276	Ranjana	http://www.wikidata.org/entity/Q33979	new	Newar
 http://www.wikidata.org/entity/Q2007960	Rejang script	http://www.wikidata.org/entity/Q615660	mui	Musi
-http://www.wikidata.org/entity/Q82996	Runic script	http://www.wikidata.org/entity/Q10860505	frk	Frankish
-http://www.wikidata.org/entity/Q82996	Runic script	http://www.wikidata.org/entity/Q35722	got	Gothic
-http://www.wikidata.org/entity/Q82996	Runic script	http://www.wikidata.org/entity/Q35505	non	Old Norse
 http://www.wikidata.org/entity/Q3399601	Russian Braille	http://www.wikidata.org/entity/Q9267	tk	Turkmen
-http://www.wikidata.org/entity/Q187846	Russian alphabet	http://www.wikidata.org/entity/Q17601812	ru	Russian Wikivoyage
 http://www.wikidata.org/entity/Q13405127	Rusyn alphabet	http://www.wikidata.org/entity/Q26245	rue	Rusyn
 http://www.wikidata.org/entity/Q26838189	S'gaw Karen Script	http://www.wikidata.org/entity/Q56410	ksw	S'gaw Karen
 http://www.wikidata.org/entity/Q846875	Sakha scripts	http://www.wikidata.org/entity/Q34299	sah	Yakut
-http://www.wikidata.org/entity/Q1550930	Samaritan script	http://www.wikidata.org/entity/Q1982248	hbo	Biblical Hebrew
 http://www.wikidata.org/entity/Q113406611	Saraiki Shahmukhi	http://www.wikidata.org/entity/Q33902	skr	Saraiki
-http://www.wikidata.org/entity/Q18920939	Saraiki alphabet	http://www.wikidata.org/entity/Q104116398	skr	Saraiki Wikipedia
-http://www.wikidata.org/entity/Q18920939	Saraiki alphabet	http://www.wikidata.org/entity/Q104116585	skr	Saraiki Wiktionary
-http://www.wikidata.org/entity/Q1089000	Sarati	http://www.wikidata.org/entity/Q56383	qya	Quenya
 http://www.wikidata.org/entity/Q923677	Sawndip	http://www.wikidata.org/entity/Q13216	za	Zhuang
 http://www.wikidata.org/entity/Q17081208	Scandinavian Braille	http://www.wikidata.org/entity/Q1412	fi	Finnish
 http://www.wikidata.org/entity/Q17081208	Scandinavian Braille	http://www.wikidata.org/entity/Q25355	kl	Greenlandic
-http://www.wikidata.org/entity/Q829464	Serbian Cyrillic alphabet	http://www.wikidata.org/entity/Q9299	sr	Serbian
-http://www.wikidata.org/entity/Q829464	Serbian Cyrillic alphabet	http://www.wikidata.org/entity/Q21161942	sr-ec	Serbian in Cyrilic script
 http://www.wikidata.org/entity/Q829464	Serbian Cyrillic alphabet	http://www.wikidata.org/entity/Q9301	sh	Serbo-Croatian
 http://www.wikidata.org/entity/Q133800	Shahmukhi	http://www.wikidata.org/entity/Q382273	hno	Hindko
-http://www.wikidata.org/entity/Q133800	Shahmukhi	http://www.wikidata.org/entity/Q3696028	pnb	Punjabi Shahmukhi Wikipedia
 http://www.wikidata.org/entity/Q4520090	Shan	http://www.wikidata.org/entity/Q56482	shn	Shan
-http://www.wikidata.org/entity/Q4520090	Shan	http://www.wikidata.org/entity/Q111345933	shn	Shan Wikivoyage
 http://www.wikidata.org/entity/Q29881733	Shughni writing system	http://www.wikidata.org/entity/Q34053	sgh	Shughni
-http://www.wikidata.org/entity/Q1497335	SignWriting	http://www.wikidata.org/entity/Q14759	ase	American Sign Language
-http://www.wikidata.org/entity/Q1497335	SignWriting	http://www.wikidata.org/entity/Q3436689	bzs	Brazilian Sign Language
-http://www.wikidata.org/entity/Q1497335	SignWriting	http://www.wikidata.org/entity/Q33000	bfi	British Sign Language
-http://www.wikidata.org/entity/Q1497335	SignWriting	http://www.wikidata.org/entity/Q33282	gsg	German Sign Language
-http://www.wikidata.org/entity/Q1497335	SignWriting	http://www.wikidata.org/entity/Q22964057	pks	Pakistan Sign Language
 http://www.wikidata.org/entity/Q13414913	Simplified Chinese	http://www.wikidata.org/entity/Q7033959	yue	Yue Chinese
 http://www.wikidata.org/entity/Q13414913	Simplified Chinese	http://www.wikidata.org/entity/Q7033959	zh-yue	Yue Chinese
 http://www.wikidata.org/entity/Q25550226	Sindhi Perso-Arabic script	http://www.wikidata.org/entity/Q33997	sd	Sindhi
@@ -1240,79 +736,52 @@ http://www.wikidata.org/entity/Q1574992	Sinhala script	http://www.wikidata.org/e
 http://www.wikidata.org/entity/Q58372003	Sitelen Pona	http://www.wikidata.org/entity/Q36846	tok	Toki Pona
 http://www.wikidata.org/entity/Q58372017	Sitelen Sitelen	http://www.wikidata.org/entity/Q36846	tok	Toki Pona
 http://www.wikidata.org/entity/Q576484	Sorabe alphabet	http://www.wikidata.org/entity/Q7930	mg	Malagasy
-http://www.wikidata.org/entity/Q285126	Spanish alphabet	http://www.wikidata.org/entity/Q33281	cbk-zam	Chavacano
-http://www.wikidata.org/entity/Q7618587	Stokoe notation	http://www.wikidata.org/entity/Q14759	ase	American Sign Language
-http://www.wikidata.org/entity/Q7618587	Stokoe notation	http://www.wikidata.org/entity/Q33000	bfi	British Sign Language
 http://www.wikidata.org/entity/Q51589	Sundanese script	http://www.wikidata.org/entity/Q34002	su	Sundanese
 http://www.wikidata.org/entity/Q118147634	Swahili Ajami	http://www.wikidata.org/entity/Q7838	sw	Swahili
 http://www.wikidata.org/entity/Q2352347	Swedish alphabet	http://www.wikidata.org/entity/Q9027	sv	Swedish
-http://www.wikidata.org/entity/Q144128	Sylheti Nagari	http://www.wikidata.org/entity/Q122766472	syl	Main Page/syl
 http://www.wikidata.org/entity/Q144128	Sylheti Nagari	http://www.wikidata.org/entity/Q2044560	syl	Sylheti
-http://www.wikidata.org/entity/Q144128	Sylheti Nagari	http://www.wikidata.org/entity/Q118646488	syl	Sylheti Wikipedia
-http://www.wikidata.org/entity/Q26567	Syriac alphabet	http://www.wikidata.org/entity/Q33538	syc	Syriac
 http://www.wikidata.org/entity/Q26567	Syriac alphabet	http://www.wikidata.org/entity/Q34040	tru	Turoyo
 http://www.wikidata.org/entity/Q1314503	Tai Tham	http://www.wikidata.org/entity/Q565110	nod	Northern Thai
-http://www.wikidata.org/entity/Q56929	Taiwanese Taigi Romanization System	http://www.wikidata.org/entity/Q3239456	zh-min-nan	Min Nan Wikipedia
 http://www.wikidata.org/entity/Q56929	Taiwanese Taigi Romanization System	http://www.wikidata.org/entity/Q36495	nan	Southern Min
 http://www.wikidata.org/entity/Q56929	Taiwanese Taigi Romanization System	http://www.wikidata.org/entity/Q36495	zh-min-nan	Southern Min
 http://www.wikidata.org/entity/Q2311554	Tajik Cyrillic alphabet	http://www.wikidata.org/entity/Q9260	tg	Tajik
 http://www.wikidata.org/entity/Q26803	Tamil script	http://www.wikidata.org/entity/Q33205	bfq	Badaga
 http://www.wikidata.org/entity/Q26803	Tamil script	http://www.wikidata.org/entity/Q5885	ta	Tamil
-http://www.wikidata.org/entity/Q26803	Tamil script	http://www.wikidata.org/entity/Q24577690	ta	Tamil Wikisource
-http://www.wikidata.org/entity/Q2087886	Taraškievica	http://www.wikidata.org/entity/Q8937989	be-tarask	Belarusian (Taraškievica) Wikipedia
-http://www.wikidata.org/entity/Q570450	Telugu	http://www.wikidata.org/entity/Q33270	hoc	Ho
-http://www.wikidata.org/entity/Q570450	Telugu	http://www.wikidata.org/entity/Q8097	te	Telugu
-http://www.wikidata.org/entity/Q473725	Tengwar	http://www.wikidata.org/entity/Q686210	art-bsp	Black Speech
-http://www.wikidata.org/entity/Q473725	Tengwar	http://www.wikidata.org/entity/Q56383	qya	Quenya
-http://www.wikidata.org/entity/Q473725	Tengwar	http://www.wikidata.org/entity/Q56437	sjn	Sindarin
+http://www.wikidata.org/entity/Q570450	Telugu script	http://www.wikidata.org/entity/Q33270	hoc	Ho
+http://www.wikidata.org/entity/Q570450	Telugu script	http://www.wikidata.org/entity/Q8097	te	Telugu
 http://www.wikidata.org/entity/Q7706995	Tetum alphabet	http://www.wikidata.org/entity/Q34125	tet	Tetum
 http://www.wikidata.org/entity/Q877906	Thaana	http://www.wikidata.org/entity/Q32656	dv	Maldivian
 http://www.wikidata.org/entity/Q236376	Thai script	http://www.wikidata.org/entity/Q5330390	kjp	Eastern Pwo
 http://www.wikidata.org/entity/Q236376	Thai script	http://www.wikidata.org/entity/Q565110	nod	Northern Thai
 http://www.wikidata.org/entity/Q236376	Thai script	http://www.wikidata.org/entity/Q56508	sou	Southern Thai
 http://www.wikidata.org/entity/Q236376	Thai script	http://www.wikidata.org/entity/Q9217	th	Thai
-http://www.wikidata.org/entity/Q236376	Thai script	http://www.wikidata.org/entity/Q21281290	th	Thai Wikinews
-http://www.wikidata.org/entity/Q236376	Thai script	http://www.wikidata.org/entity/Q565074	th	Thai Wikipedia
 http://www.wikidata.org/entity/Q2218127	Tibetan Braille	http://www.wikidata.org/entity/Q34271	bo	Tibetan
 http://www.wikidata.org/entity/Q46861	Tibetan alphabet	http://www.wikidata.org/entity/Q56509	adx	Amdo Tibetan
 http://www.wikidata.org/entity/Q46861	Tibetan alphabet	http://www.wikidata.org/entity/Q33081	dz	Dzongkha
 http://www.wikidata.org/entity/Q46861	Tibetan alphabet	http://www.wikidata.org/entity/Q56601	khg	Khams Tibetan
 http://www.wikidata.org/entity/Q46861	Tibetan alphabet	http://www.wikidata.org/entity/Q34271	bo	Tibetan
-http://www.wikidata.org/entity/Q46861	Tibetan alphabet	http://www.wikidata.org/entity/Q2091593	bo	Tibetan Wikipedia
 http://www.wikidata.org/entity/Q208503	Tifinagh	http://www.wikidata.org/entity/Q49741	tzm	Central Atlas Tamazight
-http://www.wikidata.org/entity/Q208503	Tifinagh	http://www.wikidata.org/entity/Q123352442	zgh	Moroccan Amazigh Wikipedia
 http://www.wikidata.org/entity/Q208503	Tifinagh	http://www.wikidata.org/entity/Q33274	shy	Shawiya
-http://www.wikidata.org/entity/Q208503	Tifinagh	http://www.wikidata.org/entity/Q64363001	shi-tfng	Tachelhit in Tifinagh script
 http://www.wikidata.org/entity/Q1765752	Tirhuta	http://www.wikidata.org/entity/Q36109	mai	Maithili
-http://www.wikidata.org/entity/Q18130932	Traditional Chinese	http://www.wikidata.org/entity/Q262828	zh-tw	Standard Taiwanese Mandarin
 http://www.wikidata.org/entity/Q18130932	Traditional Chinese	http://www.wikidata.org/entity/Q7033959	yue	Yue Chinese
 http://www.wikidata.org/entity/Q18130932	Traditional Chinese	http://www.wikidata.org/entity/Q7033959	zh-yue	Yue Chinese
 http://www.wikidata.org/entity/Q2604990	Tulu-Tigalari script	http://www.wikidata.org/entity/Q34251	tcy	Tulu
 http://www.wikidata.org/entity/Q637405	Turkish alphabet	http://www.wikidata.org/entity/Q256	tr	Turkish
-http://www.wikidata.org/entity/Q637405	Turkish alphabet	http://www.wikidata.org/entity/Q104903746	tr	Turkish Wikivoyage
 http://www.wikidata.org/entity/Q543617	Turkmen alphabet	http://www.wikidata.org/entity/Q9267	tk	Turkmen
 http://www.wikidata.org/entity/Q4464841	Tuvan alphabet	http://www.wikidata.org/entity/Q34119	tyv	Tuvan
 http://www.wikidata.org/entity/Q4469458	Udmurt alphabets	http://www.wikidata.org/entity/Q13238	udm	Udmurt
-http://www.wikidata.org/entity/Q1098595	Ukrainian alphabet	http://www.wikidata.org/entity/Q199698	uk	Ukrainian Wikipedia
 http://www.wikidata.org/entity/Q3181145	Ulu scripts	http://www.wikidata.org/entity/Q3195442	kvr	Kerinci
-http://www.wikidata.org/entity/Q7884923	Unified English Braille	http://www.wikidata.org/entity/Q44679	en-au	Australian English
 http://www.wikidata.org/entity/Q7884923	Unified English Braille	http://www.wikidata.org/entity/Q1860	en	English
-http://www.wikidata.org/entity/Q7884923	Unified English Braille	http://www.wikidata.org/entity/Q23580217	en-eu	European English
 http://www.wikidata.org/entity/Q163296	Upper Sorbian alphabet	http://www.wikidata.org/entity/Q13248	hsb	Upper Sorbian
-http://www.wikidata.org/entity/Q209468	Urdu alphabet	http://www.wikidata.org/entity/Q1067878	ur	Urdu Wikipedia
 http://www.wikidata.org/entity/Q112887037	Urdu orthography	http://www.wikidata.org/entity/Q216286	bsk	Burushaski
 http://www.wikidata.org/entity/Q112887037	Urdu orthography	http://www.wikidata.org/entity/Q1617	ur	Urdu
 http://www.wikidata.org/entity/Q134068570	Urhobo alphabet	http://www.wikidata.org/entity/Q36663	urh	Urhobo
-http://www.wikidata.org/entity/Q2374532	Uyghur Arabic alphabet	http://www.wikidata.org/entity/Q22338135	ug-arab	Uyghur Arabic script
-http://www.wikidata.org/entity/Q2374532	Uyghur Arabic alphabet	http://www.wikidata.org/entity/Q60856	ug	Uyghur Wikipedia
-http://www.wikidata.org/entity/Q986283	Uyghur Latin alphabet	http://www.wikidata.org/entity/Q22338145	ug-latn	Uyghur in Latin script
 http://www.wikidata.org/entity/Q2948092	Vagindra	http://www.wikidata.org/entity/Q33120	bxr	Buryat
 http://www.wikidata.org/entity/Q1992000	Vatteluttu	http://www.wikidata.org/entity/Q5885	ta	Tamil
 http://www.wikidata.org/entity/Q4107342	Veps writing	http://www.wikidata.org/entity/Q32747	vep	Veps
 http://www.wikidata.org/entity/Q1140801	Vietnamese Braille	http://www.wikidata.org/entity/Q9199	vi	Vietnamese
 http://www.wikidata.org/entity/Q622712	Vietnamese alphabet	http://www.wikidata.org/entity/Q9199	vi	Vietnamese
 http://www.wikidata.org/entity/Q1647368	Wadaad's writing	http://www.wikidata.org/entity/Q13275	so	Somali
-http://www.wikidata.org/entity/Q17041139	Walloon alphabet	http://www.wikidata.org/entity/Q3565518	wa	Standard Walloon
 http://www.wikidata.org/entity/Q79199	Warang Citi	http://www.wikidata.org/entity/Q33270	hoc	Ho
 http://www.wikidata.org/entity/Q2491829	Wolofal script	http://www.wikidata.org/entity/Q34257	wo	Wolof
 http://www.wikidata.org/entity/Q134706143	Yaghnobi Cyrillic alphabet	http://www.wikidata.org/entity/Q34247	yai	Yaghnobi
@@ -1321,45 +790,25 @@ http://www.wikidata.org/entity/Q613977	Yañalif	http://www.wikidata.org/entity/Q
 http://www.wikidata.org/entity/Q1197646	Yi script	http://www.wikidata.org/entity/Q34235	ii	Nuosu
 http://www.wikidata.org/entity/Q137733743	Yoruba Braille	http://www.wikidata.org/entity/Q34311	yo	Yoruba
 http://www.wikidata.org/entity/Q104841974	Yoruba alphabet	http://www.wikidata.org/entity/Q34311	yo	Yoruba
-http://www.wikidata.org/entity/Q2306379	Younger Futhark	http://www.wikidata.org/entity/Q35505	non	Old Norse
-http://www.wikidata.org/entity/Q2306379	Younger Futhark	http://www.wikidata.org/entity/Q2417210	http://www.wikidata.org/.well-known/genid/0b854c51289f7f37b64b7cdc86ea02bb	Old Swedish
 http://www.wikidata.org/entity/Q2637053	Yugtun script	http://www.wikidata.org/entity/Q21117	esu	Central Alaskan Yup'ik
 http://www.wikidata.org/entity/Q17110426	Zambian Braille	http://www.wikidata.org/entity/Q33628	loz	Lozi
 http://www.wikidata.org/entity/Q3944022	Zazaki alphabet	http://www.wikidata.org/entity/Q10199	diq	Zazaki
 http://www.wikidata.org/entity/Q875344	chữ Nôm	http://www.wikidata.org/entity/Q9199	vi	Vietnamese
 http://www.wikidata.org/entity/Q2636606	classical norm of Occitan	http://www.wikidata.org/entity/Q14185	oc	Occitan
-http://www.wikidata.org/entity/Q1937113	futhark	http://www.wikidata.org/entity/Q42365	ang	Old English
-http://www.wikidata.org/entity/Q2712936	futhorc	http://www.wikidata.org/entity/Q42365	ang	Old English
 http://www.wikidata.org/entity/Q48332	hiragana	http://www.wikidata.org/entity/Q5287	ja	Japanese
-http://www.wikidata.org/entity/Q48332	hiragana	http://www.wikidata.org/entity/Q53979341	ja-hira	Japanese written in hiragana
-http://www.wikidata.org/entity/Q48332	hiragana	http://www.wikidata.org/entity/Q53979345	ja-hrkt	Japanese written in kana
 http://www.wikidata.org/entity/Q48332	hiragana	http://www.wikidata.org/entity/Q34243	yoi	Yonaguni
 http://www.wikidata.org/entity/Q187659	kana	http://www.wikidata.org/entity/Q5287	ja	Japanese
-http://www.wikidata.org/entity/Q187659	kana	http://www.wikidata.org/entity/Q33110342	ja	Japanese Wikiversity
-http://www.wikidata.org/entity/Q187659	kana	http://www.wikidata.org/entity/Q98668890	ja	Japanese Wikivoyage
-http://www.wikidata.org/entity/Q187659	kana	http://www.wikidata.org/entity/Q53979345	ja-hrkt	Japanese written in kana
 http://www.wikidata.org/entity/Q187659	kana	http://www.wikidata.org/entity/Q34243	yoi	Yonaguni
 http://www.wikidata.org/entity/Q82772	kanji	http://www.wikidata.org/entity/Q5287	ja	Japanese
-http://www.wikidata.org/entity/Q82772	kanji	http://www.wikidata.org/entity/Q33110342	ja	Japanese Wikiversity
-http://www.wikidata.org/entity/Q82772	kanji	http://www.wikidata.org/entity/Q98668890	ja	Japanese Wikivoyage
-http://www.wikidata.org/entity/Q82772	kanji	http://www.wikidata.org/entity/Q53979504	ja-hani	Japanese written in kanji
 http://www.wikidata.org/entity/Q82772	kanji	http://www.wikidata.org/entity/Q34243	yoi	Yonaguni
 http://www.wikidata.org/entity/Q82946	katakana	http://www.wikidata.org/entity/Q5287	ja	Japanese
-http://www.wikidata.org/entity/Q82946	katakana	http://www.wikidata.org/entity/Q53979345	ja-hrkt	Japanese written in kana
-http://www.wikidata.org/entity/Q82946	katakana	http://www.wikidata.org/entity/Q53979342	ja-kana	Japanese written in katakana
 http://www.wikidata.org/entity/Q82946	katakana	http://www.wikidata.org/entity/Q34243	yoi	Yonaguni
-http://www.wikidata.org/entity/Q56627865	pIqaD	http://www.wikidata.org/entity/Q10134	tlh	Klingon
-http://www.wikidata.org/entity/Q56627865	pIqaD	http://www.wikidata.org/entity/Q107550940	tlh-piqd	Klingon in pIqaD
 http://www.wikidata.org/entity/Q7362709	romanization of Thai	http://www.wikidata.org/entity/Q9217	th	Thai
 http://www.wikidata.org/entity/Q185614	simplified Chinese characters	http://www.wikidata.org/entity/Q7850	zh	Chinese
 http://www.wikidata.org/entity/Q185614	simplified Chinese characters	http://www.wikidata.org/entity/Q56583	cpx	Pu-Xian Min
 http://www.wikidata.org/entity/Q185614	simplified Chinese characters	http://www.wikidata.org/entity/Q24841726	zh-cn	Putonghua
-http://www.wikidata.org/entity/Q185614	simplified Chinese characters	http://www.wikidata.org/entity/Q13414913	zh-hans	Simplified Chinese
-http://www.wikidata.org/entity/Q185614	simplified Chinese characters	http://www.wikidata.org/entity/Q64427344	gan-hans	simplified Gan
 http://www.wikidata.org/entity/Q178528	traditional Chinese characters	http://www.wikidata.org/entity/Q7850	zh	Chinese
 http://www.wikidata.org/entity/Q178528	traditional Chinese characters	http://www.wikidata.org/entity/Q56583	cpx	Pu-Xian Min
-http://www.wikidata.org/entity/Q178528	traditional Chinese characters	http://www.wikidata.org/entity/Q18130932	zh-hant	Traditional Chinese
-http://www.wikidata.org/entity/Q178528	traditional Chinese characters	http://www.wikidata.org/entity/Q64427346	gan-hant	traditional Gan
 http://www.wikidata.org/entity/Q2472605	written Cantonese	http://www.wikidata.org/entity/Q9186	yue	Cantonese
 http://www.wikidata.org/entity/Q2472605	written Cantonese	http://www.wikidata.org/entity/Q9186	zh-yue	Cantonese
 http://www.wikidata.org/entity/Q2472605	written Cantonese	http://www.wikidata.org/entity/Q7033959	yue	Yue Chinese

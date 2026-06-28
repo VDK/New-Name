@@ -16,19 +16,25 @@ final class WikidataEditService
 
     /**
      * @param list<string> $apply
-     * @param list<array{target: string, targetLabel: string, property: string, propertyLabel: string, value: string, reason: string, qualifierProperty?: string, qualifierValue?: string}> $relationships
-     * @return array{entityId: string, mode: string, relatedUpdates: int, warnings: list<string>}
+     * @param list<array{target: string, targetLabel: string, property: string, propertyLabel: string, value: string, reason: string, direction?: string, qualifierProperty?: string, qualifierValue?: string}> $relationships
+     * @return array{entityId: string, mode: string, relatedUpdates: int, inverseRelationshipUpdates: int, warnings: list<string>}
      */
-    public function save(string $name, string $displayLabel, string $type, ?string $scriptQid, ?string $languageQid, string $nativeLabelLanguage, ?string $existingItem, array $apply, array $relationships): array
+    public function save(string $name, string $displayLabel, string $type, ?string $scriptQid, ?string $languageQid, string $nativeLabelLanguage, ?string $existingItem, array $apply, array $relationships, bool $updateTransliteration = false): array
     {
         $token = $this->oauthClient->getCsrfToken();
         $entityId = $existingItem ?: null;
         $existingClaims = $entityId ? $this->existingClaims($entityId) : [];
-        $data = [
-            'labels' => $this->labels($name, $displayLabel, $scriptQid),
-            'descriptions' => $this->descriptions($type, $name, $name),
-            'claims' => [],
-        ];
+        $data = ['claims' => []];
+        if (!$entityId) {
+            $data['labels'] = $this->labels($name, $displayLabel, $scriptQid);
+        } elseif ($updateTransliteration) {
+            $data['labels'] = [
+                'mul' => ['language' => 'mul', 'value' => $displayLabel],
+            ];
+        }
+        if (!$entityId || in_array('overwrite_descriptions', $apply, true)) {
+            $data['descriptions'] = $this->descriptions($type, $name, $name);
+        }
 
         $typeQid = NameTypes::TYPE_ITEMS[$type] ?? NameTypes::TYPE_ITEMS[NameTypes::GIVEN_NAME];
         if (!$this->hasCompatibleTypeClaim($existingClaims, $type)) {
@@ -40,7 +46,11 @@ final class WikidataEditService
         if (!$this->hasAnyMonolingualTextClaim($existingClaims, 'P1705')) {
             $data['claims'][] = $this->monolingualTextClaim('P1705', $name, $nativeLabelLanguage !== '' ? $nativeLabelLanguage : 'mul');
         }
-        if ($languageQid && !$this->hasItemClaim($existingClaims, 'P407', $languageQid)) {
+        if (
+            $languageQid
+            && in_array('claim_P407', $apply, true)
+            && !$this->hasItemClaim($existingClaims, 'P407', $languageQid)
+        ) {
             $data['claims'][] = $this->itemClaim('P407', $languageQid);
         }
         foreach ($this->appliedItemClaims($apply, 'P7377') as $infixQid) {
@@ -51,6 +61,9 @@ final class WikidataEditService
         foreach ($relationships as $relationship) {
             $applyKey = 'related_' . $relationship['target'] . '_' . $relationship['property'];
             if (!in_array($applyKey, $apply, true) || !$this->isSupportedNameProperty($relationship['property'])) {
+                continue;
+            }
+            if (($relationship['direction'] ?? '') === 'target') {
                 continue;
             }
             if ($this->hasItemClaim($existingClaims, $relationship['property'], $relationship['target'])) {
@@ -82,12 +95,15 @@ final class WikidataEditService
         }
 
         $relatedUpdates = 0;
+        $inverseRelationshipUpdates = 0;
         $warnings = [];
         foreach ($relationships as $relationship) {
             $applyKey = 'related_' . $relationship['target'] . '_' . $relationship['property'];
+            $targetDirected = ($relationship['direction'] ?? '') === 'target';
             if (
                 !in_array($applyKey, $apply, true)
-                || !$this->isSymmetricNameProperty($relationship['property'])
+                || (!$targetDirected && !$this->isSymmetricNameProperty($relationship['property']))
+                || ($targetDirected && $relationship['property'] !== 'P1533')
                 || $relationship['target'] === $entityId
             ) {
                 continue;
@@ -106,12 +122,21 @@ final class WikidataEditService
                     'summary' => '[[Help:New Name|New Name]]: link related name item',
                 ]);
                 $relatedUpdates++;
+                if ($targetDirected) {
+                    $inverseRelationshipUpdates++;
+                }
             } catch (\Throwable $e) {
                 $warnings[] = 'Could not update ' . $relationship['target'] . ' with ' . $relationship['property'] . ': ' . $e->getMessage();
             }
         }
 
-        return ['entityId' => $entityId, 'mode' => $mode, 'relatedUpdates' => $relatedUpdates, 'warnings' => $warnings];
+        return [
+            'entityId' => $entityId,
+            'mode' => $mode,
+            'relatedUpdates' => $relatedUpdates,
+            'inverseRelationshipUpdates' => $inverseRelationshipUpdates,
+            'warnings' => $warnings,
+        ];
     }
 
     private function isSymmetricNameProperty(string $property): bool

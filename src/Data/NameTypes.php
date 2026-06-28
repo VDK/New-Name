@@ -12,12 +12,22 @@ final class NameTypes
     public const CHINESE_FAMILY_NAME = 'chinese_family_name';
     public const CHINESE_GIVEN_NAME = 'chinese_given_name';
 
+    public const GIVEN_SCOPE = 'given';
+
     public const ACTIVE_TYPES = [
         self::FAMILY_NAME,
         self::GIVEN_NAME,
         self::MALE_GIVEN_NAME,
         self::FEMALE_GIVEN_NAME,
         self::UNISEX_GIVEN_NAME,
+    ];
+
+    public const URL_TYPES = [
+        'family' => self::FAMILY_NAME,
+        'given' => self::GIVEN_SCOPE,
+        'male' => self::MALE_GIVEN_NAME,
+        'female' => self::FEMALE_GIVEN_NAME,
+        'unisex' => self::UNISEX_GIVEN_NAME,
     ];
 
     public const TYPE_ITEMS = [
@@ -62,6 +72,22 @@ final class NameTypes
         self::FEMALE_GIVEN_NAME => ['Q11879590', 'Q202444'],
         self::UNISEX_GIVEN_NAME => ['Q3409032'],
     ];
+
+    public static function fromUrl(?string $type): ?string
+    {
+        if ($type === null || $type === '') {
+            return null;
+        }
+
+        return self::URL_TYPES[$type] ?? null;
+    }
+
+    public static function toUrl(string $type): string
+    {
+        $urlType = array_search($type, self::URL_TYPES, true);
+
+        return is_string($urlType) ? $urlType : 'given';
+    }
 
     public const DESCRIPTIONS = [
         self::FAMILY_NAME => [
