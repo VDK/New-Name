@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Data\LanguageHeuristics;
 use App\Data\NameTypes;
 use App\Service\NameAnalyzer;
 use App\Service\OAuthAuthorizationRequired;
@@ -18,6 +17,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class WikidataSaveController
 {
+    use NameControllerTrait;
+
     #[Route('/wikidata/save', name: 'wikidata_save_home', methods: ['GET'])]
     public function home(Request $request): RedirectResponse
     {
@@ -118,11 +119,6 @@ final class WikidataSaveController
             'person_query' => $name,
             'ui' => $uiLanguage,
         ]));
-    }
-
-    private function interfaceLanguage(string $language): string
-    {
-        return in_array($language, ['en', 'nl', 'de', 'fr', 'es'], true) ? $language : 'en';
     }
 
     private function normalizeType(string $type): string
@@ -630,22 +626,6 @@ final class WikidataSaveController
         $uiLanguage = $this->interfaceLanguage($uiLanguage);
 
         return $labels[$uiLanguage][$qid] ?? $labels['en'][$qid] ?? $fallback;
-    }
-
-    /**
-     * @return list<string>
-     */
-    private function nameAffixes(): array
-    {
-        $affixes = [];
-        foreach (LanguageHeuristics::PREFIXES as $prefixes) {
-            foreach ($prefixes as $prefix) {
-                $affixes[mb_strtolower($prefix)] = mb_strtolower($prefix);
-            }
-        }
-        usort($affixes, static fn (string $a, string $b): int => mb_strlen($b) <=> mb_strlen($a));
-
-        return array_values($affixes);
     }
 
 }

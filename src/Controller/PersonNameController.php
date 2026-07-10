@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Data\LanguageHeuristics;
 use App\Service\AffixDetector;
 use App\Service\PersonNameEditService;
 use App\Service\OAuthAuthorizationRequired;
@@ -19,6 +18,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class PersonNameController
 {
+    use NameControllerTrait;
+
     public function __construct(
         private readonly AffixDetector $affixDetector,
     ) {
@@ -352,6 +353,105 @@ HTML;
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>New Name</title>
 <style>
+$this->pageStyles()
+</style>
+</head>
+<body><main>
+<div class="brand"><h1>New Name</h1><p>$tagline</p></div>
+$universalSearch
+$selectedItemBlock$invalid$message$resultBlock
+</main>
+<script>$this->pagePeopleScript($base, $ui, $safeNameItemId, $safeQuery)</script>
+</body>
+</html>
+HTML;
+    }
+
+    /**
+     * @param array{id: string, label: string, type: string, script: string, languageCode: string} $nameItem
+     * @return list<string>
+     */
+    private function allowedProperties(array $nameItem): array
+    {
+        if ($nameItem['type'] === 'given') {
+            return ['P735'];
+        }
+
+        return match ($nameItem['languageCode']) {
+            'es' => ['P734', 'P1950'],
+            'pt' => ['P734', 'P9139'],
+            default => ['P734'],
+        };
+    }
+
+    /**
+     * @param array{id: string, label: string, type: string, script: string, languageCode: string} $nameItem
+     */
+    private function personOptions(array $nameItem): string
+    {
+        $hasGivenName = $nameItem['type'] === 'given';
+        foreach ($nameItem['equivalents'] ?? [] as $equivalent) {
+            $hasGivenName = $hasGivenName || ($equivalent['type'] ?? '') === 'given';
+        }
+
+        return $hasGivenName
+            ? '<div class="options"><label>Series ordinal <span class="muted">(optional)</span><input class="ordinal" name="ordinal" inputmode="numeric" pattern="[1-9][0-9]*"></label></div>'
+            : '';
+    }
+
+    private function personActionButtons(array $nameItem): string
+    {
+        $actions = [
+            $nameItem['type'] => [
+                'id' => (string) $nameItem['id'],
+                'type' => (string) $nameItem['type'],
+            ],
+        ];
+        foreach ($nameItem['equivalents'] ?? [] as $equivalent) {
+            $type = (string) ($equivalent['type'] ?? '');
+            $id = (string) ($equivalent['id'] ?? '');
+            if (in_array($type, ['given', 'family'], true) && preg_match('/^Q\d+$/', $id)) {
+                $actions[$type] ??= ['id' => $id, 'type' => $type];
+            }
+        }
+
+        $html = '';
+        foreach (['given', 'family'] as $type) {
+            if (!isset($actions[$type])) {
+                continue;
+            }
+            $id = htmlspecialchars($actions[$type]['id'], ENT_QUOTES, 'UTF-8');
+            $property = $type === 'given' ? 'P735' : 'P734';
+            $label = $type === 'given' ? 'Given name' : 'Family name';
+            $html .= '<button type="submit" class="add-name" data-name-item="' . $id . '" data-property="' . $property . '"><span class="button-spinner" aria-hidden="true"></span><span class="button-label">' . $label . '</span></button>';
+        }
+
+        return $html;
+    }
+
+    private function hasBothNameTypes(array $nameItem): bool
+    {
+        $types = [(string) ($nameItem['type'] ?? '') => true];
+        foreach ($nameItem['equivalents'] ?? [] as $equivalent) {
+            $types[(string) ($equivalent['type'] ?? '')] = true;
+        }
+
+        return isset($types['given'], $types['family']);
+    }
+
+    private function noStoreJson(array $data, int $status = 200): JsonResponse
+    {
+        return new JsonResponse($data, $status, ['Cache-Control' => 'no-store, max-age=0']);
+    }
+
+    private function hasAffixPrefix(string $name): bool
+    {
+        return $this->affixDetector->detect($name) !== [];
+    }
+
+    private function pageStyles(): string
+    {
+        return <<<'CSS'
 body{margin:0;background:#f8f9fa;color:#202122;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 main{width:min(720px,calc(100% - 32px));margin:40px auto;display:grid;gap:16px}
 .brand{text-align:center;margin-bottom:6px}.brand h1{margin:0 0 8px;font-size:44px;font-weight:400}.brand p{margin:0;color:#54595d}.tagline-break{display:none}
@@ -372,14 +472,12 @@ button{display:inline-flex;align-items:center;justify-content:center;min-height:
 .suggest-wrap{position:relative}.suggestions{display:none;position:absolute;z-index:20;top:calc(100% + 2px);left:0;right:0;max-height:280px;overflow:auto;margin:0;padding:4px 0;list-style:none;border:1px solid #a2a9b1;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.15)}
 .suggestions li{display:flex;flex-direction:column;gap:2px;align-items:stretch;padding:8px 10px;cursor:pointer;border-top:1px solid #a2a9b1}.suggestions li:first-child{border-top:0}.suggestions li:hover,.suggestions li.active{background:#eaecf0}.suggestions strong{display:block}.suggestions .muted{display:block}
 a{color:#36c;text-decoration:none}@media(max-width:620px){.suggestions{position:static;margin-top:2px}.person button{width:100%}}@media(max-width:480px){.tagline-break{display:inline}}
-</style>
-</head>
-<body><main>
-<div class="brand"><h1>New Name</h1><p>$tagline</p></div>
-$universalSearch
-$selectedItemBlock$invalid$message$resultBlock
-</main>
-<script>
+CSS;
+    }
+
+    private function pagePeopleScript(string $base, string $ui, string $safeNameItemId, string $safeQuery): string
+    {
+        return <<<SCRIPT
 (function () {
     var input = document.getElementById('name-item-search');
     var value = document.getElementById('name-item-value');
@@ -658,112 +756,6 @@ document.querySelectorAll('.person-match').forEach(function(form) {
             .finally(function() { loading = false; });
     });
 }());
-</script>
-</body>
-</html>
-HTML;
-    }
-
-    /**
-     * @param array{id: string, label: string, type: string, script: string, languageCode: string} $nameItem
-     * @return list<string>
-     */
-    private function allowedProperties(array $nameItem): array
-    {
-        if ($nameItem['type'] === 'given') {
-            return ['P735'];
-        }
-
-        return match ($nameItem['languageCode']) {
-            'es' => ['P734', 'P1950'],
-            'pt' => ['P734', 'P9139'],
-            default => ['P734'],
-        };
-    }
-
-    /**
-     * @param array{id: string, label: string, type: string, script: string, languageCode: string} $nameItem
-     */
-    private function personOptions(array $nameItem): string
-    {
-        $hasGivenName = $nameItem['type'] === 'given';
-        foreach ($nameItem['equivalents'] ?? [] as $equivalent) {
-            $hasGivenName = $hasGivenName || ($equivalent['type'] ?? '') === 'given';
-        }
-
-        return $hasGivenName
-            ? '<div class="options"><label>Series ordinal <span class="muted">(optional)</span><input class="ordinal" name="ordinal" inputmode="numeric" pattern="[1-9][0-9]*"></label></div>'
-            : '';
-    }
-
-    private function personActionButtons(array $nameItem): string
-    {
-        $actions = [
-            $nameItem['type'] => [
-                'id' => (string) $nameItem['id'],
-                'type' => (string) $nameItem['type'],
-            ],
-        ];
-        foreach ($nameItem['equivalents'] ?? [] as $equivalent) {
-            $type = (string) ($equivalent['type'] ?? '');
-            $id = (string) ($equivalent['id'] ?? '');
-            if (in_array($type, ['given', 'family'], true) && preg_match('/^Q\d+$/', $id)) {
-                $actions[$type] ??= ['id' => $id, 'type' => $type];
-            }
-        }
-
-        $html = '';
-        foreach (['given', 'family'] as $type) {
-            if (!isset($actions[$type])) {
-                continue;
-            }
-            $id = htmlspecialchars($actions[$type]['id'], ENT_QUOTES, 'UTF-8');
-            $property = $type === 'given' ? 'P735' : 'P734';
-            $label = $type === 'given' ? 'Given name' : 'Family name';
-            $html .= '<button type="submit" class="add-name" data-name-item="' . $id . '" data-property="' . $property . '"><span class="button-spinner" aria-hidden="true"></span><span class="button-label">' . $label . '</span></button>';
-        }
-
-        return $html;
-    }
-
-    private function hasBothNameTypes(array $nameItem): bool
-    {
-        $types = [(string) ($nameItem['type'] ?? '') => true];
-        foreach ($nameItem['equivalents'] ?? [] as $equivalent) {
-            $types[(string) ($equivalent['type'] ?? '')] = true;
-        }
-
-        return isset($types['given'], $types['family']);
-    }
-
-    private function interfaceLanguage(string $language): string
-    {
-        return in_array($language, ['en', 'nl', 'de', 'fr', 'es'], true) ? $language : 'en';
-    }
-
-    private function noStoreJson(array $data, int $status = 200): JsonResponse
-    {
-        return new JsonResponse($data, $status, ['Cache-Control' => 'no-store, max-age=0']);
-    }
-
-    /**
-     * @return list<string>
-     */
-    private function nameAffixes(): array
-    {
-        $affixes = [];
-        foreach (LanguageHeuristics::PREFIXES as $prefixes) {
-            foreach ($prefixes as $prefix) {
-                $affixes[mb_strtolower($prefix)] = mb_strtolower($prefix);
-            }
-        }
-        usort($affixes, static fn (string $a, string $b): int => mb_strlen($b) <=> mb_strlen($a));
-
-        return array_values($affixes);
-    }
-
-    private function hasAffixPrefix(string $name): bool
-    {
-        return $this->affixDetector->detect($name) !== [];
+SCRIPT;
     }
 }
