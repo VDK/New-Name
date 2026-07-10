@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Data\LanguageHeuristics;
+use App\Service\AffixDetector;
 use App\Service\PersonNameEditService;
 use App\Service\OAuthAuthorizationRequired;
 use App\Service\NameFlowState;
@@ -18,6 +19,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class PersonNameController
 {
+    public function __construct(
+        private readonly AffixDetector $affixDetector,
+    ) {
+    }
+
     #[Route('/api/name-items', name: 'name_item_search', methods: ['GET'])]
     public function searchNameItems(Request $request, WikidataClient $wikidataClient): JsonResponse
     {
@@ -79,7 +85,8 @@ final class PersonNameController
     {
         $nameItemId = strtoupper(trim((string) $request->query->get('name_item', '')));
         $query = trim((string) $request->query->get('person_query', ''));
-        $status = (string) $request->query->get('status', '');
+        $flashStatus = $request->getSession()->getFlashBag()->get('save_status');
+        $status = $flashStatus ? $flashStatus[0] : (string) $request->query->get('status', '');
         $personId = strtoupper(trim((string) $request->query->get('person', '')));
         $nameItem = $nameItemId !== '' ? $wikidataClient->nameItem($nameItemId) : null;
         $page = $nameItem && $query !== ''
@@ -211,13 +218,20 @@ final class PersonNameController
             'es' => ['name' => 'Nombre', 'create' => 'Crear', 'analyze' => 'Analizar', 'update' => 'Actualizar', 'match' => 'Vincular', 'possible' => 'Esto parece el nombre completo de una persona.', 'confirm' => 'Confirmo que es un nombre de pila o un apellido.'],
         ][$uiLanguage];
         $nameAffixes = json_encode($this->nameAffixes(), JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+        $isSaveStatus = in_array($status, ['created', 'updated'], true);
         $message = '';
-        if ($status === 'changed' && preg_match('/^Q\d+$/', $personId)) {
+        if ($isSaveStatus) {
+            $heading = $status === 'created' ? 'Wikidata item created' : 'Wikidata item updated';
+        } elseif ($status === 'changed' && preg_match('/^Q\d+$/', $personId)) {
             $safePersonId = htmlspecialchars($personId, ENT_QUOTES, 'UTF-8');
             $message = '<p class="success">Changed at <a href="https://www.wikidata.org/wiki/' . $safePersonId . '">' . $safePersonId . '</a>.</p>';
+            $heading = 'Selected item';
         } elseif ($status === 'exists' && preg_match('/^Q\d+$/', $personId)) {
             $safePersonId = htmlspecialchars($personId, ENT_QUOTES, 'UTF-8');
             $message = '<p class="notice">This name statement already exists on <a href="https://www.wikidata.org/wiki/' . $safePersonId . '">' . $safePersonId . '</a>.</p>';
+            $heading = 'Selected item';
+        } else {
+            $heading = 'Selected item';
         }
 
         $results = '';
@@ -247,9 +261,10 @@ final class PersonNameController
                 }
                 $equivalentBlock .= '<div class="equivalent-item"><h3>' . $equivalentType . '</h3><div class="selected-item-card"><div class="selected-item-details"><strong>' . $equivalentLabel . '</strong><span class="muted">' . $equivalentDescription . '</span>' . $equivalentDetails . '<a href="https://www.wikidata.org/wiki/' . $equivalentId . '">' . $equivalentId . '</a></div></div></div>';
             }
+            $safeHeading = htmlspecialchars($heading, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
             $selectedItemBlock = <<<HTML
 <section class="selected-item-section">
-    <h2>Selected item</h2>
+    <h2>$safeHeading</h2>
     <div class="selected-item-card">
         <div class="selected-item-details">
             <strong>$safeLabel</strong>
@@ -260,6 +275,16 @@ final class PersonNameController
     $equivalentBlock
 </section>
 HTML;
+            if (!$this->hasBothNameTypes($nameItem) && !$this->hasAffixPrefix($query)) {
+                $oppositeType = $nameItem['type'] === 'given' ? 'family' : 'given';
+                $createEquivalentUrl = htmlspecialchars(
+                    $request->getBasePath() . '/?name=' . urlencode($query) . '&type=' . urlencode($oppositeType) . '&_analysis=1&_equivalent=' . urlencode($nameItemId) . '&ui=' . urlencode($uiLanguage),
+                    ENT_QUOTES,
+                    'UTF-8'
+                );
+                $createLabel = $oppositeType === 'given' ? 'Create given name equivalent' : 'Create family name equivalent';
+                $selectedItemBlock .= '<p><a href="' . $createEquivalentUrl . '" class="equivalent-create">' . htmlspecialchars($createLabel, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</a></p>';
+            }
             foreach ($matches as $match) {
                 $id = htmlspecialchars($match['id'], ENT_QUOTES, 'UTF-8');
                 $label = htmlspecialchars($match['label'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -342,6 +367,7 @@ button{display:inline-flex;align-items:center;justify-content:center;min-height:
 .options{display:flex;flex-wrap:wrap;gap:10px}.muted{color:#54595d;font-size:13px}.notice{background:#f8f9fa;padding:10px}.success{border-left:4px solid #14866d;padding:10px;background:#edfaf7}
 .person-actions{display:flex;gap:8px}.person-actions button{flex:1 1 100%;min-width:0;min-height:40px;padding:6px 10px}.person-actions.has-equivalent button{flex-basis:50%}
 .button-spinner{display:none;width:14px;height:14px;margin-right:6px;border:2px solid rgba(255,255,255,.55);border-top-color:#fff;border-radius:50%;animation:spin .75s linear infinite}.add-name.is-loading .button-spinner{display:inline-block}.add-name.is-success{border-color:#14866d;background:#14866d}.add-name.is-present,.add-name.is-present:hover{border-color:#a2a9b1;background:#eaecf0;color:#54595d;cursor:not-allowed}.add-name.is-failure{border-color:#b32424;background:#b32424}
+.equivalent-create{display:inline-flex;align-items:center;min-height:36px;margin-top:12px;padding:6px 12px;border:1px solid #36c;background:#36c;color:#fff;border-radius:2px;font-weight:700;text-decoration:none}.equivalent-create:hover{background:#2a4b8d;border-color:#2a4b8d;text-decoration:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 .suggest-wrap{position:relative}.suggestions{display:none;position:absolute;z-index:20;top:calc(100% + 2px);left:0;right:0;max-height:280px;overflow:auto;margin:0;padding:4px 0;list-style:none;border:1px solid #a2a9b1;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.15)}
 .suggestions li{display:flex;flex-direction:column;gap:2px;align-items:stretch;padding:8px 10px;cursor:pointer;border-top:1px solid #a2a9b1}.suggestions li:first-child{border-top:0}.suggestions li:hover,.suggestions li.active{background:#eaecf0}.suggestions strong{display:block}.suggestions .muted{display:block}
@@ -734,5 +760,10 @@ HTML;
         usort($affixes, static fn (string $a, string $b): int => mb_strlen($b) <=> mb_strlen($a));
 
         return array_values($affixes);
+    }
+
+    private function hasAffixPrefix(string $name): bool
+    {
+        return $this->affixDetector->detect($name) !== [];
     }
 }
