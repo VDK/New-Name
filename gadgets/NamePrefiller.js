@@ -543,6 +543,11 @@ if ( mw.NamePrefiller === undefined ) {
 			return;
 		}
 
+		// Don't prefill qualifier fields
+		if ( $valueview.closest( '.wikibase-statementview-qualifiers' ).length ) {
+			return;
+		}
+
 		expert = valueview.expert();
 
 		if (

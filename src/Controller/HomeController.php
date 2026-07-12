@@ -1105,6 +1105,7 @@ final class HomeController
             var transliteration = document.getElementById('label-transliteration');
             var typeEditor = document.getElementById('type-editor');
             var typeDisplay = document.getElementById('update-type-display');
+            var selectedExistingType = document.getElementById('selected-existing-type');
             var reviewHeading = document.getElementById('review-heading');
             var matchWithoutUpdate = document.getElementById('match-without-update');
             var overwriteDescriptions = document.getElementById('overwrite-descriptions');
@@ -1122,7 +1123,9 @@ final class HomeController
             var selectedItemDescription = document.getElementById('selected-item-description');
             var selectedItemQid = document.getElementById('selected-item-qid');
             var selectedItemMatch = document.getElementById('selected-item-match');
+            var existingMatchReminder = document.getElementById('existing-match-reminder');
             var isCreate = !selected || selected.value === '';
+            if (existingMatchReminder) existingMatchReminder.style.display = isCreate ? 'block' : 'none';
             document.querySelectorAll('[data-suggestion-target]').forEach(function(row) {
                 if (isCreate) {
                     row.style.display = '';
@@ -1164,6 +1167,7 @@ final class HomeController
                 if (typeEditor) typeEditor.style.display = '';
                 var typeSelect = document.getElementById('type');
                 if (typeSelect) typeSelect.disabled = false;
+                if (selectedExistingType) selectedExistingType.disabled = true;
                 if (typeDisplay) typeDisplay.style.display = 'none';
                 if (reviewHeading) reviewHeading.textContent = $jsReviewRequired;
                 if (matchWithoutUpdate) matchWithoutUpdate.style.display = 'none';
@@ -1193,6 +1197,7 @@ final class HomeController
             var label = selected.dataset.label || 'item';
             var qid = selected.value;
             var typeLabel = selected.dataset.typeLabel || '';
+            var selectedType = selected.dataset.type || '';
             var description = selected.dataset.description || '';
             var existingScriptInput = document.querySelector('[data-existing-script-for="' + qid + '"]');
             var existingScript = selected.dataset.script || (existingScriptInput ? existingScriptInput.value : '');
@@ -1232,7 +1237,21 @@ final class HomeController
             if (script) warnScriptChange(script);
             if (typeEditor) typeEditor.style.display = '';
             var typeSelect = document.getElementById('type');
-            if (typeSelect) typeSelect.disabled = true;
+            if (typeSelect) {
+                if (selectedType) typeSelect.value = selectedType;
+                typeSelect.disabled = true;
+            }
+            if (!serverUpdate) {
+                if (!selectedExistingType) {
+                    selectedExistingType = document.createElement('input');
+                    selectedExistingType.id = 'selected-existing-type';
+                    selectedExistingType.name = 'type';
+                    selectedExistingType.type = 'hidden';
+                    document.querySelector('form.review').appendChild(selectedExistingType);
+                }
+                selectedExistingType.value = selectedType;
+                selectedExistingType.disabled = !selectedType;
+            }
             if (reviewHeading) reviewHeading.textContent = $jsUpdateItem;
             if (matchWithoutUpdate) {
                 matchWithoutUpdate.style.display = 'inline-flex';
@@ -1790,6 +1809,7 @@ HTML;
                 'confidence' => 'Confidence',
                 'create_new_item' => 'Create new item',
                 'create_note' => 'A new item with the following properties will be created.',
+                'existing_matches_reminder' => 'Matching name items already exist. Review them before creating another.',
                 'credit' => 'by',
                 'cyrillic_languages' => 'Cyrillic languages',
                 'interface_language' => 'Interface language',
@@ -1815,6 +1835,7 @@ HTML;
                 'confirm_given_name' => 'I confirm that this is a given name.',
                 'confirm_family_name' => 'I confirm that this is a family name.',
                 'given_name_identical_family' => 'Given name equivalent',
+                'family_name_identical_given' => 'Family name equivalent',
                 'choose_another_item' => 'Choose another item',
                 'ready_to_create' => 'Ready to create',
                 'review_required_fields' => 'Review required fields',
@@ -1840,6 +1861,7 @@ HTML;
                 'confidence' => 'Zekerheid',
                 'create_new_item' => 'Nieuw item aanmaken',
                 'create_note' => 'Er wordt een nieuw item met deze eigenschappen aangemaakt.',
+                'existing_matches_reminder' => 'Er bestaan al overeenkomende naamitems. Controleer ze voordat je nog een item aanmaakt.',
                 'credit' => 'door',
                 'cyrillic_languages' => 'Cyrillische talen',
                 'interface_language' => 'Interfacetaal',
@@ -1865,6 +1887,7 @@ HTML;
                 'confirm_given_name' => 'Ik bevestig dat dit een voornaam is.',
                 'confirm_family_name' => 'Ik bevestig dat dit een achternaam is.',
                 'given_name_identical_family' => 'Equivalent als voornaam',
+                'family_name_identical_given' => 'Equivalent als achternaam',
                 'choose_another_item' => 'Ander item kiezen',
                 'ready_to_create' => 'Klaar om op te slaan',
                 'review_required_fields' => 'Velden controleren',
@@ -1890,6 +1913,7 @@ HTML;
                 'confidence' => 'Sicherheit',
                 'create_new_item' => 'Neues Item erstellen',
                 'create_note' => 'Ein neues Item mit den folgenden Eigenschaften wird erstellt.',
+                'existing_matches_reminder' => 'Passende Namensitems existieren bereits. Prüfe sie, bevor du ein weiteres erstellst.',
                 'credit' => 'von',
                 'cyrillic_languages' => 'kyrillische Sprachen',
                 'interface_language' => 'Oberflächensprache',
@@ -1915,6 +1939,7 @@ HTML;
                 'confirm_given_name' => 'Ich bestätige, dass dies ein Vorname ist.',
                 'confirm_family_name' => 'Ich bestätige, dass dies ein Nachname ist.',
                 'given_name_identical_family' => 'Entsprechender Vorname',
+                'family_name_identical_given' => 'Entsprechender Nachname',
                 'choose_another_item' => 'Anderes Item wählen',
                 'ready_to_create' => 'Bereit zum Speichern',
                 'review_required_fields' => 'Felder prüfen',
@@ -1940,6 +1965,7 @@ HTML;
                 'confidence' => 'Confiance',
                 'create_new_item' => 'Créer un nouvel élément',
                 'create_note' => 'Un nouvel élément avec les propriétés suivantes sera créé.',
+                'existing_matches_reminder' => 'Des éléments de nom correspondants existent déjà. Vérifiez-les avant d’en créer un autre.',
                 'credit' => 'par',
                 'cyrillic_languages' => 'langues cyrilliques',
                 'interface_language' => 'Langue de l’interface',
@@ -1965,6 +1991,7 @@ HTML;
                 'confirm_given_name' => 'Je confirme qu’il s’agit d’un prénom.',
                 'confirm_family_name' => 'Je confirme qu’il s’agit d’un nom de famille.',
                 'given_name_identical_family' => 'Prénom équivalent',
+                'family_name_identical_given' => 'Nom de famille équivalent',
                 'choose_another_item' => 'Choisir un autre élément',
                 'ready_to_create' => 'Prêt à enregistrer',
                 'review_required_fields' => 'Vérifier les champs',
@@ -1990,6 +2017,7 @@ HTML;
                 'confidence' => 'Confianza',
                 'create_new_item' => 'Crear elemento nuevo',
                 'create_note' => 'Se creará un elemento nuevo con las siguientes propiedades.',
+                'existing_matches_reminder' => 'Ya existen elementos de nombre coincidentes. Revísalos antes de crear otro.',
                 'credit' => 'por',
                 'cyrillic_languages' => 'idiomas cirílicos',
                 'interface_language' => 'Idioma de la interfaz',
@@ -2015,6 +2043,7 @@ HTML;
                 'confirm_given_name' => 'Confirmo que es un nombre de pila.',
                 'confirm_family_name' => 'Confirmo que es un apellido.',
                 'given_name_identical_family' => 'Nombre de pila equivalente',
+                'family_name_identical_given' => 'Apellido equivalente',
                 'choose_another_item' => 'Elegir otro elemento',
                 'ready_to_create' => 'Listo para guardar',
                 'review_required_fields' => 'Revisar campos',
@@ -2173,6 +2202,7 @@ HTML;
             $isUpdate,
             $existingMulLabel
         );
+        $oppositeTypeUrl = $rootType === NameTypes::FAMILY_NAME ? 'given' : 'family';
         $duplicates = $isUpdate
             ? $this->selectedItemBox(
                 $request,
@@ -2211,7 +2241,9 @@ HTML;
             $isUpdate,
             $requiresConfirmation,
             $selectedItemId,
-            (string) $analysis['name']
+            (string) $analysis['name'],
+            $equivalentItemId,
+            $oppositeTypeUrl
         );
         $reviewRequiredText = $isUpdate
             ? $this->t($uiLanguage, 'update_item')
@@ -2223,6 +2255,13 @@ HTML;
         $applyHeading = $isUpdate ? $reviewUpdates : $createNewItem;
         $createNote = htmlspecialchars($this->t($uiLanguage, 'create_note'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $readyToCreate = htmlspecialchars($isUpdate ? $this->t($uiLanguage, 'update_item') : $this->t($uiLanguage, 'ready_to_create'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $existingMatchReminder = '';
+        if (!$isUpdate && !empty($analysis['sameTypeMatches'])) {
+            $reminderText = htmlspecialchars($this->t($uiLanguage, 'existing_matches_reminder'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            $alreadyExistsLink = htmlspecialchars($this->t($uiLanguage, 'already_exists'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            $reminderDisplay = count($analysis['sameTypeMatches']) === 1 ? 'none' : 'block';
+            $existingMatchReminder = '<p id="existing-match-reminder" class="warning" style="display:' . $reminderDisplay . '">' . $reminderText . ' <a href="#existing-item-section">' . $alreadyExistsLink . ' &uarr;</a></p>';
+        }
         $saveAction = htmlspecialchars($request->getBasePath() . '/index.php/wikidata/save', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $updateStateInput = '';
         if ($isUpdate) {
@@ -2257,6 +2296,7 @@ HTML;
     </section>
     <section>
         <h2>$readyToCreate</h2>
+        $existingMatchReminder
         $action
     </section>
 </form>
@@ -2271,10 +2311,33 @@ HTML;
         bool $requiresConfirmation = false,
         string $selectedItemId = '',
         string $name = '',
+        string $equivalentItemId = '',
+        string $equivalentOppositeTypeUrl = '',
     ): string
     {
+        $hasEquivalent = $equivalentItemId !== '' && preg_match('/^Q\d+$/', $equivalentItemId) === 1;
         $matchWithoutUpdating = htmlspecialchars($this->t($uiLanguage, 'match_without_updating'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        if ($isUpdate) {
+        if ($hasEquivalent) {
+            $equivalentLabel = htmlspecialchars(
+                $equivalentOppositeTypeUrl === 'given'
+                    ? $this->t($uiLanguage, 'given_name_identical_family')
+                    : $this->t($uiLanguage, 'family_name_identical_given'),
+                ENT_QUOTES | ENT_SUBSTITUTE,
+                'UTF-8'
+            );
+            $equivalentUrl = htmlspecialchars(
+                $request->getBasePath() . '/index.php?' . http_build_query([
+                    'name' => $name,
+                    'type' => $equivalentOppositeTypeUrl,
+                    '_equivalent' => $equivalentItemId,
+                    '_analysis' => '1',
+                    'ui' => $uiLanguage,
+                ]),
+                ENT_QUOTES,
+                'UTF-8'
+            );
+            $matchButton = '<a id="match-without-update" class="pill-link secondary-action" href="' . $equivalentUrl . '">' . $equivalentLabel . '</a>';
+        } elseif ($isUpdate) {
             $matchUrl = htmlspecialchars(
                 $request->getBasePath() . '/index.php/people?' . http_build_query([
                     'name_item' => $selectedItemId,
@@ -2717,14 +2780,23 @@ HTML;
         $rootType = in_array((string) ($analysis['selectedType'] ?? ''), [NameTypes::FAMILY_NAME, NameTypes::CHINESE_FAMILY_NAME], true)
             ? NameTypes::FAMILY_NAME
             : NameTypes::GIVEN_NAME;
-        $rootTypeLabel = htmlspecialchars($this->nameTypeLabel($uiLanguage, $rootType), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $sameTypeMatches = $analysis['sameTypeMatches'] ?? [];
+        if ($selectedItem === '' && count($sameTypeMatches) === 1) {
+            $selectedItem = (string) ($sameTypeMatches[0]['id'] ?? '');
+        }
         $createChecked = $selectedItem === '' ? ' checked' : '';
-        $rows = '<tr><td colspan="2"><label class="check featured"><input type="radio" name="existing_item" value=""' . $createChecked . ' data-label="' . $createNewItem . '"><span><strong>' . $createNewItem . '</strong></span></label></td></tr>';
-        foreach (array_slice($analysis['sameTypeMatches'], 0, 8) as $match) {
+        $rows = '';
+        foreach (array_slice($sameTypeMatches, 0, 8) as $match) {
             $id = htmlspecialchars((string) $match['id'], ENT_QUOTES, 'UTF-8');
             $label = htmlspecialchars((string) $match['label'], ENT_QUOTES, 'UTF-8');
             $descriptionText = $this->translatedInstanceList($uiLanguage, $match['instanceLabels'] ?? []) ?: (string) $match['description'];
             $description = htmlspecialchars($descriptionText, ENT_QUOTES, 'UTF-8');
+            $matchType = $this->nameTypeFromInstances($match['instanceOf'] ?? []) ?? $rootType;
+            $matchRootType = in_array($matchType, [NameTypes::FAMILY_NAME, NameTypes::CHINESE_FAMILY_NAME], true)
+                ? NameTypes::FAMILY_NAME
+                : NameTypes::GIVEN_NAME;
+            $matchTypeValue = htmlspecialchars(NameTypes::toUrl($matchType), ENT_QUOTES, 'UTF-8');
+            $matchTypeLabel = htmlspecialchars($this->nameTypeLabel($uiLanguage, $matchRootType), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
             $checked = $selectedItem === (string) $match['id'] ? ' checked' : '';
             $matchUrl = htmlspecialchars(
                 $request->getBasePath() . '/index.php/people?' . http_build_query([
@@ -2741,8 +2813,9 @@ HTML;
             $rows .= "<input type=\"hidden\" data-existing-mul-for=\"$id\" value=\"$existingMul\">";
             $hasExistingNative = empty($match['nativeLabels']) ? '0' : '1';
             $rows .= "<input type=\"hidden\" data-existing-native-for=\"$id\" value=\"$hasExistingNative\">";
-            $rows .= "<tr><td colspan=\"2\"><label class=\"check duplicate-check\"><input type=\"radio\" name=\"existing_item\" value=\"$id\"$checked data-label=\"$label\" data-description=\"$description\" data-type-label=\"$rootTypeLabel\"><span><strong>$label</strong> <a class=\"qid-link\" href=\"https://www.wikidata.org/wiki/$id\" target=\"_blank\" rel=\"noopener noreferrer\">($id)</a><br><span class=\"meta\">$description</span></span><a class=\"match-option\" href=\"$matchUrl\">$matchLabel</a></label></td></tr>";
+            $rows .= "<tr><td colspan=\"2\"><label class=\"check duplicate-check\"><input type=\"radio\" name=\"existing_item\" value=\"$id\"$checked data-label=\"$label\" data-description=\"$description\" data-type=\"$matchTypeValue\" data-type-label=\"$matchTypeLabel\"><span><strong>$label</strong> <a class=\"qid-link\" href=\"https://www.wikidata.org/wiki/$id\" target=\"_blank\" rel=\"noopener noreferrer\">($id)</a><br><span class=\"meta\">$description</span></span><a class=\"match-option\" href=\"$matchUrl\">$matchLabel</a></label></td></tr>";
         }
+        $rows .= '<tr><td colspan="2"><label class="check featured"><input type="radio" name="existing_item" value=""' . $createChecked . ' data-label="' . $createNewItem . '"><span><strong>' . $createNewItem . '</strong></span></label></td></tr>';
 
         return <<<HTML
 <section id="existing-item-section" data-dynamic="{$dynamic}">

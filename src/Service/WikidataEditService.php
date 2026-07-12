@@ -26,7 +26,7 @@ final class WikidataEditService
         $existingClaims = $entityId ? $this->existingClaims($entityId) : [];
         $data = ['claims' => []];
         if (!$entityId) {
-            $data['labels'] = $this->labels($name, $displayLabel, $scriptQid);
+            $data['labels'] = $this->labels($name, $displayLabel, $scriptQid, $nativeLabelLanguage);
         } elseif ($updateTransliteration) {
             $data['labels'] = [
                 'mul' => ['language' => 'mul', 'value' => $displayLabel],
@@ -152,17 +152,27 @@ final class WikidataEditService
     /**
      * @return array<string, array{language: string, value: string}>
      */
-    private function labels(string $name, string $displayLabel, ?string $scriptQid): array
+    private function labels(string $name, string $displayLabel, ?string $scriptQid, string $nativeLabelLanguage): array
     {
         $labels = [
             'mul' => ['language' => 'mul', 'value' => $displayLabel],
         ];
 
-        foreach ($this->scriptLanguages->languageCodesForScript($scriptQid) as $scriptLanguage) {
+        $scriptLanguages = $scriptQid === 'Q8201'
+            ? [$this->hanLabelLanguage($nativeLabelLanguage)]
+            : $this->scriptLanguages->languageCodesForScript($scriptQid);
+        foreach ($scriptLanguages as $scriptLanguage) {
             $labels[$scriptLanguage] = ['language' => $scriptLanguage, 'value' => $name];
         }
 
         return $labels;
+    }
+
+    private function hanLabelLanguage(string $language): string
+    {
+        return preg_match('/^(?:zh|gan|yue)(?:-[a-z0-9]+)?$/', $language) === 1
+            ? $language
+            : 'zh';
     }
 
     /**

@@ -63,10 +63,9 @@ final class RefreshDataCommand extends Command
             $output->writeln('<info>Updated data/script-languages.tsv</info>');
         }
 
-        $this->writeRemoteFile(
+        $this->writePywikibotTransliteration(
             $dataDir . '/transliteration-gadget.js',
-            'https://www.wikidata.org/w/index.php?title=MediaWiki:Gadget-SimpleTransliterate.js&action=raw',
-            'window.transliterateTool'
+            $output,
         );
         $output->writeln('<info>Updated data/transliteration-gadget.js</info>');
 
@@ -106,6 +105,65 @@ final class RefreshDataCommand extends Command
 
         if (!rename($tmp, $path)) {
             @unlink($tmp);
+            throw new RuntimeException('Could not replace file: ' . $path);
+        }
+    }
+
+    /**
+     * Fetch pywikibot transliteration.py and convert it to the gadget JS format.
+     */
+    private function writePywikibotTransliteration(string $path, OutputInterface $output): void
+    {
+        $projectDir = $this->kernel->getProjectDir();
+        $converter = $projectDir . '/build_transliteration_js.py';
+
+        if (!is_file($converter)) {
+            throw new RuntimeException('Converter script not found: ' . $converter);
+        }
+
+        // Download pywikibot transliteration.py
+        $pyUrl = 'https://raw.githubusercontent.com/wikimedia/pywikibot/master/pywikibot/userinterfaces/transliteration.py';
+        $output->writeln('<info>Downloading pywikibot transliteration.py...</info>');
+        $pySource = $this->httpGet($pyUrl);
+
+        // Save to a temp .py file
+        $tmpDir = sys_get_temp_dir();
+        $pyTemp = $tmpDir . '/pywikibot_transliteration_' . bin2hex(random_bytes(8)) . '.py';
+        if (file_put_contents($pyTemp, $pySource) === false) {
+            throw new RuntimeException('Could not write temporary pywikibot file: ' . $pyTemp);
+        }
+
+        // Generate the JS output to a temp file
+        $jsTemp = $path . '.tmp';
+        $cmd = sprintf(
+            'python %s %s %s 2>&1',
+            escapeshellarg($converter),
+            escapeshellarg($pyTemp),
+            escapeshellarg($jsTemp)
+        );
+        exec($cmd, $cmdOutput, $exitCode);
+
+        // Clean up the temp .py file
+        @unlink($pyTemp);
+
+        if ($exitCode !== 0) {
+            throw new RuntimeException('Converter script failed (exit ' . $exitCode . '): ' . implode("\n", $cmdOutput));
+        }
+
+        if (!is_file($jsTemp)) {
+            throw new RuntimeException('Converter script did not produce output file.');
+        }
+
+        // Validate the output
+        $jsContent = file_get_contents($jsTemp);
+        if (!is_string($jsContent) || !str_contains($jsContent, 'window.transliterateTool')) {
+            @unlink($jsTemp);
+            throw new RuntimeException('Generated JS did not contain expected marker: window.transliterateTool');
+        }
+
+        // Atomically replace the target file
+        if (!rename($jsTemp, $path)) {
+            @unlink($jsTemp);
             throw new RuntimeException('Could not replace file: ' . $path);
         }
     }

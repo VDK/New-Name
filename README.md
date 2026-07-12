@@ -14,7 +14,7 @@ Created by [Vera de Kok](https://www.veradekok.nl/). Licensed under the MIT Lice
 
 - Detects likely name type: family name, given name, and male/female/unisex given name.
 - Detects writing system from Unicode script.
-- Suggests transliterations for non-Latin scripts using the bundled Wikidata transliteration gadget data.
+- Suggests transliterations for non-Latin scripts using transliteration data extracted from pywikibot.
 - Suggests Wikidata matches for the selected name type to avoid duplicates.
 - Suggests related name statements:
   - `said to be the same as (P460)`
@@ -119,13 +119,21 @@ Refresh them with:
 php bin/console app:refresh-data
 ```
 
-This command queries Wikidata Query Service, imports the bundled Wikidata gadget sources, and writes files atomically. It is intended for a Toolforge cron job.
+This command queries Wikidata Query Service, downloads the pywikibot
+[transliteration.py](https://github.com/wikimedia/pywikibot/blob/master/pywikibot/userinterfaces/transliteration.py)
+and converts it to the bundled gadget format, and writes files atomically.
+Intended for a Toolforge cron job.
 
 To refresh only the gadget sources:
 
 ```bash
 php bin/console app:refresh-data --only-gadgets
 ```
+
+The transliteration data comes directly from pywikibot's `_trans` dictionary,
+which is more actively maintained than the older Wikidata gadget copy.
+The converter scripts (`build_transliteration_js.py` and `convert_trans.py`)
+handle extracting the Python dict and generating the JS bundle.
 
 On Toolforge, replace the scheduled refresh job with:
 

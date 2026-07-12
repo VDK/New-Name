@@ -5,7 +5,7 @@ namespace App\Service;
 final class NameTransliterator
 {
     /**
-     * Uses the bundled Wikidata gadget dictionary first, with a small fallback map.
+     * Uses the bundled pywikibot-derived dictionary first, with a small fallback map.
      */
     public function transliterate(string $name, ?array $script): string
     {

@@ -26,6 +26,7 @@ final class NameAnalyzer
             $selectedItemId = '';
         }
         $selectedType = $this->normalizeSelectedType($selectedType);
+        $typeWasSelected = $selectedType !== null;
         $script = $this->scriptDetector->detect($name);
         $affixes = $this->affixDetector->detect($name);
         $matches = $this->wikidataClient->searchItems($name);
@@ -88,6 +89,14 @@ final class NameAnalyzer
             }
         }
 
+        $sameTypeMatches = $this->sameTypeMatches($matches, $instances, $scripts, $nativeLabels, $mulLabels, $type, $name, $script);
+        if (!$typeWasSelected) {
+            $sameTypeMatches = $this->mergeMatchesById(
+                $this->sameTypeMatches($matches, $instances, $scripts, $nativeLabels, $mulLabels, NameTypes::GIVEN_NAME, $name, $script),
+                $this->sameTypeMatches($matches, $instances, $scripts, $nativeLabels, $mulLabels, NameTypes::FAMILY_NAME, $name, $script),
+            );
+        }
+
         return [
             'name' => $name,
             'selectedType' => $type,
@@ -96,7 +105,7 @@ final class NameAnalyzer
             'script' => $script,
             'affixes' => $affixes,
             'matches' => $this->shapeMatches($matches, $instances, $scripts, $nativeLabels, $mulLabels, $script),
-            'sameTypeMatches' => $this->sameTypeMatches($matches, $instances, $scripts, $nativeLabels, $mulLabels, $type, $name, $script),
+            'sameTypeMatches' => $sameTypeMatches,
             'descriptions' => $this->descriptionSet->forType($type, $name),
             'claims' => $this->claimsFor($type, $script),
             'relationshipSuggestions' => $this->relationshipSuggestions(
@@ -234,6 +243,25 @@ final class NameAnalyzer
         return array_values($matches);
     }
 
+    /**
+     * @param list<array<string, mixed>> ...$groups
+     * @return list<array<string, mixed>>
+     */
+    private function mergeMatchesById(array ...$groups): array
+    {
+        $matches = [];
+        foreach ($groups as $group) {
+            foreach ($group as $match) {
+                $id = (string) ($match['id'] ?? '');
+                if ($id !== '' && !isset($matches[$id])) {
+                    $matches[$id] = $match;
+                }
+            }
+        }
+
+        return array_values($matches);
+    }
+
     private function rootTypeItem(string $type): string
     {
         if ($this->isFamilyNameType($type)) {
@@ -331,15 +359,49 @@ final class NameAnalyzer
 
         $foldedName = $this->foldName($name);
         $detectedScriptQid = is_array($detectedScript) ? (string) ($detectedScript['qid'] ?? '') : '';
-        $sameType = array_values(array_filter($matches, function (array $match) use ($instances, $scripts, $compatibleItems, $foldedName, $detectedScriptQid): bool {
+        $sameType = array_values(array_filter($matches, function (array $match) use ($instances, $scripts, $nativeLabels, $mulLabels, $compatibleItems, $foldedName, $detectedScriptQid): bool {
             $matchScripts = $scripts[$match['id']] ?? [];
 
+            $candidateNames = [
+                (string) ($match['label'] ?? ''),
+                (string) ($mulLabels[$match['id']] ?? ''),
+                ...($nativeLabels[$match['id']] ?? []),
+            ];
+            $nameMatches = false;
+            foreach ($candidateNames as $candidateName) {
+                foreach ($this->nativeLabelVariants($candidateName) as $variant) {
+                    if ($this->foldName($variant) === $foldedName) {
+                        $nameMatches = true;
+                        break 2;
+                    }
+                }
+            }
+
+            // Han name items may use either the generic Chinese-character item
+            // or a language-specific writing-system item such as Japanese.
+            $scriptMatches = $detectedScriptQid === ''
+                || $detectedScriptQid === 'Q8201'
+                || in_array($detectedScriptQid, $matchScripts, true);
+
             return array_intersect($compatibleItems, $instances[$match['id']] ?? []) !== []
-                && ($detectedScriptQid === '' || in_array($detectedScriptQid, $matchScripts, true))
-                && $this->foldName((string) $match['label']) === $foldedName;
+                && $scriptMatches
+                && $nameMatches;
         }));
 
         return $this->shapeMatches($sameType, $instances, $scripts, $nativeLabels, $mulLabels, $detectedScript);
+    }
+
+    /**
+     * Wikidata native-name values occasionally contain parallel script forms,
+     * for example "美麗 / 美丽". Treat those as separate exact names.
+     *
+     * @return list<string>
+     */
+    private function nativeLabelVariants(string $value): array
+    {
+        $variants = preg_split('/\s*[\/／]\s*/u', trim($value)) ?: [];
+
+        return array_values(array_filter(array_unique($variants), static fn (string $variant): bool => $variant !== ''));
     }
 
     /**

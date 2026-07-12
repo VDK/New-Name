@@ -151,6 +151,12 @@
 			return;
 		}
 
+		// Don't show in qualifier fields
+		if ( $( event.target ).closest( '.wikibase-statementview-qualifiers' ).length ) {
+			currentInfo = null;
+			return;
+		}
+
 		scheduleUpdates();
 	}
 

@@ -353,7 +353,7 @@ HTML;
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>New Name</title>
 <style>
-$this->pageStyles()
+{$this->pageStyles()}
 </style>
 </head>
 <body><main>
@@ -361,7 +361,7 @@ $this->pageStyles()
 $universalSearch
 $selectedItemBlock$invalid$message$resultBlock
 </main>
-<script>$this->pagePeopleScript($base, $ui, $safeNameItemId, $safeQuery)</script>
+<script>{$this->pagePeopleScript($base, $ui, $safeNameItemId, $safeQuery)}</script>
 </body>
 </html>
 HTML;
