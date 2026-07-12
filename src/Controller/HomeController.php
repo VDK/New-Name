@@ -177,6 +177,27 @@ final class HomeController
         $relationshipSearchUrl = json_encode($request->getBasePath() . '/index.php/api/name-relationships', JSON_THROW_ON_ERROR);
         $scriptPreviewUrl = json_encode($request->getBasePath() . '/index.php/api/script-preview', JSON_THROW_ON_ERROR);
         $peopleBaseUrl = json_encode($request->getBasePath() . '/index.php/people', JSON_THROW_ON_ERROR);
+        $jsHasEquivalent = $equivalentItemId !== '' && preg_match('/^Q\d+$/', $equivalentItemId) === 1 ? 'true' : 'false';
+        $jsEquivalentUrl = 'null';
+        $jsEquivalentLabel = 'null';
+        if ($equivalentItemId !== '' && preg_match('/^Q\d+$/', $equivalentItemId) === 1) {
+            $analysisType = $analysis ? (string) ($analysis['selectedType'] ?? '') : '';
+            $isFamily = in_array($analysisType, [NameTypes::FAMILY_NAME, NameTypes::CHINESE_FAMILY_NAME], true);
+            $jsEquivalentUrl = json_encode(
+                $request->getBasePath() . '/index.php?' . http_build_query([
+                    'name' => $name,
+                    'type' => $isFamily ? 'given' : 'family',
+                    '_equivalent' => $equivalentItemId,
+                    '_analysis' => '1',
+                    'ui' => $uiLanguage,
+                ]),
+                JSON_THROW_ON_ERROR
+            );
+            $equivalentLabel = $isFamily
+                ? $this->t($uiLanguage, 'given_name_identical_family')
+                : $this->t($uiLanguage, 'family_name_identical_given');
+            $jsEquivalentLabel = json_encode($equivalentLabel, JSON_THROW_ON_ERROR);
+        }
         $nameAffixes = json_encode($this->nameAffixes(), JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
         $matchAction = htmlspecialchars($this->t($uiLanguage, 'match'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $jsCreateNewItem = json_encode($this->t($uiLanguage, 'create_new_item'), JSON_THROW_ON_ERROR);
@@ -1277,9 +1298,14 @@ final class HomeController
                 }
                 if (selectedItemMatch) {
                     var selectedName = document.querySelector('.review input[name="name"]');
-                    selectedItemMatch.href = $peopleBaseUrl + '?name_item=' + encodeURIComponent(qid)
-                        + '&person_query=' + encodeURIComponent(selectedName ? selectedName.value : label)
-                        + '&ui=' + encodeURIComponent('$safeUiLanguage');
+                    if ($jsHasEquivalent && $jsEquivalentUrl) {
+                        selectedItemMatch.href = $jsEquivalentUrl;
+                        if ($jsEquivalentLabel) selectedItemMatch.textContent = $jsEquivalentLabel;
+                    } else {
+                        selectedItemMatch.href = $peopleBaseUrl + '?name_item=' + encodeURIComponent(qid)
+                            + '&person_query=' + encodeURIComponent(selectedName ? selectedName.value : label)
+                            + '&ui=' + encodeURIComponent('$safeUiLanguage');
+                    }
                 }
             } else {
                 if (existingItemHeading) existingItemHeading.textContent = $jsAlreadyExists;
@@ -2211,7 +2237,9 @@ HTML;
                 (string) ($selectedMatch['description'] ?? ''),
                 $rootTypeLabel,
                 (string) $analysis['name'],
-                $uiLanguage
+                $uiLanguage,
+                $equivalentItemId,
+                $oppositeTypeUrl
             )
             : $this->duplicates($request, $analysis, $uiLanguage, '', true);
         $generatedTransliteration = $this->defaultTransliteration((string) $analysis['name'], $analysis['script'] ?? null, $transliterator);
@@ -2241,9 +2269,7 @@ HTML;
             $isUpdate,
             $requiresConfirmation,
             $selectedItemId,
-            (string) $analysis['name'],
-            $equivalentItemId,
-            $oppositeTypeUrl
+            (string) $analysis['name']
         );
         $reviewRequiredText = $isUpdate
             ? $this->t($uiLanguage, 'update_item')
@@ -2311,33 +2337,10 @@ HTML;
         bool $requiresConfirmation = false,
         string $selectedItemId = '',
         string $name = '',
-        string $equivalentItemId = '',
-        string $equivalentOppositeTypeUrl = '',
     ): string
     {
-        $hasEquivalent = $equivalentItemId !== '' && preg_match('/^Q\d+$/', $equivalentItemId) === 1;
         $matchWithoutUpdating = htmlspecialchars($this->t($uiLanguage, 'match_without_updating'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        if ($hasEquivalent) {
-            $equivalentLabel = htmlspecialchars(
-                $equivalentOppositeTypeUrl === 'given'
-                    ? $this->t($uiLanguage, 'given_name_identical_family')
-                    : $this->t($uiLanguage, 'family_name_identical_given'),
-                ENT_QUOTES | ENT_SUBSTITUTE,
-                'UTF-8'
-            );
-            $equivalentUrl = htmlspecialchars(
-                $request->getBasePath() . '/index.php?' . http_build_query([
-                    'name' => $name,
-                    'type' => $equivalentOppositeTypeUrl,
-                    '_equivalent' => $equivalentItemId,
-                    '_analysis' => '1',
-                    'ui' => $uiLanguage,
-                ]),
-                ENT_QUOTES,
-                'UTF-8'
-            );
-            $matchButton = '<a id="match-without-update" class="pill-link secondary-action" href="' . $equivalentUrl . '">' . $equivalentLabel . '</a>';
-        } elseif ($isUpdate) {
+        if ($isUpdate) {
             $matchUrl = htmlspecialchars(
                 $request->getBasePath() . '/index.php/people?' . http_build_query([
                     'name_item' => $selectedItemId,
@@ -2735,22 +2738,44 @@ HTML;
     /**
      * @param array<string, mixed> $analysis
      */
-    private function selectedItemBox(Request $request, string $id, string $label, string $description, string $typeLabel, string $name, string $uiLanguage): string
+    private function selectedItemBox(Request $request, string $id, string $label, string $description, string $typeLabel, string $name, string $uiLanguage, string $equivalentItemId = '', string $oppositeTypeUrl = ''): string
     {
         $heading = htmlspecialchars($this->t($uiLanguage, 'selected_item'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $safeId = htmlspecialchars($id, ENT_QUOTES, 'UTF-8');
         $safeLabel = htmlspecialchars($label, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $safeDescription = htmlspecialchars($description !== '' ? $description : $typeLabel, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        $matchLabel = htmlspecialchars($this->t($uiLanguage, 'match'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        $matchUrl = htmlspecialchars(
-            $request->getBasePath() . '/index.php/people?' . http_build_query([
-                'name_item' => $id,
-                'person_query' => $name,
-                'ui' => $uiLanguage,
-            ]),
-            ENT_QUOTES,
-            'UTF-8'
-        );
+        if ($equivalentItemId !== '' && preg_match('/^Q\d+$/', $equivalentItemId) === 1) {
+            $matchLabel = htmlspecialchars(
+                $oppositeTypeUrl === 'given'
+                    ? $this->t($uiLanguage, 'given_name_identical_family')
+                    : $this->t($uiLanguage, 'family_name_identical_given'),
+                ENT_QUOTES | ENT_SUBSTITUTE,
+                'UTF-8'
+            );
+            $equivalentUrl = htmlspecialchars(
+                $request->getBasePath() . '/index.php?' . http_build_query([
+                    'name' => $name,
+                    'type' => $oppositeTypeUrl,
+                    '_equivalent' => $equivalentItemId,
+                    '_analysis' => '1',
+                    'ui' => $uiLanguage,
+                ]),
+                ENT_QUOTES,
+                'UTF-8'
+            );
+            $matchUrl = $equivalentUrl;
+        } else {
+            $matchLabel = htmlspecialchars($this->t($uiLanguage, 'match'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            $matchUrl = htmlspecialchars(
+                $request->getBasePath() . '/index.php/people?' . http_build_query([
+                    'name_item' => $id,
+                    'person_query' => $name,
+                    'ui' => $uiLanguage,
+                ]),
+                ENT_QUOTES,
+                'UTF-8'
+            );
+        }
 
         return <<<HTML
 <section id="existing-item-section">
