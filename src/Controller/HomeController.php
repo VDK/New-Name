@@ -2269,7 +2269,9 @@ HTML;
             $isUpdate,
             $requiresConfirmation,
             $selectedItemId,
-            (string) $analysis['name']
+            (string) $analysis['name'],
+            $equivalentItemId,
+            $oppositeTypeUrl
         );
         $reviewRequiredText = $isUpdate
             ? $this->t($uiLanguage, 'update_item')
@@ -2337,10 +2339,33 @@ HTML;
         bool $requiresConfirmation = false,
         string $selectedItemId = '',
         string $name = '',
+        string $equivalentItemId = '',
+        string $equivalentOppositeTypeUrl = '',
     ): string
     {
         $matchWithoutUpdating = htmlspecialchars($this->t($uiLanguage, 'match_without_updating'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        if ($isUpdate) {
+        $hasEquivalent = $equivalentItemId !== '' && preg_match('/^Q\d+$/', $equivalentItemId) === 1 && !$isUpdate;
+        if ($hasEquivalent) {
+            $equivalentLabel = htmlspecialchars(
+                $equivalentOppositeTypeUrl === 'given'
+                    ? $this->t($uiLanguage, 'given_name_identical_family')
+                    : $this->t($uiLanguage, 'family_name_identical_given'),
+                ENT_QUOTES | ENT_SUBSTITUTE,
+                'UTF-8'
+            );
+            $equivalentUrl = htmlspecialchars(
+                $request->getBasePath() . '/index.php?' . http_build_query([
+                    'name' => $name,
+                    'type' => $equivalentOppositeTypeUrl,
+                    '_equivalent' => $equivalentItemId,
+                    '_analysis' => '1',
+                    'ui' => $uiLanguage,
+                ]),
+                ENT_QUOTES,
+                'UTF-8'
+            );
+            $matchButton = '<a id="match-without-update" class="pill-link secondary-action" href="' . $equivalentUrl . '">' . $equivalentLabel . '</a>';
+        } elseif ($isUpdate) {
             $matchUrl = htmlspecialchars(
                 $request->getBasePath() . '/index.php/people?' . http_build_query([
                     'name_item' => $selectedItemId,
