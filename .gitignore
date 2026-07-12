@@ -9,3 +9,8 @@
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
+
+__pycache__/
+*.pyc
+build_transliteration_js.py
+convert_trans.py
