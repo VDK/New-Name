@@ -176,7 +176,7 @@ final class HomeController
         $nameItemSearchUrl = json_encode($request->getBasePath() . '/index.php/api/name-items', JSON_THROW_ON_ERROR);
         $relationshipSearchUrl = json_encode($request->getBasePath() . '/index.php/api/name-relationships', JSON_THROW_ON_ERROR);
         $scriptPreviewUrl = json_encode($request->getBasePath() . '/index.php/api/script-preview', JSON_THROW_ON_ERROR);
-        $peopleBaseUrl = json_encode($request->getBasePath() . '/index.php/people', JSON_THROW_ON_ERROR);
+        $peopleBaseUrl = json_encode($request->getBasePath() . '/index.php/match', JSON_THROW_ON_ERROR);
         $jsHasEquivalent = $equivalentItemId !== '' && preg_match('/^Q\d+$/', $equivalentItemId) === 1 ? 'true' : 'false';
         $jsEquivalentUrl = 'null';
         $jsEquivalentLabel = 'null';
@@ -1303,7 +1303,6 @@ final class HomeController
                         if ($jsEquivalentLabel) selectedItemMatch.textContent = $jsEquivalentLabel;
                     } else {
                         selectedItemMatch.href = $peopleBaseUrl + '?name_item=' + encodeURIComponent(qid)
-                            + '&person_query=' + encodeURIComponent(selectedName ? selectedName.value : label)
                             + '&ui=' + encodeURIComponent('$safeUiLanguage');
                     }
                 }
@@ -1315,7 +1314,6 @@ final class HomeController
                 if (matchWithoutUpdate && !($jsHasEquivalent && $jsEquivalentUrl)) {
                     var selectedName = document.querySelector('.review input[name="name"]');
                     matchWithoutUpdate.href = $peopleBaseUrl + '?name_item=' + encodeURIComponent(qid)
-                        + '&person_query=' + encodeURIComponent(selectedName ? selectedName.value : label)
                         + '&ui=' + encodeURIComponent('$safeUiLanguage');
                 }
             }
@@ -1462,7 +1460,6 @@ final class HomeController
                 var match = document.createElement('a');
                 match.className = 'match-option';
                 match.href = $peopleBaseUrl + '?name_item=' + encodeURIComponent(item.id)
-                    + '&person_query=' + encodeURIComponent(nativeLabel.value.trim())
                     + '&ui=' + encodeURIComponent('$safeUiLanguage');
                 match.textContent = '$matchAction';
                 label.appendChild(radio);
@@ -1606,7 +1603,6 @@ final class HomeController
             matchButton.addEventListener('click', function() {
                 if (!itemValue.value) return;
                 window.location = $peopleBaseUrl + '?name_item=' + encodeURIComponent(itemValue.value)
-                    + '&person_query=' + encodeURIComponent(input.value.trim())
                     + '&ui=' + encodeURIComponent('$safeUiLanguage');
             });
             input.form.addEventListener('submit', function() {
@@ -1727,7 +1723,6 @@ final class HomeController
                     var name = document.querySelector('.review input[name="name"]');
                     if (!selected || !selected.value || !name) return;
                     window.location = $peopleBaseUrl + '?name_item=' + encodeURIComponent(selected.value)
-                        + '&person_query=' + encodeURIComponent(name.value)
                         + '&ui=' + encodeURIComponent('$safeUiLanguage');
                 });
             }
@@ -2373,9 +2368,8 @@ HTML;
             $matchButton = '<a id="match-without-update" class="pill-link secondary-action" href="' . $equivalentUrl . '">' . $equivalentLabel . '</a>';
         } elseif ($isUpdate) {
             $matchUrl = htmlspecialchars(
-                $request->getBasePath() . '/index.php/people?' . http_build_query([
+                $request->getBasePath() . '/index.php/match?' . http_build_query([
                     'name_item' => $selectedItemId,
-                    'person_query' => $name,
                     'ui' => $uiLanguage,
                 ]),
                 ENT_QUOTES,
@@ -2798,9 +2792,8 @@ HTML;
         } else {
             $matchLabel = htmlspecialchars($this->t($uiLanguage, 'match'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
             $matchUrl = htmlspecialchars(
-                $request->getBasePath() . '/index.php/people?' . http_build_query([
+                $request->getBasePath() . '/index.php/match?' . http_build_query([
                     'name_item' => $id,
-                    'person_query' => $name,
                     'ui' => $uiLanguage,
                 ]),
                 ENT_QUOTES,
@@ -2855,9 +2848,8 @@ HTML;
             $matchTypeLabel = htmlspecialchars($this->nameTypeLabel($uiLanguage, $matchRootType), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
             $checked = $selectedItem === (string) $match['id'] ? ' checked' : '';
             $matchUrl = htmlspecialchars(
-                $request->getBasePath() . '/index.php/people?' . http_build_query([
+                $request->getBasePath() . '/index.php/match?' . http_build_query([
                     'name_item' => (string) $match['id'],
-                    'person_query' => (string) $analysis['name'],
                     'ui' => $uiLanguage,
                 ]),
                 ENT_QUOTES,

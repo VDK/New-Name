@@ -81,15 +81,15 @@ final class PersonNameController
         ]);
     }
 
-    #[Route('/people', name: 'person_name', methods: ['GET'])]
+    #[Route('/match', name: 'person_name', methods: ['GET'])]
     public function index(Request $request, WikidataClient $wikidataClient): Response
     {
         $nameItemId = strtoupper(trim((string) $request->query->get('name_item', '')));
-        $query = trim((string) $request->query->get('person_query', ''));
+        $nameItem = $nameItemId !== '' ? $wikidataClient->nameItem($nameItemId) : null;
+        $query = $nameItem['label'] ?? '';
         $flashStatus = $request->getSession()->getFlashBag()->get('save_status');
         $status = $flashStatus ? $flashStatus[0] : (string) $request->query->get('status', '');
         $personId = strtoupper(trim((string) $request->query->get('person', '')));
-        $nameItem = $nameItemId !== '' ? $wikidataClient->nameItem($nameItemId) : null;
         $page = $nameItem && $query !== ''
             ? $wikidataClient->personMatchesPage(
                 $query,
@@ -112,7 +112,7 @@ final class PersonNameController
         return $response;
     }
 
-    #[Route('/people/save', name: 'person_name_save', methods: ['POST'])]
+    #[Route('/match/save', name: 'person_name_save', methods: ['POST'])]
     public function save(
         Request $request,
         WikimediaOAuthClient $oauthClient,
@@ -125,7 +125,6 @@ final class PersonNameController
         $property = (string) $request->request->get('property', '');
         $ordinal = trim((string) $request->request->get('ordinal', ''));
         $action = (string) $request->request->get('edit_action', 'add');
-        $query = trim((string) $request->request->get('person_query', ''));
         $ui = (string) $request->request->get('ui', 'en');
         $nameItem = $wikidataClient->nameItem($nameItemId);
 
@@ -146,7 +145,6 @@ final class PersonNameController
 
         $returnParams = [
             'name_item' => $nameItemId,
-            'person_query' => $query,
             'ui' => $ui,
         ];
         if (!$oauthClient->isAuthorized()) {
@@ -297,7 +295,7 @@ HTML;
                 $detail = $description !== '' ? '<br><span class="muted">' . $description . '</span>' : '';
                 $scriptMatch = $matchedLabel !== $label ? '<br><span class="muted">Matched label: ' . $matchedLabel . '</span>' : '';
                 $results .= <<<HTML
-<form class="person person-match" method="post" action="$base/people/save" data-person-id="$id">
+<form class="person person-match" method="post" action="$base/match/save" data-person-id="$id">
     <input type="hidden" name="person" value="$id">
     <input type="hidden" name="person_query" value="$safeQuery">
     <input type="hidden" name="ui" value="$ui">
@@ -601,8 +599,7 @@ CSS;
     });
     match.addEventListener('click', function () {
         if (!value.value) return;
-        window.location = '$base/people?name_item=' + encodeURIComponent(value.value)
-            + '&person_query=' + encodeURIComponent(input.value.trim())
+        window.location = '$base/match?name_item=' + encodeURIComponent(value.value)
             + '&ui=' + encodeURIComponent('$ui');
     });
     document.addEventListener('click', function (event) {
