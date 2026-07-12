@@ -1312,6 +1312,12 @@ final class HomeController
                 if (existingItemHint) existingItemHint.style.display = '';
                 if (existingItemOptions) existingItemOptions.style.display = '';
                 if (selectedItemCard) selectedItemCard.style.display = 'none';
+                if (matchWithoutUpdate && !($jsHasEquivalent && $jsEquivalentUrl)) {
+                    var selectedName = document.querySelector('.review input[name="name"]');
+                    matchWithoutUpdate.href = $peopleBaseUrl + '?name_item=' + encodeURIComponent(qid)
+                        + '&person_query=' + encodeURIComponent(selectedName ? selectedName.value : label)
+                        + '&ui=' + encodeURIComponent('$safeUiLanguage');
+                }
             }
             if (heading) heading.textContent = $jsReviewUpdates;
             if (note) note.style.display = 'none';
@@ -2377,7 +2383,7 @@ HTML;
             );
             $matchButton = '<a id="match-without-update" class="pill-link secondary-action" href="' . $matchUrl . '">' . $matchWithoutUpdating . '</a>';
         } else {
-            $matchButton = '<button id="match-without-update" class="secondary-action" type="button" style="display:none">' . $matchWithoutUpdating . '</button>';
+            $matchButton = '<a id="match-without-update" class="pill-link secondary-action" href="#" style="display:none">' . $matchWithoutUpdating . '</a>';
         }
         $confirmation = '';
         if ($requiresConfirmation) {
