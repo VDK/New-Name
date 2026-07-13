@@ -73,6 +73,9 @@ final class NameTypes
         self::UNISEX_GIVEN_NAME => ['Q3409032'],
     ];
 
+    /** All P31 Q-IDs for name-type items, used for haswbstatement filtering. */
+    public const NAME_TYPE_QIDS = ['Q101352', 'Q66480858', 'Q60558422', 'Q202444', 'Q12308941', 'Q11879590', 'Q3409032'];
+
     public static function fromUrl(?string $type): ?string
     {
         if ($type === null || $type === '') {

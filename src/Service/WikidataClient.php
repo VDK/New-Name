@@ -9,26 +9,34 @@ final class WikidataClient
     public const HUMAN = 'Q5';
 
     /**
+     * @param list<string> $haswbstatement P31 Q-IDs to filter by (e.g. ['Q101352', 'Q202444'])
      * @return array<int, array{id: string, label: string, description: string}>
      */
-    public function searchItems(string $search, string $language = 'en', int $limit = 10): array
+    public function searchItems(string $search, string $language = 'en', int $limit = 10, array $haswbstatement = []): array
     {
         if (trim($search) === '') {
             return [];
         }
 
+        $params = [
+            'action' => 'wbsearchentities',
+            'format' => 'json',
+            'type' => 'item',
+            'search' => $search,
+            'language' => $language,
+            'uselang' => $language,
+            'limit' => max(1, min(50, $limit)),
+        ];
+        if ($haswbstatement !== []) {
+            $params['haswbstatement'] = 'P31=' . implode('|', $haswbstatement);
+        }
+
         $items = [];
         $seen = [];
         foreach ($this->searchLanguages($language) as $searchLanguage) {
-            $data = $this->api([
-                'action' => 'wbsearchentities',
-                'format' => 'json',
-                'type' => 'item',
-                'search' => $search,
-                'language' => $searchLanguage,
-                'uselang' => $searchLanguage,
-                'limit' => max(1, min(50, $limit)),
-            ]);
+            $params['language'] = $searchLanguage;
+            $params['uselang'] = $searchLanguage;
+            $data = $this->api($params);
 
             foreach ($data['search'] ?? [] as $hit) {
                 $id = (string) ($hit['id'] ?? '');

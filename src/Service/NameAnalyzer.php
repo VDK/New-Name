@@ -29,9 +29,12 @@ final class NameAnalyzer
         $typeWasSelected = $selectedType !== null;
         $script = $this->scriptDetector->detect($name);
         $affixes = $this->affixDetector->detect($name);
-        $matches = $this->wikidataClient->searchItems($name);
+        $typeQids = $selectedType && isset(NameTypes::TYPE_ITEMS[$selectedType])
+            ? array_values(array_unique([NameTypes::TYPE_ITEMS[$selectedType], ...($this->compatibleTypeItems($selectedType))]))
+            : NameTypes::NAME_TYPE_QIDS;
+        $matches = $this->wikidataClient->searchItems($name, 'en', 10, $typeQids);
         if ($transliteration !== '' && $this->foldName($transliteration) !== $this->foldName($name)) {
-            $matches = $this->mergeMatches($matches, $this->wikidataClient->searchItems($transliteration));
+            $matches = $this->mergeMatches($matches, $this->wikidataClient->searchItems($transliteration, 'en', 10, $typeQids));
         }
         $analysisData = $this->wikidataClient->itemAnalysisData(array_column($matches, 'id'));
         $instances = $analysisData['instances'];
