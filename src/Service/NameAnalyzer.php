@@ -33,6 +33,14 @@ final class NameAnalyzer
         if ($transliteration !== '' && $this->foldName($transliteration) !== $this->foldName($name)) {
             $matches = $this->mergeMatches($matches, $this->wikidataClient->searchItems($transliteration));
         }
+
+        $typeQids = NameTypes::NAME_TYPE_QIDS;
+        $filteredIds = $this->wikidataClient->filterByType(array_column($matches, 'id'), $typeQids);
+        $matches = array_values(array_filter(
+            $matches,
+            static fn (array $m): bool => in_array($m['id'] ?? '', $filteredIds, true),
+        ));
+
         $analysisData = $this->wikidataClient->itemAnalysisData(array_column($matches, 'id'));
         $instances = $analysisData['instances'];
 

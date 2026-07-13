@@ -985,6 +985,40 @@ SPARQL;
     }
 
     /**
+     * @param list<string> $ids
+     * @param list<string> $allowedP31 P31 Q-IDs to keep (OR filter)
+     * @return list<string> IDs that have any of the allowed P31 values
+     */
+    public function filterByType(array $ids, array $allowedP31): array
+    {
+        $ids = array_values(array_filter(array_unique($ids), static fn (string $id): bool => preg_match('/^Q\d+$/', $id) === 1));
+        if (!$ids || !$allowedP31) {
+            return $ids;
+        }
+
+        $values = 'wd:' . implode(' wd:', $ids);
+        $types = 'wd:' . implode(' wd:', $allowedP31);
+        $query = <<<SPARQL
+SELECT ?item WHERE {
+  VALUES ?item { $values }
+  ?item wdt:P31 ?type .
+  VALUES ?type { $types }
+}
+SPARQL;
+
+        $data = $this->sparql($query);
+        $result = [];
+        foreach ($data['results']['bindings'] ?? [] as $row) {
+            $qid = basename($row['item']['value'] ?? '');
+            if (preg_match('/^Q\d+$/', $qid) === 1) {
+                $result[$qid] = true;
+            }
+        }
+
+        return array_values(array_intersect($ids, array_keys($result)));
+    }
+
+    /**
      * @return array<string, mixed>
      */
     private function sparql(string $query): array
