@@ -33,12 +33,7 @@ final class WikidataEditService
             ];
         }
         if (!$entityId || in_array('overwrite_descriptions', $apply, true)) {
-            $descriptions = $this->descriptions($type, $name, $name);
-            if ($entityId) {
-                $existingLabels = $this->existingLabels($entityId);
-                $descriptions = array_diff_key($descriptions, $existingLabels);
-            }
-            $data['descriptions'] = $descriptions;
+            $data['descriptions'] = $this->descriptions($type, $name, $name);
         }
 
         $typeQid = NameTypes::TYPE_ITEMS[$type] ?? NameTypes::TYPE_ITEMS[NameTypes::GIVEN_NAME];
@@ -93,7 +88,21 @@ final class WikidataEditService
             $mode = 'created';
         }
 
-        $result = $this->oauthClient->signedPost(WikimediaOAuthClient::WIKIDATA_API_URL, $params);
+        try {
+            $result = $this->oauthClient->signedPost(WikimediaOAuthClient::WIKIDATA_API_URL, $params);
+        } catch (RuntimeException $e) {
+            $message = $e->getMessage();
+            if ($entityId && str_contains($message, 'modification-failed') && str_contains($message, 'already has label')) {
+                return [
+                    'entityId' => $entityId,
+                    'mode' => 'updated',
+                    'relatedUpdates' => 0,
+                    'inverseRelationshipUpdates' => 0,
+                    'warnings' => ['Could not update descriptions: label+description conflict — the item already has the necessary labels.'],
+                ];
+            }
+            throw $e;
+        }
         $entityId = $result['entity']['id'] ?? $entityId;
         if (!is_string($entityId) || $entityId === '') {
             throw new RuntimeException('Wikidata edit succeeded but no entity id was returned.');
@@ -216,23 +225,6 @@ final class WikidataEditService
         $claims = $data['entities'][$entityId]['claims'] ?? [];
 
         return is_array($claims) ? $claims : [];
-    }
-
-    /**
-     * @return array<string, true>
-     */
-    private function existingLabels(string $entityId): array
-    {
-        $data = $this->oauthClient->signedPost(WikimediaOAuthClient::WIKIDATA_API_URL, [
-            'action' => 'wbgetentities',
-            'format' => 'json',
-            'ids' => $entityId,
-            'props' => 'labels',
-        ]);
-
-        $labels = $data['entities'][$entityId]['labels'] ?? [];
-
-        return is_array($labels) ? array_fill_keys(array_keys($labels), true) : [];
     }
 
     /**
