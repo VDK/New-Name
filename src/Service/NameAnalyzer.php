@@ -379,8 +379,11 @@ final class NameAnalyzer
 
             // Han name items may use either the generic Chinese-character item
             // or a language-specific writing-system item such as Japanese.
+            // Items without any writing-system claim are also accepted — many
+            // given-name items lack P282 entirely.
             $scriptMatches = $detectedScriptQid === ''
                 || $detectedScriptQid === 'Q8201'
+                || $matchScripts === []
                 || in_array($detectedScriptQid, $matchScripts, true);
 
             return array_intersect($compatibleItems, $instances[$match['id']] ?? []) !== []

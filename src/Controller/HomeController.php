@@ -210,6 +210,7 @@ final class HomeController
         $jsLocatedAt = json_encode($this->t($uiLanguage, 'located_at'), JSON_THROW_ON_ERROR);
         $jsSelectedItem = json_encode($this->t($uiLanguage, 'selected_item'), JSON_THROW_ON_ERROR);
         $jsAlreadyExists = json_encode($this->t($uiLanguage, 'already_exists'), JSON_THROW_ON_ERROR);
+        $jsAnalysisName = json_encode($name, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
         $jsNotSet = json_encode($this->t($uiLanguage, 'not_set'), JSON_THROW_ON_ERROR);
         $analysisUrl = 'null';
         if ($analysisPending) {
@@ -1200,7 +1201,7 @@ final class HomeController
                 if (nativeLabelInput) nativeLabelInput.readOnly = false;
                 if (nativeLabelLocked) nativeLabelLocked.style.display = 'none';
                 if (nativeLabelRow) nativeLabelRow.style.display = '';
-                if (existingItemHeading) existingItemHeading.textContent = $jsAlreadyExists;
+                if (existingItemHeading) existingItemHeading.textContent = $jsAnalysisName !== '' ? 'Does "' + $jsAnalysisName + '" already exist?' : $jsAlreadyExists;
                 if (existingItemHint) existingItemHint.style.display = '';
                 if (existingItemOptions) existingItemOptions.style.display = '';
                 if (selectedItemCard) selectedItemCard.style.display = 'none';
@@ -1307,7 +1308,7 @@ final class HomeController
                     }
                 }
             } else {
-                if (existingItemHeading) existingItemHeading.textContent = $jsAlreadyExists;
+                if (existingItemHeading) existingItemHeading.textContent = $jsAnalysisName !== '' ? 'Does "' + $jsAnalysisName + '" already exist?' : $jsAlreadyExists;
                 if (existingItemHint) existingItemHint.style.display = '';
                 if (existingItemOptions) existingItemOptions.style.display = '';
                 if (selectedItemCard) selectedItemCard.style.display = 'none';
@@ -2242,7 +2243,7 @@ HTML;
                 $equivalentItemId,
                 $oppositeTypeUrl
             )
-            : $this->duplicates($request, $analysis, $uiLanguage, '', true);
+            : $this->duplicates($request, $analysis, $uiLanguage, (string) $analysis['name'], '', true);
         $generatedTransliteration = $this->defaultTransliteration((string) $analysis['name'], $analysis['script'] ?? null, $transliterator);
         $displayLabel = $isUpdate && $existingMulLabel !== ''
             ? $existingMulLabel
@@ -2819,10 +2820,16 @@ HTML;
     /**
      * @param array<string, mixed> $analysis
      */
-    private function duplicates(Request $request, array $analysis, string $uiLanguage, string $selectedItem = '', bool $dynamic = false): string
+    private function duplicates(Request $request, array $analysis, string $uiLanguage, string $name = '', string $selectedItem = '', bool $dynamic = false): string
     {
         $createNewItem = htmlspecialchars($this->t($uiLanguage, 'create_new_item'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        $alreadyExists = htmlspecialchars($this->t($uiLanguage, 'already_exists'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $alreadyExists = htmlspecialchars(
+            $name !== ''
+                ? sprintf('Does "%s" already exist?', htmlspecialchars_decode($name, ENT_QUOTES))
+                : $this->t($uiLanguage, 'already_exists'),
+            ENT_QUOTES | ENT_SUBSTITUTE,
+            'UTF-8'
+        );
         $tryNotDuplicate = htmlspecialchars($this->t($uiLanguage, 'try_not_duplicate'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $chooseAnother = htmlspecialchars($this->t($uiLanguage, 'choose_another_item'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $matchLabel = htmlspecialchars($this->t($uiLanguage, 'match'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
