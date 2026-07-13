@@ -2838,8 +2838,7 @@ HTML;
         foreach (array_slice($sameTypeMatches, 0, 8) as $match) {
             $id = htmlspecialchars((string) $match['id'], ENT_QUOTES, 'UTF-8');
             $label = htmlspecialchars((string) $match['label'], ENT_QUOTES, 'UTF-8');
-            $descriptionText = $this->translatedInstanceList($uiLanguage, $match['instanceLabels'] ?? []) ?: (string) $match['description'];
-            $description = htmlspecialchars($descriptionText, ENT_QUOTES, 'UTF-8');
+            $description = htmlspecialchars((string) ($match['description'] ?? ''), ENT_QUOTES, 'UTF-8');
             $matchType = $this->nameTypeFromInstances($match['instanceOf'] ?? []) ?? $rootType;
             $matchRootType = in_array($matchType, [NameTypes::FAMILY_NAME, NameTypes::CHINESE_FAMILY_NAME], true)
                 ? NameTypes::FAMILY_NAME
