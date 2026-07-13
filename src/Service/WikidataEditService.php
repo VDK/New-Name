@@ -33,7 +33,12 @@ final class WikidataEditService
             ];
         }
         if (!$entityId || in_array('overwrite_descriptions', $apply, true)) {
-            $data['descriptions'] = $this->descriptions($type, $name, $name);
+            $descriptions = $this->descriptions($type, $name, $name);
+            if ($entityId) {
+                $existingLabels = $this->existingLabels($entityId);
+                $descriptions = array_diff_key($descriptions, $existingLabels);
+            }
+            $data['descriptions'] = $descriptions;
         }
 
         $typeQid = NameTypes::TYPE_ITEMS[$type] ?? NameTypes::TYPE_ITEMS[NameTypes::GIVEN_NAME];
@@ -211,6 +216,23 @@ final class WikidataEditService
         $claims = $data['entities'][$entityId]['claims'] ?? [];
 
         return is_array($claims) ? $claims : [];
+    }
+
+    /**
+     * @return array<string, true>
+     */
+    private function existingLabels(string $entityId): array
+    {
+        $data = $this->oauthClient->signedPost(WikimediaOAuthClient::WIKIDATA_API_URL, [
+            'action' => 'wbgetentities',
+            'format' => 'json',
+            'ids' => $entityId,
+            'props' => 'labels',
+        ]);
+
+        $labels = $data['entities'][$entityId]['labels'] ?? [];
+
+        return is_array($labels) ? array_fill_keys(array_keys($labels), true) : [];
     }
 
     /**
