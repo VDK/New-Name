@@ -575,22 +575,25 @@ if ( mw.NamePrefiller === undefined ) {
 			if ( !snaklistview ) {
 				return;
 			}
-			// The snaklistview already has one snakview (created by startEditing).
-			// Set its value directly instead of adding another one.
-			var snakviews = snaklistview.value();
-			if ( !snakviews || !snakviews.length ) {
-				return;
-			}
-			var snakview = snakviews[ 0 ];
-			try {
-				var dm = require( 'wikibase.datamodel' );
-				snakview.value( new dm.StringSnak( 'P1545', String( ord ) ) );
-			} catch ( e ) {
-				mw.loader.using( 'wikibase.datamodel' ).then( function () {
+			// The snaklistview creates its first snakview asynchronously
+			// via startEditing -> inner listview.enterNewItem().
+			// Wait for that to finish before accessing the snakview.
+			setTimeout( function () {
+				var snakviews = snaklistview.value();
+				if ( !snakviews || !snakviews.length ) {
+					return;
+				}
+				var snakview = snakviews[ 0 ];
+				try {
 					var dm = require( 'wikibase.datamodel' );
 					snakview.value( new dm.StringSnak( 'P1545', String( ord ) ) );
-				} );
-			}
+				} catch ( e ) {
+					mw.loader.using( 'wikibase.datamodel' ).then( function () {
+						var dm = require( 'wikibase.datamodel' );
+						snakview.value( new dm.StringSnak( 'P1545', String( ord ) ) );
+					} );
+				}
+			}, 200 );
 		} );
 	}
 
