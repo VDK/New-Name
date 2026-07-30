@@ -531,6 +531,68 @@ if ( mw.NamePrefiller === undefined ) {
 			'';
 	}
 
+	function getPropertyIdForStatement( $statementview ) {
+		var $mainSnak = $statementview.find( '> .wikibase-statementview-mainsnak > .wikibase-snakview' ),
+			snakview = $mainSnak.data( 'snakview' );
+
+		return snakview && snakview.value() ?
+			snakview.value().property :
+			'';
+	}
+
+	function addP1545Qualifier( $valueview ) {
+		var $statementview = $valueview.closest( '.wikibase-statementview' );
+		if ( !$statementview.length ) {
+			return;
+		}
+
+		var statementview = $statementview.data( 'statementview' );
+		if ( !statementview || !statementview._qualifiers ) {
+			return;
+		}
+
+		// Don't add if P1545 qualifier already exists
+		try {
+			var value = statementview.value();
+			if ( value && value.getClaim && value.getClaim() ) {
+				var qualifiers = value.getClaim().getQualifiers();
+				if ( qualifiers && qualifiers.getItemByPropertyId ) {
+					var existing = qualifiers.getItemByPropertyId( 'P1545' );
+					if ( existing && existing.length ) {
+						return;
+					}
+				}
+			}
+		} catch ( e ) {
+			// Fall through and add qualifier anyway
+		}
+
+		var ord = getClaimIndex( 'P735', $valueview ) + 1,
+			listview = statementview._qualifiers;
+
+		listview.enterNewItem().done( function ( $snaklistview ) {
+			var snaklistview = $snaklistview.data( 'snaklistview' );
+			if ( !snaklistview ) {
+				return;
+			}
+			snaklistview.enterNewItem().done( function ( $snakview ) {
+				var snakview = $snakview.data( 'snakview' );
+				if ( !snakview ) {
+					return;
+				}
+				try {
+					var dm = require( 'wikibase.datamodel' );
+					snakview.value( new dm.StringSnak( 'P1545', String( ord ) ) );
+				} catch ( e ) {
+					mw.loader.using( 'wikibase.datamodel' ).then( function () {
+						var dm = require( 'wikibase.datamodel' );
+						snakview.value( new dm.StringSnak( 'P1545', String( ord ) ) );
+					} );
+				}
+			} );
+		} );
+	}
+
 	function handleValueViewAfterStartEditing( event ) {
 		var currentConfig = getConfig(),
 			$valueview = $( event.target ),
@@ -543,9 +605,20 @@ if ( mw.NamePrefiller === undefined ) {
 			return;
 		}
 
-		// Don't prefill qualifier fields
+		// Allow P1545 qualifier fields in P735 statements through (for series ordinal)
 		if ( $valueview.closest( '.wikibase-statementview-qualifiers' ).length ) {
-			return;
+			if ( propertyId !== 'P1545' ) {
+				return;
+			}
+			// For P1545 qualifiers, check that the parent statement is P735
+			var $parentStatementview = $valueview.closest( '.wikibase-statementview' );
+			if ( !$parentStatementview.length ) {
+				return;
+			}
+			var parentPropertyId = getPropertyIdForStatement( $parentStatementview );
+			if ( parentPropertyId !== 'P735' ) {
+				return;
+			}
 		}
 
 		expert = valueview.expert();
@@ -573,6 +646,13 @@ if ( mw.NamePrefiller === undefined ) {
 			if ( expert.$input && expert.$input[ 0 ] ) {
 				expert.$input[ 0 ].focus();
 			}
+		}
+
+		// After filling a given name (P735), add series ordinal (P1545) qualifier
+		if ( value && propertyId === 'P735' ) {
+			setTimeout( function () {
+				addP1545Qualifier( $valueview );
+			}, 300 );
 		}
 	}
 
