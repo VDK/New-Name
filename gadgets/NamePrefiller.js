@@ -565,28 +565,46 @@ if ( mw.NamePrefiller === undefined ) {
 			// Fall through and add qualifier anyway
 		}
 
-		// Click the "add qualifier" button to start the normal UI flow
+		// Click the "add qualifier" button
 		var $addLink = $statementview.find( '.wikibase-addqualifier a' );
 		if ( !$addLink.length ) {
 			return;
 		}
 		$addLink.trigger( 'click' );
 
-		// Wait for the property selector to appear, then set the property to P1545.
-		// This triggers a value input which fires valueviewafterstartediting,
-		// and our handler fills the ordinal.
+		// Phase 2: set the property to P1545 via the snakview API
 		setTimeout( function () {
-			var $newSnakview = $statementview.find(
+			var $snakview = $statementview.find(
 				'.wikibase-statementview-qualifiers .wikibase-snakview'
 			).last();
-			if ( !$newSnakview.length ) {
+			if ( !$snakview.length ) {
 				return;
 			}
-			var snakview = $newSnakview.data( 'snakview' );
+			var snakview = $snakview.data( 'snakview' );
 			if ( !snakview ) {
 				return;
 			}
 			snakview.propertyId( 'P1545' );
+
+			// Phase 3: wait for the value input to appear, then fill the ordinal
+			setTimeout( function () {
+				var ord = getClaimIndex( 'P735', $valueview ) + 1;
+				var $valueviewEl = $snakview.find(
+					'.wikibase-snakview-value .valueview'
+				);
+				if ( !$valueviewEl.length ) {
+					return;
+				}
+				var valueview = $valueviewEl.data( 'valueview' );
+				if ( !valueview ) {
+					return;
+				}
+				var expert = valueview.expert();
+				if ( !expert || !expert.$input ) {
+					return;
+				}
+				setExpertInput( expert, String( ord ) );
+			}, 400 );
 		}, 300 );
 	}
 
@@ -596,28 +614,16 @@ if ( mw.NamePrefiller === undefined ) {
 			valueview = $valueview.data( 'valueview' ),
 			propertyId = getPropertyId( $valueview ),
 			expert,
-			value = '',
-			isP1545Qualifier = false;
+			value = '';
 
 		if ( !valueview || !propertyId ) {
 			return;
 		}
 
-		// Allow P1545 qualifier fields in P735 statements through (for series ordinal)
+		// Don't prefill qualifier fields (P1545 is handled directly
+		// by addP1545Qualifier via DOM manipulation)
 		if ( $valueview.closest( '.wikibase-statementview-qualifiers' ).length ) {
-			if ( propertyId !== 'P1545' ) {
-				return;
-			}
-			// For P1545 qualifiers, check that the parent statement is P735
-			var $parentStatementview = $valueview.closest( '.wikibase-statementview' );
-			if ( !$parentStatementview.length ) {
-				return;
-			}
-			var parentPropertyId = getPropertyIdForStatement( $parentStatementview );
-			if ( parentPropertyId !== 'P735' ) {
-				return;
-			}
-			isP1545Qualifier = true;
+			return;
 		}
 
 		expert = valueview.expert();
@@ -629,21 +635,15 @@ if ( mw.NamePrefiller === undefined ) {
 			return;
 		}
 
-		if ( isP1545Qualifier ) {
-			// Fill series ordinal from the given name index
-			var ord = getClaimIndex( 'P735', $valueview ) + 1;
-			value = String( ord );
-		} else {
-			$.each( currentConfig.rules, function ( i, rule ) {
-				if ( !ruleMatches( rule ) ) {
-					return true;
-				}
+		$.each( currentConfig.rules, function ( i, rule ) {
+			if ( !ruleMatches( rule ) ) {
+				return true;
+			}
 
-				value = getFillValue( rule, propertyId, $valueview );
+			value = getFillValue( rule, propertyId, $valueview );
 
-				return !value;
-			} );
-		}
+			return !value;
+		} );
 
 		if ( value ) {
 			setExpertInput( expert, value );
