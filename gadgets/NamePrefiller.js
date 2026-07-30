@@ -546,20 +546,18 @@ if ( mw.NamePrefiller === undefined ) {
 			return;
 		}
 
-		var statementview = $statementview.data( 'statementview' );
-		if ( !statementview || !statementview._qualifiers ) {
-			return;
-		}
-
 		// Don't add if P1545 qualifier already exists
 		try {
-			var value = statementview.value();
-			if ( value && value.getClaim && value.getClaim() ) {
-				var qualifiers = value.getClaim().getQualifiers();
-				if ( qualifiers && qualifiers.getItemByPropertyId ) {
-					var existing = qualifiers.getItemByPropertyId( 'P1545' );
-					if ( existing && existing.length ) {
-						return;
+			var statementview = $statementview.data( 'statementview' );
+			if ( statementview && statementview.value ) {
+				var sv = statementview.value();
+				if ( sv && sv.getClaim && sv.getClaim() ) {
+					var qualifiers = sv.getClaim().getQualifiers();
+					if ( qualifiers && qualifiers.getItemByPropertyId ) {
+						var existing = qualifiers.getItemByPropertyId( 'P1545' );
+						if ( existing && existing.length ) {
+							return;
+						}
 					}
 				}
 			}
@@ -567,34 +565,29 @@ if ( mw.NamePrefiller === undefined ) {
 			// Fall through and add qualifier anyway
 		}
 
-		var ord = getClaimIndex( 'P735', $valueview ) + 1,
-			listview = statementview._qualifiers;
+		// Click the "add qualifier" button to start the normal UI flow
+		var $addLink = $statementview.find( '.wikibase-addqualifier a' );
+		if ( !$addLink.length ) {
+			return;
+		}
+		$addLink.trigger( 'click' );
 
-		listview.enterNewItem().done( function ( $snaklistview ) {
-			var snaklistview = $snaklistview.data( 'snaklistview' );
-			if ( !snaklistview ) {
+		// Wait for the property selector to appear, then set the property to P1545.
+		// This triggers a value input which fires valueviewafterstartediting,
+		// and our handler fills the ordinal.
+		setTimeout( function () {
+			var $newSnakview = $statementview.find(
+				'.wikibase-statementview-qualifiers .wikibase-snakview'
+			).last();
+			if ( !$newSnakview.length ) {
 				return;
 			}
-			// The snaklistview creates its first snakview asynchronously
-			// via startEditing -> inner listview.enterNewItem().
-			// Wait for that to finish before accessing the snakview.
-			setTimeout( function () {
-				var snakviews = snaklistview.value();
-				if ( !snakviews || !snakviews.length ) {
-					return;
-				}
-				var snakview = snakviews[ 0 ];
-				try {
-					var dm = require( 'wikibase.datamodel' );
-					snakview.value( new dm.StringSnak( 'P1545', String( ord ) ) );
-				} catch ( e ) {
-					mw.loader.using( 'wikibase.datamodel' ).then( function () {
-						var dm = require( 'wikibase.datamodel' );
-						snakview.value( new dm.StringSnak( 'P1545', String( ord ) ) );
-					} );
-				}
-			}, 200 );
-		} );
+			var snakview = $newSnakview.data( 'snakview' );
+			if ( !snakview ) {
+				return;
+			}
+			snakview.propertyId( 'P1545' );
+		}, 300 );
 	}
 
 	function handleValueViewAfterStartEditing( event ) {
@@ -603,7 +596,8 @@ if ( mw.NamePrefiller === undefined ) {
 			valueview = $valueview.data( 'valueview' ),
 			propertyId = getPropertyId( $valueview ),
 			expert,
-			value = '';
+			value = '',
+			isP1545Qualifier = false;
 
 		if ( !valueview || !propertyId ) {
 			return;
@@ -623,6 +617,7 @@ if ( mw.NamePrefiller === undefined ) {
 			if ( parentPropertyId !== 'P735' ) {
 				return;
 			}
+			isP1545Qualifier = true;
 		}
 
 		expert = valueview.expert();
@@ -634,15 +629,21 @@ if ( mw.NamePrefiller === undefined ) {
 			return;
 		}
 
-		$.each( currentConfig.rules, function ( i, rule ) {
-			if ( !ruleMatches( rule ) ) {
-				return true;
-			}
+		if ( isP1545Qualifier ) {
+			// Fill series ordinal from the given name index
+			var ord = getClaimIndex( 'P735', $valueview ) + 1;
+			value = String( ord );
+		} else {
+			$.each( currentConfig.rules, function ( i, rule ) {
+				if ( !ruleMatches( rule ) ) {
+					return true;
+				}
 
-			value = getFillValue( rule, propertyId, $valueview );
+				value = getFillValue( rule, propertyId, $valueview );
 
-			return !value;
-		} );
+				return !value;
+			} );
+		}
 
 		if ( value ) {
 			setExpertInput( expert, value );
