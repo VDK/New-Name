@@ -575,21 +575,22 @@ if ( mw.NamePrefiller === undefined ) {
 			if ( !snaklistview ) {
 				return;
 			}
-			snaklistview.enterNewItem().done( function ( $snakview ) {
-				var snakview = $snakview.data( 'snakview' );
-				if ( !snakview ) {
-					return;
-				}
-				try {
+			// The snaklistview already has one snakview (created by startEditing).
+			// Set its value directly instead of adding another one.
+			var snakviews = snaklistview.value();
+			if ( !snakviews || !snakviews.length ) {
+				return;
+			}
+			var snakview = snakviews[ 0 ];
+			try {
+				var dm = require( 'wikibase.datamodel' );
+				snakview.value( new dm.StringSnak( 'P1545', String( ord ) ) );
+			} catch ( e ) {
+				mw.loader.using( 'wikibase.datamodel' ).then( function () {
 					var dm = require( 'wikibase.datamodel' );
 					snakview.value( new dm.StringSnak( 'P1545', String( ord ) ) );
-				} catch ( e ) {
-					mw.loader.using( 'wikibase.datamodel' ).then( function () {
-						var dm = require( 'wikibase.datamodel' );
-						snakview.value( new dm.StringSnak( 'P1545', String( ord ) ) );
-					} );
-				}
-			} );
+				} );
+			}
 		} );
 	}
 
