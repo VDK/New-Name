@@ -565,6 +565,8 @@ if ( mw.NamePrefiller === undefined ) {
 			// Fall through and add qualifier anyway
 		}
 
+		var ord = getClaimIndex( 'P735', $valueview ) + 1;
+
 		// Click the "add qualifier" button
 		var $addLink = $statementview.find( '.wikibase-addqualifier a' );
 		if ( !$addLink.length ) {
@@ -572,7 +574,7 @@ if ( mw.NamePrefiller === undefined ) {
 		}
 		$addLink.trigger( 'click' );
 
-		// Phase 2: set the property to P1545 via the snakview API
+		// Set the property on the new snakview and update the property display
 		setTimeout( function () {
 			var $snakview = $statementview.find(
 				'.wikibase-statementview-qualifiers .wikibase-snakview'
@@ -586,25 +588,49 @@ if ( mw.NamePrefiller === undefined ) {
 			}
 			snakview.propertyId( 'P1545' );
 
-			// Phase 3: wait for the value input to appear, then fill the ordinal
-			setTimeout( function () {
-				var ord = getClaimIndex( 'P735', $valueview ) + 1;
+			// Update the property selector display to show P1545
+			var $propertyInput = $snakview.find( '.wikibase-snakview-property input' );
+			if ( $propertyInput.length ) {
+				$propertyInput.val( 'P1545' );
+				var entityselector = $propertyInput.data( 'entityselector' );
+				if ( entityselector && entityselector.widget ) {
+					entityselector.widget().val( 'P1545' );
+				}
+			}
+
+			// Poll until the value view is ready, then fill the ordinal
+			var attempts = 0;
+			var fillValue = function () {
+				attempts++;
 				var $valueviewEl = $snakview.find(
 					'.wikibase-snakview-value .valueview'
 				);
 				if ( !$valueviewEl.length ) {
+					if ( attempts < 25 ) {
+						setTimeout( fillValue, 100 );
+					}
 					return;
 				}
 				var valueview = $valueviewEl.data( 'valueview' );
-				if ( !valueview ) {
+				if ( !valueview || !valueview.expert ) {
+					if ( attempts < 25 ) {
+						setTimeout( fillValue, 100 );
+					}
 					return;
 				}
 				var expert = valueview.expert();
 				if ( !expert || !expert.$input ) {
+					if ( attempts < 25 ) {
+						setTimeout( fillValue, 100 );
+					}
+					return;
+				}
+				if ( normalizeWhitespace( expert.$input.val() ) ) {
 					return;
 				}
 				setExpertInput( expert, String( ord ) );
-			}, 400 );
+			};
+			setTimeout( fillValue, 100 );
 		}, 300 );
 	}
 
