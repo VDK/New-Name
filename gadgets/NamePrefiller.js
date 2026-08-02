@@ -575,11 +575,15 @@ if ( mw.NamePrefiller === undefined ) {
 	}
 
 	function getP1545Ordinal( $valueview ) {
-		// 1-based ordinal: count how many given name (P735) statements BEFORE
-		// the current one already have a P1545 qualifier, then add 1.
+		// 1-based ordinal: count how many statements in the current statement
+		// group (before the current one) already have a P1545 qualifier, then add 1.
 		var $currentStatement = $valueview.closest( '.wikibase-statementview' ),
+			propertyId = getPropertyIdForStatement( $currentStatement ),
 			count = 0;
-		$( '.wikibase-statementgroupview#P735 .wikibase-statementview' ).each( function () {
+		if ( !propertyId ) {
+			return 1;
+		}
+		$( '.wikibase-statementgroupview#' + propertyId + ' .wikibase-statementview' ).each( function () {
 			if ( $currentStatement.length && this === $currentStatement[ 0 ] ) {
 				return false;
 			}
@@ -602,17 +606,10 @@ if ( mw.NamePrefiller === undefined ) {
 			return;
 		}
 
-		// Qualifier fields: only fill series ordinal (P1545) inside given name (P735)
-		// statements. Other qualifier fields are left alone.
+		// Qualifier fields: only fill series ordinal (P1545). Other qualifier
+		// fields are left alone.
 		if ( $valueview.closest( '.wikibase-statementview-qualifiers' ).length ) {
 			if ( propertyId !== 'P1545' ) {
-				return;
-			}
-			var $parentStatementview = $valueview.closest( '.wikibase-statementview' );
-			if ( !$parentStatementview.length ) {
-				return;
-			}
-			if ( getPropertyIdForStatement( $parentStatementview ) !== 'P735' ) {
 				return;
 			}
 			expert = valueview.expert();
