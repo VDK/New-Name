@@ -610,22 +610,50 @@ if ( mw.NamePrefiller === undefined ) {
 	function getP1545Ordinal( $valueview ) {
 		// 1-based ordinal: count how many statements in the current statement
 		// group (before the current one) already have a P1545 qualifier, then add 1.
+		// Saved statements are counted from the entity claims (falling back to the
+		// DOM if the config is stale); new (unsaved) statements are counted from the
+		// DOM so in-session additions are picked up too.
 		var $currentStatement = $valueview.closest( '.wikibase-statementview' ),
 			propertyId = getPropertyIdForStatement( $currentStatement ),
-			count = 0;
+			entityCount = 0,
+			domSavedCount = 0,
+			domNewCount = 0;
+
 		if ( !propertyId ) {
 			console.log( '[NamePrefiller] getP1545Ordinal: no propertyId for current statement' );
 			return 1;
 		}
+
+		var claims = getClaims() || {},
+			groupClaims = claims[ propertyId ] || [];
+		for ( var i = 0; i < groupClaims.length; i++ ) {
+			var c = groupClaims[ i ];
+			if (
+				c &&
+				c.qualifiers &&
+				c.qualifiers.P1545 &&
+				c.qualifiers.P1545.length
+			) {
+				entityCount++;
+			}
+		}
+
 		$( '.wikibase-statementgroupview#' + propertyId + ' .wikibase-statementview' ).each( function () {
 			if ( $currentStatement.length && this === $currentStatement[ 0 ] ) {
 				return false;
 			}
-			if ( statementHasP1545Qualifier( $( this ) ) ) {
-				count++;
+			if ( !statementHasP1545Qualifier( $( this ) ) ) {
+				return true;
+			}
+			if ( $( this ).is( '.wikibase-newentity, .wb-new, .wikibase-statementview-new' ) ) {
+				domNewCount++;
+			} else {
+				domSavedCount++;
 			}
 		} );
-		console.log( '[NamePrefiller] getP1545Ordinal: property=' + propertyId + ', previousWithP1545=' + count + ', ordinal=' + ( count + 1 ) );
+
+		var count = Math.max( entityCount, domSavedCount ) + domNewCount;
+		console.log( '[NamePrefiller] getP1545Ordinal: property=' + propertyId + ', entity=' + entityCount + ', domSaved=' + domSavedCount + ', domNew=' + domNewCount + ', ordinal=' + ( count + 1 ) );
 		return count + 1;
 	}
 
