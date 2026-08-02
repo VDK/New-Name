@@ -573,7 +573,7 @@ if ( mw.NamePrefiller === undefined ) {
 		console.log( '[NamePrefiller] ordinal to fill:', ord );
 
 		// Click the "add qualifier" button
-		var $addLink = $statementview.find( '.wikibase-addqualifier a' );
+		var $addLink = $statementview.find( '.wikibase-statementview-qualifiers .wikibase-addtoolbar a' );
 		console.log( '[NamePrefiller] add-qualifier link found:', $addLink.length > 0 );
 		if ( !$addLink.length ) {
 			return;
