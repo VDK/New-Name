@@ -541,8 +541,10 @@ if ( mw.NamePrefiller === undefined ) {
 	}
 
 	function addP1545Qualifier( $valueview ) {
+		console.log( '[NamePrefiller] addP1545Qualifier entered' );
 		var $statementview = $valueview.closest( '.wikibase-statementview' );
 		if ( !$statementview.length ) {
+			console.log( '[NamePrefiller] addP1545Qualifier: no statementview found, abort' );
 			return;
 		}
 
@@ -555,6 +557,7 @@ if ( mw.NamePrefiller === undefined ) {
 					var qualifiers = sv.getClaim().getQualifiers();
 					if ( qualifiers && qualifiers.getItemByPropertyId ) {
 						var existing = qualifiers.getItemByPropertyId( 'P1545' );
+						console.log( '[NamePrefiller] existing P1545 qualifiers:', existing && existing.length );
 						if ( existing && existing.length ) {
 							return;
 						}
@@ -562,37 +565,49 @@ if ( mw.NamePrefiller === undefined ) {
 				}
 			}
 		} catch ( e ) {
+			console.log( '[NamePrefiller] addP1545Qualifier existing-check exception:', e );
 			// Fall through and add qualifier anyway
 		}
 
 		var ord = getClaimIndex( 'P735', $valueview ) + 1;
+		console.log( '[NamePrefiller] ordinal to fill:', ord );
 
 		// Click the "add qualifier" button
 		var $addLink = $statementview.find( '.wikibase-addqualifier a' );
+		console.log( '[NamePrefiller] add-qualifier link found:', $addLink.length > 0 );
 		if ( !$addLink.length ) {
 			return;
 		}
 		$addLink.trigger( 'click' );
+		console.log( '[NamePrefiller] add-qualifier clicked' );
 
 		// Set the property on the new snakview and update the property display
 		setTimeout( function () {
+			console.log( '[NamePrefiller] phase2: looking for new snakview' );
 			var $snakview = $statementview.find(
 				'.wikibase-statementview-qualifiers .wikibase-snakview'
 			).last();
+			console.log( '[NamePrefiller] phase2: snakviews found:', $statementview.find( '.wikibase-statementview-qualifiers .wikibase-snakview' ).length );
 			if ( !$snakview.length ) {
+				console.log( '[NamePrefiller] phase2: no snakview, abort' );
 				return;
 			}
 			var snakview = $snakview.data( 'snakview' );
 			if ( !snakview ) {
+				console.log( '[NamePrefiller] phase2: no snakview data, abort' );
 				return;
 			}
+			console.log( '[NamePrefiller] phase2: snakview found, setting propertyId P1545' );
 			snakview.propertyId( 'P1545' );
+			console.log( '[NamePrefiller] phase2: propertyId set, snakview value:', JSON.stringify( snakview.value() ) );
 
 			// Update the property selector display to show P1545
 			var $propertyInput = $snakview.find( '.wikibase-snakview-property input' );
+			console.log( '[NamePrefiller] phase2: property input found:', $propertyInput.length > 0 );
 			if ( $propertyInput.length ) {
 				$propertyInput.val( 'P1545' );
 				var entityselector = $propertyInput.data( 'entityselector' );
+				console.log( '[NamePrefiller] phase2: entityselector widget:', !!entityselector );
 				if ( entityselector && entityselector.widget ) {
 					entityselector.widget().val( 'P1545' );
 				}
@@ -606,29 +621,47 @@ if ( mw.NamePrefiller === undefined ) {
 					'.wikibase-snakview-value .valueview'
 				);
 				if ( !$valueviewEl.length ) {
+					if ( attempts % 5 === 0 ) {
+						console.log( '[NamePrefiller] fillValue attempt ' + attempts + ': valueview element not found yet' );
+					}
 					if ( attempts < 25 ) {
 						setTimeout( fillValue, 100 );
+					} else {
+						console.log( '[NamePrefiller] fillValue: gave up after 25 attempts, no valueview element' );
 					}
 					return;
 				}
 				var valueview = $valueviewEl.data( 'valueview' );
 				if ( !valueview || !valueview.expert ) {
+					if ( attempts % 5 === 0 ) {
+						console.log( '[NamePrefiller] fillValue attempt ' + attempts + ': valueview data not ready' );
+					}
 					if ( attempts < 25 ) {
 						setTimeout( fillValue, 100 );
+					} else {
+						console.log( '[NamePrefiller] fillValue: gave up after 25 attempts, no valueview data' );
 					}
 					return;
 				}
 				var expert = valueview.expert();
 				if ( !expert || !expert.$input ) {
+					if ( attempts % 5 === 0 ) {
+						console.log( '[NamePrefiller] fillValue attempt ' + attempts + ': expert not ready' );
+					}
 					if ( attempts < 25 ) {
 						setTimeout( fillValue, 100 );
+					} else {
+						console.log( '[NamePrefiller] fillValue: gave up after 25 attempts, no expert' );
 					}
 					return;
 				}
+				console.log( '[NamePrefiller] fillValue attempt ' + attempts + ': expert ready, current value: "' + expert.$input.val() + '"' );
 				if ( normalizeWhitespace( expert.$input.val() ) ) {
+					console.log( '[NamePrefiller] fillValue: value already set, skip' );
 					return;
 				}
 				setExpertInput( expert, String( ord ) );
+				console.log( '[NamePrefiller] fillValue: set ordinal ' + ord + ', now: "' + expert.$input.val() + '"' );
 			};
 			setTimeout( fillValue, 100 );
 		}, 300 );
