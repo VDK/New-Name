@@ -540,133 +540,6 @@ if ( mw.NamePrefiller === undefined ) {
 			'';
 	}
 
-	function addP1545Qualifier( $valueview ) {
-		console.log( '[NamePrefiller] addP1545Qualifier entered' );
-		var $statementview = $valueview.closest( '.wikibase-statementview' );
-		if ( !$statementview.length ) {
-			console.log( '[NamePrefiller] addP1545Qualifier: no statementview found, abort' );
-			return;
-		}
-
-		// Don't add if P1545 qualifier already exists
-		try {
-			var statementview = $statementview.data( 'statementview' );
-			if ( statementview && statementview.value ) {
-				var sv = statementview.value();
-				if ( sv && sv.getClaim && sv.getClaim() ) {
-					var qualifiers = sv.getClaim().getQualifiers();
-					if ( qualifiers && qualifiers.getItemByPropertyId ) {
-						var existing = qualifiers.getItemByPropertyId( 'P1545' );
-						console.log( '[NamePrefiller] existing P1545 qualifiers:', existing && existing.length );
-						if ( existing && existing.length ) {
-							return;
-						}
-					}
-				}
-			}
-		} catch ( e ) {
-			console.log( '[NamePrefiller] addP1545Qualifier existing-check exception:', e );
-			// Fall through and add qualifier anyway
-		}
-
-		var ord = getClaimIndex( 'P735', $valueview ) + 1;
-		console.log( '[NamePrefiller] ordinal to fill:', ord );
-
-		// Click the "add qualifier" button
-		var $addLink = $statementview.find( '.wikibase-statementview-qualifiers .wikibase-addtoolbar a' );
-		console.log( '[NamePrefiller] add-qualifier link found:', $addLink.length > 0 );
-		if ( !$addLink.length ) {
-			return;
-		}
-		$addLink.trigger( 'click' );
-		console.log( '[NamePrefiller] add-qualifier clicked' );
-
-		// Set the property on the new snakview and update the property display
-		setTimeout( function () {
-			console.log( '[NamePrefiller] phase2: looking for new snakview' );
-			var $snakview = $statementview.find(
-				'.wikibase-statementview-qualifiers .wikibase-snakview'
-			).last();
-			console.log( '[NamePrefiller] phase2: snakviews found:', $statementview.find( '.wikibase-statementview-qualifiers .wikibase-snakview' ).length );
-			if ( !$snakview.length ) {
-				console.log( '[NamePrefiller] phase2: no snakview, abort' );
-				return;
-			}
-			var snakview = $snakview.data( 'snakview' );
-			if ( !snakview ) {
-				console.log( '[NamePrefiller] phase2: no snakview data, abort' );
-				return;
-			}
-			console.log( '[NamePrefiller] phase2: snakview found, setting propertyId P1545' );
-			snakview.propertyId( 'P1545' );
-			console.log( '[NamePrefiller] phase2: propertyId set, snakview value:', JSON.stringify( snakview.value() ) );
-
-			// Update the property selector display to show P1545
-			var $propertyInput = $snakview.find( '.wikibase-snakview-property input' );
-			console.log( '[NamePrefiller] phase2: property input found:', $propertyInput.length > 0 );
-			if ( $propertyInput.length ) {
-				$propertyInput.val( 'P1545' );
-				var entityselector = $propertyInput.data( 'entityselector' );
-				console.log( '[NamePrefiller] phase2: entityselector widget:', !!entityselector );
-				if ( entityselector && entityselector.widget ) {
-					entityselector.widget().val( 'P1545' );
-				}
-			}
-
-			// Poll until the value view is ready, then fill the ordinal
-			var attempts = 0;
-			var fillValue = function () {
-				attempts++;
-				var $valueviewEl = $snakview.find(
-					'.wikibase-snakview-value .valueview'
-				);
-				if ( !$valueviewEl.length ) {
-					if ( attempts % 5 === 0 ) {
-						console.log( '[NamePrefiller] fillValue attempt ' + attempts + ': valueview element not found yet' );
-					}
-					if ( attempts < 25 ) {
-						setTimeout( fillValue, 100 );
-					} else {
-						console.log( '[NamePrefiller] fillValue: gave up after 25 attempts, no valueview element' );
-					}
-					return;
-				}
-				var valueview = $valueviewEl.data( 'valueview' );
-				if ( !valueview || !valueview.expert ) {
-					if ( attempts % 5 === 0 ) {
-						console.log( '[NamePrefiller] fillValue attempt ' + attempts + ': valueview data not ready' );
-					}
-					if ( attempts < 25 ) {
-						setTimeout( fillValue, 100 );
-					} else {
-						console.log( '[NamePrefiller] fillValue: gave up after 25 attempts, no valueview data' );
-					}
-					return;
-				}
-				var expert = valueview.expert();
-				if ( !expert || !expert.$input ) {
-					if ( attempts % 5 === 0 ) {
-						console.log( '[NamePrefiller] fillValue attempt ' + attempts + ': expert not ready' );
-					}
-					if ( attempts < 25 ) {
-						setTimeout( fillValue, 100 );
-					} else {
-						console.log( '[NamePrefiller] fillValue: gave up after 25 attempts, no expert' );
-					}
-					return;
-				}
-				console.log( '[NamePrefiller] fillValue attempt ' + attempts + ': expert ready, current value: "' + expert.$input.val() + '"' );
-				if ( normalizeWhitespace( expert.$input.val() ) ) {
-					console.log( '[NamePrefiller] fillValue: value already set, skip' );
-					return;
-				}
-				setExpertInput( expert, String( ord ) );
-				console.log( '[NamePrefiller] fillValue: set ordinal ' + ord + ', now: "' + expert.$input.val() + '"' );
-			};
-			setTimeout( fillValue, 100 );
-		}, 300 );
-	}
-
 	function handleValueViewAfterStartEditing( event ) {
 		var currentConfig = getConfig(),
 			$valueview = $( event.target ),
@@ -679,9 +552,29 @@ if ( mw.NamePrefiller === undefined ) {
 			return;
 		}
 
-		// Don't prefill qualifier fields (P1545 is handled directly
-		// by addP1545Qualifier via DOM manipulation)
+		// Qualifier fields: only fill series ordinal (P1545) inside given name (P735)
+		// statements. Other qualifier fields are left alone.
 		if ( $valueview.closest( '.wikibase-statementview-qualifiers' ).length ) {
+			if ( propertyId !== 'P1545' ) {
+				return;
+			}
+			var $parentStatementview = $valueview.closest( '.wikibase-statementview' );
+			if ( !$parentStatementview.length ) {
+				return;
+			}
+			if ( getPropertyIdForStatement( $parentStatementview ) !== 'P735' ) {
+				return;
+			}
+			expert = valueview.expert();
+			if (
+				!expert ||
+				!expert.$input ||
+				normalizeWhitespace( expert.$input.val() )
+			) {
+				return;
+			}
+			value = String( getClaimIndex( 'P735', $valueview ) + 1 );
+			setExpertInput( expert, value );
 			return;
 		}
 
@@ -710,13 +603,6 @@ if ( mw.NamePrefiller === undefined ) {
 			if ( expert.$input && expert.$input[ 0 ] ) {
 				expert.$input[ 0 ].focus();
 			}
-		}
-
-		// After filling a given name (P735), add series ordinal (P1545) qualifier
-		if ( value && propertyId === 'P735' ) {
-			setTimeout( function () {
-				addP1545Qualifier( $valueview );
-			}, 300 );
 		}
 	}
 
