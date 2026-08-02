@@ -541,6 +541,42 @@ if ( mw.NamePrefiller === undefined ) {
 	}
 
 	function statementHasP1545Qualifier( $statement ) {
+		var $qualifiers = $statement.find( '.wikibase-statementview-qualifiers' );
+		if ( !$qualifiers.length ) {
+			return false;
+		}
+
+		// 1. Edit-mode: snakview widget data
+		var hasSnakview = false;
+		$qualifiers.find( '.wikibase-snakview' ).each( function () {
+			var snakview = $( this ).data( 'snakview' );
+			if (
+				snakview &&
+				snakview.value &&
+				snakview.value()
+			) {
+				var v = snakview.value();
+				if ( v.property === 'P1545' || v.propertyId === 'P1545' ) {
+					hasSnakview = true;
+					return false;
+				}
+			}
+		} );
+		if ( hasSnakview ) {
+			return true;
+		}
+
+		// 2. Read-mode: property link/label for P1545 in the qualifiers section
+		if (
+			$qualifiers.find( '.wikibase-snakview-property a[href*="P1545"]' ).length ||
+			$qualifiers.find( '.wikibase-snakview-property' ).filter( function () {
+				return ( $( this ).text() || '' ).indexOf( 'P1545' ) !== -1;
+			} ).length
+		) {
+			return true;
+		}
+
+		// 3. Data model via statementview value (includes saved qualifiers)
 		try {
 			var statementview = $statement.data( 'statementview' );
 			if ( statementview && statementview.value ) {
@@ -556,22 +592,19 @@ if ( mw.NamePrefiller === undefined ) {
 				}
 			}
 		} catch ( e ) {
-			// fall through to DOM check
+			// ignore
 		}
-		var hasDom = false;
-		$statement.find( '.wikibase-statementview-qualifiers .wikibase-snakview' ).each( function () {
-			var snakview = $( this ).data( 'snakview' );
-			if (
-				snakview &&
-				snakview.value &&
-				snakview.value() &&
-				snakview.value().property === 'P1545'
-			) {
-				hasDom = true;
-				return false;
-			}
-		} );
-		return hasDom;
+
+		// 4. Edit-mode fallback: property selector input shows P1545 / series ordinal
+		if ( $qualifiers.find( '.wikibase-snakview-property input' ).filter( function () {
+			var val = $( this ).val() || '';
+			return val.indexOf( 'P1545' ) !== -1 ||
+				val.indexOf( 'series ordinal' ) !== -1;
+		} ).length ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	function getP1545Ordinal( $valueview ) {
@@ -581,6 +614,7 @@ if ( mw.NamePrefiller === undefined ) {
 			propertyId = getPropertyIdForStatement( $currentStatement ),
 			count = 0;
 		if ( !propertyId ) {
+			console.log( '[NamePrefiller] getP1545Ordinal: no propertyId for current statement' );
 			return 1;
 		}
 		$( '.wikibase-statementgroupview#' + propertyId + ' .wikibase-statementview' ).each( function () {
@@ -591,6 +625,7 @@ if ( mw.NamePrefiller === undefined ) {
 				count++;
 			}
 		} );
+		console.log( '[NamePrefiller] getP1545Ordinal: property=' + propertyId + ', previousWithP1545=' + count + ', ordinal=' + ( count + 1 ) );
 		return count + 1;
 	}
 
