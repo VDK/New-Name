@@ -614,7 +614,10 @@ if ( mw.NamePrefiller === undefined ) {
 		// DOM if the config is stale); new (unsaved) statements are counted from the
 		// DOM so in-session additions are picked up too.
 		var $currentStatement = $valueview.closest( '.wikibase-statementview' ),
-			propertyId = getPropertyIdForStatement( $currentStatement ),
+			$group = $currentStatement.closest( '.wikibase-statementgroupview' ),
+			propertyId = getPropertyIdForStatement( $currentStatement ) ||
+				$group.attr( 'data-property-id' ) ||
+				$group.attr( 'id' ),
 			entityCount = 0,
 			domSavedCount = 0,
 			domNewCount = 0;
