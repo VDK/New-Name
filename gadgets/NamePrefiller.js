@@ -566,6 +566,7 @@ if ( mw.NamePrefiller === undefined ) {
 				return;
 			}
 			expert = valueview.expert();
+			console.log( '[NamePrefiller] P1545 qualifier detected in P735, expert ready:', !!expert && !!expert.$input );
 			if (
 				!expert ||
 				!expert.$input ||
@@ -573,7 +574,9 @@ if ( mw.NamePrefiller === undefined ) {
 			) {
 				return;
 			}
-			value = String( getClaimIndex( 'P735', $valueview ) + 1 );
+			// TEST: hardcoded value to verify the fill mechanism works
+			value = '12345';
+			console.log( '[NamePrefiller] TEST: filling P1545 with 12345' );
 			setExpertInput( expert, value );
 			return;
 		}
