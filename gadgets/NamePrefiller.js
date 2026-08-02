@@ -540,6 +540,56 @@ if ( mw.NamePrefiller === undefined ) {
 			'';
 	}
 
+	function statementHasP1545Qualifier( $statement ) {
+		try {
+			var statementview = $statement.data( 'statementview' );
+			if ( statementview && statementview.value ) {
+				var sv = statementview.value();
+				if ( sv && sv.getClaim && sv.getClaim() ) {
+					var quals = sv.getClaim().getQualifiers();
+					if ( quals && quals.getItemByPropertyId ) {
+						var existing = quals.getItemByPropertyId( 'P1545' );
+						if ( existing && existing.length ) {
+							return true;
+						}
+					}
+				}
+			}
+		} catch ( e ) {
+			// fall through to DOM check
+		}
+		var hasDom = false;
+		$statement.find( '.wikibase-statementview-qualifiers .wikibase-snakview' ).each( function () {
+			var snakview = $( this ).data( 'snakview' );
+			if (
+				snakview &&
+				snakview.value &&
+				snakview.value() &&
+				snakview.value().property === 'P1545'
+			) {
+				hasDom = true;
+				return false;
+			}
+		} );
+		return hasDom;
+	}
+
+	function getP1545Ordinal( $valueview ) {
+		// 1-based ordinal: count how many given name (P735) statements BEFORE
+		// the current one already have a P1545 qualifier, then add 1.
+		var $currentStatement = $valueview.closest( '.wikibase-statementview' ),
+			count = 0;
+		$( '.wikibase-statementgroupview#P735 .wikibase-statementview' ).each( function () {
+			if ( $currentStatement.length && this === $currentStatement[ 0 ] ) {
+				return false;
+			}
+			if ( statementHasP1545Qualifier( $( this ) ) ) {
+				count++;
+			}
+		} );
+		return count + 1;
+	}
+
 	function handleValueViewAfterStartEditing( event ) {
 		var currentConfig = getConfig(),
 			$valueview = $( event.target ),
@@ -566,7 +616,6 @@ if ( mw.NamePrefiller === undefined ) {
 				return;
 			}
 			expert = valueview.expert();
-			console.log( '[NamePrefiller] P1545 qualifier detected in P735, expert ready:', !!expert && !!expert.$input );
 			if (
 				!expert ||
 				!expert.$input ||
@@ -574,9 +623,7 @@ if ( mw.NamePrefiller === undefined ) {
 			) {
 				return;
 			}
-			// TEST: hardcoded value to verify the fill mechanism works
-			value = '12345';
-			console.log( '[NamePrefiller] TEST: filling P1545 with 12345' );
+			value = String( getP1545Ordinal( $valueview ) );
 			setExpertInput( expert, value );
 			return;
 		}
