@@ -239,9 +239,28 @@ final class PersonNameController
         $results = '';
         $selectedItemBlock = '';
         if ($nameItem) {
-            $safeLabel = htmlspecialchars($nameItem['label'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            $nativeLabel = (string) ($nameItem['nativeLabels'][0] ?? '');
+            $transliteration = (string) $nameItem['label'];
+            $safeLabel = htmlspecialchars($nativeLabel !== '' ? $nativeLabel : $transliteration, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
             $typeLabel = $nameItem['type'] === 'given' ? 'given name' : 'family name';
-            $safeDescription = htmlspecialchars($nameItem['description'] !== '' ? $nameItem['description'] : $typeLabel, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            $displayDescription = $nameItem['description'];
+            if ($nativeLabel !== '' && $transliteration !== '' && $nativeLabel !== $transliteration) {
+                $quotedNative = preg_quote(trim($nativeLabel), '/');
+                $replaced = (string) preg_replace(
+                    '/\s*\(\s*' . $quotedNative . '\s*\)$/u',
+                    ' (' . $transliteration . ')',
+                    $displayDescription
+                );
+                if ($replaced === $displayDescription) {
+                    $replaced = (string) preg_replace(
+                        '/\s*-\s*' . $quotedNative . '$/u',
+                        ' - ' . $transliteration,
+                        $displayDescription
+                    );
+                }
+                $displayDescription = $replaced;
+            }
+            $safeDescription = htmlspecialchars($displayDescription !== '' ? $displayDescription : $typeLabel, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
             $equivalentBlock = '';
             foreach ($nameItem['equivalents'] as $equivalent) {
                 $equivalentId = htmlspecialchars($equivalent['id'], ENT_QUOTES, 'UTF-8');
