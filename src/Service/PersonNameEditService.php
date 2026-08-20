@@ -18,7 +18,7 @@ final class PersonNameEditService
         if (!preg_match('/^Q\d+$/', $personId) || !preg_match('/^Q\d+$/', $nameItemId)) {
             throw new RuntimeException('Invalid Wikidata item.');
         }
-        if (!in_array($property, ['P735', 'P734', 'P1950', 'P9139'], true)) {
+        if (!in_array($property, ['P735', 'P734', 'P1950', 'P9139', 'P5056'], true)) {
             throw new RuntimeException('Unsupported name property.');
         }
         if ($property !== 'P735') {
@@ -77,7 +77,7 @@ final class PersonNameEditService
         if (!preg_match('/^Q\d+$/', $personId) || !preg_match('/^Q\d+$/', $nameItemId)) {
             throw new RuntimeException('Invalid Wikidata item.');
         }
-        if (!in_array($property, ['P735', 'P734', 'P1950', 'P9139'], true)) {
+        if (!in_array($property, ['P735', 'P734', 'P1950', 'P9139', 'P5056'], true)) {
             throw new RuntimeException('Unsupported name property.');
         }
         if ($property !== 'P735') {

@@ -105,6 +105,25 @@ final class NameAnalyzer
             );
         }
 
+        $relationshipName = $name;
+        $relationshipAffixes = $affixes;
+        $relationshipScriptQid = is_array($script) ? (string) ($script['qid'] ?? '') : '';
+        $relationshipAlternativeNames = $transliteration !== '' ? [$transliteration] : [];
+        if ($selectedItemId !== '') {
+            $selectedItem = $this->wikidataClient->nameItem($selectedItemId);
+            $selectedNativeName = trim((string) ($selectedItem['nativeLabels'][0] ?? ''));
+            if ($selectedNativeName !== '') {
+                $relationshipName = $selectedNativeName;
+                $relationshipAffixes = $this->affixDetector->detect($selectedNativeName);
+                $relationshipAlternativeNames[] = $name;
+            }
+            $selectedItemScript = trim((string) ($selectedItem['script'] ?? ''));
+            if ($selectedItemScript !== '') {
+                $relationshipScriptQid = $selectedItemScript;
+            }
+        }
+        $relationshipAlternativeNames = array_values(array_unique(array_filter($relationshipAlternativeNames)));
+
         return [
             'name' => $name,
             'selectedType' => $type,
@@ -114,17 +133,20 @@ final class NameAnalyzer
             'affixes' => $affixes,
             'matches' => $this->shapeMatches($matches, $instances, $scripts, $nativeLabels, $mulLabels, $script),
             'sameTypeMatches' => $sameTypeMatches,
-            'descriptions' => $this->descriptionSet->forType($type, $name),
+            'descriptions' => $this->descriptionSet->forType($type, $relationshipName),
+            'isRussianFeminineFamilyName' => DescriptionSet::isRussianFeminineFamilyName($type, $relationshipName),
+            'isRussianMasculineFamilyName' => DescriptionSet::isRussianMasculineFamilyName($type, $relationshipName),
+            'isRussianPatronymicFamilyName' => DescriptionSet::isRussianPatronymicFamilyName($type, $relationshipName),
             'claims' => $this->claimsFor($type, $script),
             'relationshipSuggestions' => $this->relationshipSuggestions(
-                $name,
+                $relationshipName,
                 $type,
-                $affixes,
+                $relationshipAffixes,
                 $this->relationshipCandidateMatches($matches, $instances, $type),
                 $instances,
                 $scripts,
-                is_array($script) ? (string) ($script['qid'] ?? '') : '',
-                $transliteration !== '' ? [$transliteration] : [],
+                $relationshipScriptQid,
+                $relationshipAlternativeNames,
                 $selectedItemId
             ),
         ];
@@ -367,7 +389,9 @@ final class NameAnalyzer
 
         $foldedName = $this->foldName($name);
         $detectedScriptQid = is_array($detectedScript) ? (string) ($detectedScript['qid'] ?? '') : '';
-        $sameType = array_values(array_filter($matches, function (array $match) use ($instances, $scripts, $nativeLabels, $mulLabels, $compatibleItems, $foldedName, $detectedScriptQid): bool {
+        $requiresExactSpelling = is_array($detectedScript)
+            && (string) ($detectedScript['script'] ?? '') !== 'Latin';
+        $sameType = array_values(array_filter($matches, function (array $match) use ($instances, $scripts, $nativeLabels, $mulLabels, $compatibleItems, $foldedName, $detectedScriptQid, $requiresExactSpelling, $name): bool {
             $matchScripts = $scripts[$match['id']] ?? [];
 
             $candidateNames = [
@@ -378,7 +402,10 @@ final class NameAnalyzer
             $nameMatches = false;
             foreach ($candidateNames as $candidateName) {
                 foreach ($this->nativeLabelVariants($candidateName) as $variant) {
-                    if ($this->foldName($variant) === $foldedName) {
+                    $matches = $requiresExactSpelling
+                        ? mb_strtolower($variant) === mb_strtolower($name)
+                        : $this->foldName($variant) === $foldedName;
+                    if ($matches) {
                         $nameMatches = true;
                         break 2;
                     }
@@ -481,6 +508,9 @@ final class NameAnalyzer
         $suggestions = [];
         $foldedName = $this->foldName($name);
         $comparisonNames = array_values(array_unique(array_filter([$name, ...$alternativeNames])));
+        $detectedScript = $this->scriptDetector->detect($name);
+        $requiresExactSpelling = is_array($detectedScript)
+            && (string) ($detectedScript['script'] ?? '') !== 'Latin';
 
         foreach ($matches as $match) {
             $id = $match['id'];
@@ -490,18 +520,35 @@ final class NameAnalyzer
             $label = $match['label'];
             $matchInstances = $instances[$id] ?? [];
             $foldedLabel = $this->foldName($label);
+            $candidateLabels = [$label];
+            $nativeLabel = $this->nativeLabelFromDescription(
+                (string) ($match['description'] ?? ''),
+                $label,
+                $detectedScript
+            );
+            if ($nativeLabel !== null) {
+                $candidateLabels[] = $nativeLabel;
+            }
 
             $sameSpelling = false;
             foreach ($comparisonNames as $comparisonName) {
-                if ($foldedLabel === $this->foldName($comparisonName)) {
-                    $sameSpelling = true;
-                    break;
+                foreach ($candidateLabels as $candidateLabel) {
+                    $matchesComparison = $requiresExactSpelling
+                        ? mb_strtolower($candidateLabel) === mb_strtolower($comparisonName)
+                        : $this->foldName($candidateLabel) === $this->foldName($comparisonName);
+                    if ($matchesComparison) {
+                        $sameSpelling = true;
+                        break 2;
+                    }
                 }
             }
-            $relatedFamilySpelling = $this->isFamilyNameType($selectedType)
+            $relatedFamilySpelling = !$requiresExactSpelling
+                && $this->isFamilyNameType($selectedType)
                 && $this->isRelatedFamilyNameCandidate($name, $label, $affixes);
 
             if (
+                !$requiresExactSpelling
+                &&
                 $label !== $name
                 && $this->isSameType($selectedType, $matchInstances)
                 && ($sameSpelling || $relatedFamilySpelling)
@@ -518,7 +565,7 @@ final class NameAnalyzer
             }
 
             if (
-                $foldedLabel === $foldedName
+                $sameSpelling
                 && $this->isGivenNameType($selectedType)
                 && $this->hasFamilyNameInstance($matchInstances)
             ) {
@@ -534,7 +581,7 @@ final class NameAnalyzer
             }
 
             if (
-                $foldedLabel === $foldedName
+                $sameSpelling
                 && $this->isFamilyNameType($selectedType)
                 && $this->hasGivenNameInstance($matchInstances)
             ) {
@@ -609,10 +656,13 @@ final class NameAnalyzer
                 }
             }
         }
-        if ($this->isFamilyNameType($selectedType) && $this->hasIcelandicDottirHint($affixes)) {
-            foreach ($this->genderedVariantMatches($name, $selectedType, $matches, true) as $variant) {
+        if ($this->isFamilyNameType($selectedType)) {
+            $isIcelandic = $this->hasIcelandicDottirHint($affixes);
+            foreach ($this->genderedVariantMatches($name, $selectedType, $matches, $isIcelandic) as $variant) {
                 $variantInstances = $variant['instances'];
-                if ($this->hasFamilyNameInstance($variantInstances)) {
+                $scriptMatches = $selectedScriptQid === ''
+                    || in_array($selectedScriptQid, $variant['scripts'] ?? [], true);
+                if ($scriptMatches && $this->hasFamilyNameInstance($variantInstances)) {
                     $suggestions[] = [
                         'target' => $variant['id'],
                         'targetLabel' => $variant['label'],
@@ -620,8 +670,10 @@ final class NameAnalyzer
                         'property' => 'P5278',
                         'propertyLabel' => 'surname for other gender',
                         'value' => 'new item',
-                        'reason' => 'Icelandic -dóttir family name counterpart',
-                        'checked' => true,
+                        'reason' => $isIcelandic
+                            ? 'Icelandic -dóttir family name counterpart'
+                            : 'gendered family name counterpart',
+                        'checked' => $isIcelandic || $selectedScriptQid !== '',
                     ];
                 }
             }
@@ -744,15 +796,15 @@ final class NameAnalyzer
         if (!$variants) {
             return [];
         }
-
-        $currentIds = array_flip(array_column($currentMatches, 'id'));
         $out = [];
         foreach ($variants as $variant) {
+            foreach ($currentMatches as $match) {
+                if ($this->matchesGenderedVariant($match, $variant, $exactLabel)) {
+                    $out[$match['id']] = $match;
+                }
+            }
             foreach ($this->wikidataClient->searchItems($variant, 'en', 5) as $match) {
-                $labelMatches = $exactLabel
-                    ? mb_strtolower((string) $match['label']) === mb_strtolower($variant)
-                    : $this->foldName($match['label']) === $this->foldName($variant);
-                if (isset($currentIds[$match['id']]) || !$labelMatches) {
+                if (!$this->matchesGenderedVariant($match, $variant, $exactLabel)) {
                     continue;
                 }
                 $out[$match['id']] = $match;
@@ -773,12 +825,39 @@ final class NameAnalyzer
     }
 
     /**
+     * @param array{id: string, label: string, description: string} $match
+     */
+    private function matchesGenderedVariant(array $match, string $variant, bool $exactLabel): bool
+    {
+        $labels = [(string) ($match['label'] ?? '')];
+        $nativeLabel = $this->nativeLabelFromDescription(
+            (string) ($match['description'] ?? ''),
+            (string) ($match['label'] ?? ''),
+            $this->scriptDetector->detect($variant)
+        );
+        if ($nativeLabel !== null) {
+            $labels[] = $nativeLabel;
+        }
+
+        foreach ($labels as $label) {
+            $matches = $exactLabel
+                ? mb_strtolower($label) === mb_strtolower($variant)
+                : $this->foldName($label) === $this->foldName($variant);
+            if ($matches) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @return list<string>
      */
     private function genderedNameVariants(string $name, string $selectedType): array
     {
         $name = trim($name);
-        if ($name === '' || !preg_match('/^[\p{Latin}\p{M}\s\'’.-]+$/u', $name)) {
+        if ($name === '' || !preg_match('/^[\p{Latin}\p{Cyrillic}\p{M}\s\'’.-]+$/u', $name)) {
             return [];
         }
 
@@ -808,8 +887,16 @@ final class NameAnalyzer
                     $variants[] = mb_substr($name, 0, -mb_strlen($gendered)) . $base;
                 }
                 if (str_ends_with($lower, $base) && mb_strlen($name) > mb_strlen($base) + 1) {
-                    $variants[] = $name . mb_substr($gendered, mb_strlen($base));
+                    $variants[] = mb_substr($name, 0, -mb_strlen($base)) . $gendered;
                 }
+            }
+            if (str_ends_with($lower, 'skaya') && mb_strlen($name) > 7) {
+                $variants[] = mb_substr($name, 0, -5);
+            }
+            if (str_ends_with($lower, 'ская') && mb_strlen($name) > 6) {
+                $cyrillicStem = mb_substr($name, 0, -4);
+                $variants[] = $cyrillicStem;
+                $variants[] = $cyrillicStem . 'ский';
             }
         }
 
@@ -855,16 +942,48 @@ final class NameAnalyzer
             ['ský', 'ská'],
             ['ov', 'ová'],
             ['ev', 'evá'],
+            // Cyrillic Russian gendered surnames: Рябчиков -> Рябчикова,
+            // Козлов -> Козлова, Ленин -> Ленина, Рыбин -> Рыбина.
+            ['ов', 'ова'],
+            ['ев', 'ева'],
+            ['ёв', 'ёва'],
+            ['ин', 'ина'],
+            ['ын', 'ына'],
         ];
     }
+
+    private const CYRILLIC_TRANSLITERATION = [
+        'а' => 'a', 'б' => 'b', 'в' => 'v', 'г' => 'g', 'д' => 'd', 'е' => 'e', 'ё' => 'e',
+        'ж' => 'zh', 'з' => 'z', 'и' => 'i', 'й' => 'y', 'к' => 'k', 'л' => 'l', 'м' => 'm',
+        'н' => 'n', 'о' => 'o', 'п' => 'p', 'р' => 'r', 'с' => 's', 'т' => 't', 'у' => 'u',
+        'ф' => 'f', 'х' => 'kh', 'ц' => 'ts', 'ч' => 'ch', 'ш' => 'sh', 'щ' => 'shch',
+        'ъ' => '', 'ы' => 'y', 'ь' => '', 'э' => 'e', 'ю' => 'yu', 'я' => 'ya',
+    ];
 
     private function foldName(string $name): string
     {
         $name = mb_strtolower(trim($name));
         $transliterated = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $name);
+        // Windows' iconv does not transliterate Cyrillic (or Greek) and yields
+        // an empty string, unlike glibc on Linux. Fall back to an explicit map
+        // so folding is consistent across environments.
+        if (!is_string($transliterated) || preg_replace('/[^a-z0-9]+/', '', $transliterated) === '') {
+            $transliterated = $this->transliterateCyrillic($name);
+        }
         $folded = is_string($transliterated) ? $transliterated : $name;
 
         return preg_replace('/[^a-z0-9]+/', '', $folded) ?? $folded;
+    }
+
+    private function transliterateCyrillic(string $value): string
+    {
+        $out = '';
+        $length = mb_strlen($value);
+        for ($i = 0; $i < $length; $i++) {
+            $out .= self::CYRILLIC_TRANSLITERATION[mb_substr($value, $i, 1)] ?? mb_substr($value, $i, 1);
+        }
+
+        return $out;
     }
 
     /**

@@ -63,10 +63,11 @@ final class ScriptLanguageLookup
         while (($row = fgetcsv($handle, 0, "\t")) !== false) {
             $script = (string) ($row[$columns['script'] ?? -1] ?? '');
             $code = (string) ($row[$columns['code'] ?? -1] ?? '');
-            if (!preg_match('/^Q\d+$/', $script) || !preg_match('/^[a-z][a-z0-9-]{1,15}$/', $code)) {
+            // The TSV stores full entity URLs in the script column; extract the QID.
+            if (!preg_match('/(Q\d+)$/', $script, $scriptMatch) || !preg_match('/^[a-z][a-z0-9-]{1,15}$/', $code)) {
                 continue;
             }
-            $this->codesByScript[$script][$code] = $code;
+            $this->codesByScript[$scriptMatch[1]][$code] = $code;
         }
         fclose($handle);
 

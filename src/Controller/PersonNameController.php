@@ -57,10 +57,11 @@ final class PersonNameController
         if (!$nameItem || $query === '') {
             return $this->noStoreJson(['matches' => [], 'nextOffset' => $offset, 'hasMore' => false]);
         }
+        $matchName = trim((string) ($nameItem['nativeLabels'][0] ?? $nameItem['label']));
 
         $page = $wikidataClient->personMatchesPage(
             $query,
-            $nameItem['label'],
+            $matchName,
             $nameItem['script'],
             $nameItem['languageCode'],
             $nameItemId,
@@ -85,15 +86,17 @@ final class PersonNameController
     public function index(Request $request, WikidataClient $wikidataClient): Response
     {
         $nameItemId = strtoupper(trim((string) $request->query->get('name_item', '')));
-        $nameItem = $nameItemId !== '' ? $wikidataClient->nameItem($nameItemId) : null;
-        $query = $nameItem['label'] ?? '';
+        $nameItem = $nameItemId !== '' ? $wikidataClient->nameItem($nameItemId, true) : null;
+        $requestedQuery = trim((string) $request->query->get('person_query', ''));
+        $query = $requestedQuery !== '' ? $requestedQuery : ($nameItem['label'] ?? '');
+        $matchName = $nameItem ? trim((string) ($nameItem['nativeLabels'][0] ?? $nameItem['label'])) : '';
         $flashStatus = $request->getSession()->getFlashBag()->get('save_status');
         $status = $flashStatus ? $flashStatus[0] : (string) $request->query->get('status', '');
         $personId = strtoupper(trim((string) $request->query->get('person', '')));
         $page = $nameItem && $query !== ''
             ? $wikidataClient->personMatchesPage(
                 $query,
-                $nameItem['label'],
+                $matchName,
                 $nameItem['script'],
                 $nameItem['languageCode'],
                 $nameItemId,
@@ -223,11 +226,11 @@ final class PersonNameController
             $heading = $status === 'created' ? 'Wikidata item created' : 'Wikidata item updated';
         } elseif ($status === 'changed' && preg_match('/^Q\d+$/', $personId)) {
             $safePersonId = htmlspecialchars($personId, ENT_QUOTES, 'UTF-8');
-            $message = '<p class="success">Changed at <a href="https://www.wikidata.org/wiki/' . $safePersonId . '">' . $safePersonId . '</a>.</p>';
+            $message = '<p class="success">Changed at <a href="https://www.wikidata.org/wiki/' . $safePersonId . '" target="_blank" rel="noopener noreferrer">' . $safePersonId . '</a>.</p>';
             $heading = 'Selected item';
         } elseif ($status === 'exists' && preg_match('/^Q\d+$/', $personId)) {
             $safePersonId = htmlspecialchars($personId, ENT_QUOTES, 'UTF-8');
-            $message = '<p class="notice">This name statement already exists on <a href="https://www.wikidata.org/wiki/' . $safePersonId . '">' . $safePersonId . '</a>.</p>';
+            $message = '<p class="notice">This name statement already exists on <a href="https://www.wikidata.org/wiki/' . $safePersonId . '" target="_blank" rel="noopener noreferrer">' . $safePersonId . '</a>.</p>';
             $heading = 'Selected item';
         } else {
             $heading = 'Selected item';
@@ -258,7 +261,7 @@ final class PersonNameController
                     }
                     $equivalentDetails .= '<span class="item-detail"><b>Writing system</b> ' . $scriptLabel . '</span>';
                 }
-                $equivalentBlock .= '<div class="equivalent-item"><h3>' . $equivalentType . '</h3><div class="selected-item-card"><div class="selected-item-details"><strong>' . $equivalentLabel . '</strong><span class="muted">' . $equivalentDescription . '</span>' . $equivalentDetails . '<a href="https://www.wikidata.org/wiki/' . $equivalentId . '">' . $equivalentId . '</a></div></div></div>';
+                $equivalentBlock .= '<div class="equivalent-item"><h3>' . $equivalentType . '</h3><div class="selected-item-card"><div class="selected-item-details"><strong>' . $equivalentLabel . '</strong><span class="muted">' . $equivalentDescription . '</span>' . $equivalentDetails . '<a href="https://www.wikidata.org/wiki/' . $equivalentId . '" target="_blank" rel="noopener noreferrer">' . $equivalentId . '</a></div></div></div>';
             }
             $safeHeading = htmlspecialchars($heading, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
             $selectedItemBlock = <<<HTML
@@ -268,13 +271,18 @@ final class PersonNameController
         <div class="selected-item-details">
             <strong>$safeLabel</strong>
             <span class="muted">$safeDescription</span>
-            <a href="https://www.wikidata.org/wiki/$safeNameItemId">$safeNameItemId</a>
+            <a href="https://www.wikidata.org/wiki/$safeNameItemId" target="_blank" rel="noopener noreferrer">$safeNameItemId</a>
         </div>
     </div>
     $equivalentBlock
 </section>
 HTML;
-            if (!$this->hasBothNameTypes($nameItem) && !$this->hasAffixPrefix($query)) {
+            if (
+                !$this->hasBothNameTypes($nameItem)
+                && !$this->hasAffixPrefix($query)
+                && $this->patronymOrMatronymLabel($nameItem) === null
+                && $nameItem['otherGenderEquivalents'] === []
+            ) {
                 $oppositeType = $nameItem['type'] === 'given' ? 'family' : 'given';
                 $createEquivalentUrl = htmlspecialchars(
                     $request->getBasePath() . '/?name=' . urlencode($query) . '&type=' . urlencode($oppositeType) . '&_analysis=1&_equivalent=' . urlencode($nameItemId) . '&ui=' . urlencode($uiLanguage),
@@ -286,21 +294,24 @@ HTML;
             }
             foreach ($matches as $match) {
                 $id = htmlspecialchars($match['id'], ENT_QUOTES, 'UTF-8');
-                $label = htmlspecialchars($match['label'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                $label = (string) $match['label'];
+                $highlightedLabel = $this->highlightSearchQuery($label, $query);
                 $description = htmlspecialchars($match['description'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-                $matchedLabel = htmlspecialchars($match['matchedLabel'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                $matchedLabel = (string) $match['matchedLabel'];
                 $personOptions = $this->personOptions($nameItem);
                 $personActions = $this->personActionButtons($nameItem);
                 $personActionClass = substr_count($personActions, '<button') > 1 ? ' person-actions has-equivalent' : ' person-actions';
                 $detail = $description !== '' ? '<br><span class="muted">' . $description . '</span>' : '';
-                $scriptMatch = $matchedLabel !== $label ? '<br><span class="muted">Matched label: ' . $matchedLabel . '</span>' : '';
+                $scriptMatch = $matchedLabel !== $label
+                    ? '<br><span class="muted">Matched label: ' . $this->highlightSearchQuery($matchedLabel, $query) . '</span>'
+                    : '';
                 $results .= <<<HTML
 <form class="person person-match" method="post" action="$base/match/save" data-person-id="$id">
     <input type="hidden" name="person" value="$id">
     <input type="hidden" name="person_query" value="$safeQuery">
     <input type="hidden" name="ui" value="$ui">
     <input type="hidden" name="ajax" value="1">
-    <div><strong>$label</strong> <a href="https://www.wikidata.org/wiki/$id">($id)</a>$detail$scriptMatch</div>
+    <div>$highlightedLabel <a href="https://www.wikidata.org/wiki/$id" target="_blank" rel="noopener noreferrer">($id)</a>$detail$scriptMatch</div>
     $personOptions
     <div class="$personActionClass">$personActions</div>
 </form>
@@ -375,11 +386,16 @@ HTML;
             return ['P735'];
         }
 
-        return match ($nameItem['languageCode']) {
+        $properties = match ($nameItem['languageCode']) {
             'es' => ['P734', 'P1950'],
             'pt' => ['P734', 'P9139'],
             default => ['P734'],
         };
+        if ($this->patronymOrMatronymLabel($nameItem) !== null) {
+            $properties[] = 'P5056';
+        }
+
+        return $properties;
     }
 
     /**
@@ -424,7 +440,28 @@ HTML;
             $html .= '<button type="submit" class="add-name" data-name-item="' . $id . '" data-property="' . $property . '"><span class="button-spinner" aria-hidden="true"></span><span class="button-label">' . $label . '</span></button>';
         }
 
+        if ($nameItem['type'] === 'family' && ($patronymOrMatronym = $this->patronymOrMatronymLabel($nameItem)) !== null) {
+            $id = htmlspecialchars((string) $nameItem['id'], ENT_QUOTES, 'UTF-8');
+            $html .= '<button type="submit" class="add-name" data-name-item="' . $id . '" data-property="P5056"><span class="button-spinner" aria-hidden="true"></span><span class="button-label">' . $patronymOrMatronym . '</span></button>';
+        }
+
         return $html;
+    }
+
+    /**
+     * P5056 has one property for both terms; use the item's more specific P31 label in the UI.
+     */
+    private function patronymOrMatronymLabel(array $nameItem): ?string
+    {
+        $instances = $nameItem['instanceOf'] ?? [];
+        if (array_intersect(['Q110874', 'Q11455398'], $instances) !== []) {
+            return 'Patronymic';
+        }
+        if (array_intersect(['Q1076664', 'Q109267084'], $instances) !== []) {
+            return 'Matronymic';
+        }
+
+        return null;
     }
 
     private function hasBothNameTypes(array $nameItem): bool
@@ -447,6 +484,31 @@ HTML;
         return $this->affixDetector->detect($name) !== [];
     }
 
+    /**
+     * Highlight the query match in the label: the matching part is bold,
+     * while the remainder stays regular.
+     */
+    private function highlightSearchQuery(string $label, string $query): string
+    {
+        $query = trim($query);
+        if ($query === '') {
+            return htmlspecialchars($label, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        }
+
+        $parts = preg_split('/(' . preg_quote($query, '/') . ')/iu', $label, -1, PREG_SPLIT_DELIM_CAPTURE);
+        if (!is_array($parts) || count($parts) === 1) {
+            return htmlspecialchars($label, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        }
+
+        $result = '';
+        foreach ($parts as $index => $part) {
+            $safePart = htmlspecialchars($part, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            $result .= $index % 2 === 1 ? '<span class="search-query-match">' . $safePart . '</span>' : $safePart;
+        }
+
+        return $result;
+    }
+
     private function pageStyles(): string
     {
         return <<<'CSS'
@@ -460,21 +522,26 @@ section{background:#fff;border:1px solid #c8ccd1;padding:18px}h2{margin:0 0 12px
 .search-button-spinner{display:none;width:16px;height:16px;margin-right:7px;border:2px solid rgba(255,255,255,.55);border-top-color:#fff;border-radius:50%;animation:spin .75s linear infinite}.search-progress-label{display:none}#people-analyze.is-searching .search-button-spinner{display:inline-block}#people-analyze.is-searching .search-default-label{display:none}#people-analyze.is-searching .search-progress-label{display:inline}
 button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 14px;border:1px solid #36c;border-radius:2px;background:#36c;color:#fff;font-weight:700;text-align:center;cursor:pointer;white-space:nowrap}
 .load-more{margin-top:12px;border-color:#72777d;background:#fff;color:#202122;border-radius:2px}.load-more:hover{background:#eaecf0}
-.equivalent-item{margin-top:16px}.equivalent-item h3{margin:0 0 8px;font-size:16px}.person{display:grid;gap:10px;padding:14px 0;border-top:1px solid #c8ccd1}.person:first-child{border-top:0}
+.equivalent-item{margin-top:16px}.equivalent-item h3{margin:0 0 8px;font-size:16px}.person{display:grid;gap:10px;padding:14px 0;border-top:1px solid #c8ccd1}.person:first-child{border-top:0}.search-query-match{font-weight:700}
 .selected-item-card{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid #c8ccd1;background:#fff}.selected-item-details{min-width:0}.selected-item-card .muted{display:block;margin-top:3px}.selected-item-card .item-detail{display:block;margin-top:5px;font-size:13px}.selected-item-card .item-detail b{color:#54595d;margin-right:5px}.selected-item-card a{display:block;width:fit-content;margin-top:5px}
 .options{display:flex;flex-wrap:wrap;gap:10px}.muted{color:#54595d;font-size:13px}.notice{background:#f8f9fa;padding:10px}.success{border-left:4px solid #14866d;padding:10px;background:#edfaf7}
 .person-actions{display:flex;gap:8px}.person-actions button{flex:1 1 100%;min-width:0;min-height:40px;padding:6px 10px}.person-actions.has-equivalent button{flex-basis:50%}
 .button-spinner{display:none;width:14px;height:14px;margin-right:6px;border:2px solid rgba(255,255,255,.55);border-top-color:#fff;border-radius:50%;animation:spin .75s linear infinite}.add-name.is-loading .button-spinner{display:inline-block}.add-name.is-success{border-color:#14866d;background:#14866d}.add-name.is-present,.add-name.is-present:hover{border-color:#a2a9b1;background:#eaecf0;color:#54595d;cursor:not-allowed}.add-name.is-failure{border-color:#b32424;background:#b32424}
 .equivalent-create{display:inline-flex;align-items:center;min-height:36px;margin-top:12px;padding:6px 12px;border:1px solid #36c;background:#36c;color:#fff;border-radius:2px;font-weight:700;text-decoration:none}.equivalent-create:hover{background:#2a4b8d;border-color:#2a4b8d;text-decoration:none}
 @keyframes spin{to{transform:rotate(360deg)}}
-.suggest-wrap{position:relative}.suggestions{display:none;position:absolute;z-index:20;top:calc(100% + 2px);left:0;right:0;max-height:280px;overflow:auto;margin:0;padding:4px 0;list-style:none;border:1px solid #a2a9b1;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.suggest-wrap{position:relative}.suggestions{display:none;position:static;max-height:280px;overflow:auto;margin:2px 0 0;padding:4px 0;list-style:none;border:1px solid #a2a9b1;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.15)}
 .suggestions li{display:flex;flex-direction:column;gap:2px;align-items:stretch;padding:8px 10px;cursor:pointer;border-top:1px solid #a2a9b1}.suggestions li:first-child{border-top:0}.suggestions li:hover,.suggestions li.active{background:#eaecf0}.suggestions strong{display:block}.suggestions .muted{display:block}
-a{color:#36c;text-decoration:none}@media(max-width:620px){.suggestions{position:static;margin-top:2px}.person button{width:100%}}@media(max-width:480px){.tagline-break{display:inline}}
+a{color:#36c;text-decoration:none}@media(max-width:620px){.person button{width:100%}}@media(max-width:480px){.tagline-break{display:inline}}
 CSS;
     }
 
     private function pagePeopleScript(string $base, string $ui, string $safeNameItemId, string $safeQuery): string
     {
+        $jsonFlags = JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+        $jsNameItemId = json_encode(html_entity_decode($safeNameItemId, ENT_QUOTES | ENT_HTML5, 'UTF-8'), $jsonFlags);
+        $jsQuery = json_encode(html_entity_decode($safeQuery, ENT_QUOTES | ENT_HTML5, 'UTF-8'), $jsonFlags);
+        $jsUi = json_encode(html_entity_decode($ui, ENT_QUOTES | ENT_HTML5, 'UTF-8'), $jsonFlags);
+
         return <<<SCRIPT
 (function () {
     var input = document.getElementById('name-item-search');
@@ -672,11 +739,29 @@ document.querySelectorAll('.person-match').forEach(function(form) {
     var button = document.getElementById('load-more-people');
     var section = document.getElementById('people-results');
     var list = document.getElementById('people-list');
-    if (!button || !section || !list || !'$safeNameItemId') return;
+    var nameItemId = $jsNameItemId;
+    var query = $jsQuery;
+    var uiLanguage = $jsUi;
+    if (!button || !section || !list || !nameItemId) return;
     var loading = false;
 
     var personOptions = '';
     var personActions = '';
+    function appendHighlightedLabel(container, label) {
+        var lowerLabel = label.toLocaleLowerCase();
+        var lowerQuery = query.toLocaleLowerCase();
+        var start = lowerQuery ? lowerLabel.indexOf(lowerQuery) : -1;
+        if (start < 0) {
+            container.textContent = label;
+            return;
+        }
+        container.appendChild(document.createTextNode(label.slice(0, start)));
+        var match = document.createElement('span');
+        match.className = 'search-query-match';
+        match.textContent = label.slice(start, start + query.length);
+        container.appendChild(match);
+        container.appendChild(document.createTextNode(label.slice(start + query.length)));
+    }
     function appendPerson(person) {
         if (document.querySelector('[data-person-id="' + person.id + '"]')) return;
         var form = document.createElement('form');
@@ -684,7 +769,7 @@ document.querySelectorAll('.person-match').forEach(function(form) {
         if (notice) notice.remove();
         form.className = 'person person-match';
         form.method = 'post';
-        form.action = '$base/people/save';
+        form.action = '$base/match/save';
         form.dataset.personId = person.id;
         form.innerHTML =
             '<input type="hidden" name="person" value="' + person.id + '">' +
@@ -692,10 +777,12 @@ document.querySelectorAll('.person-match').forEach(function(form) {
             '<input type="hidden" name="ui" value="$ui">' +
             '<input type="hidden" name="ajax" value="1">';
         var identity = document.createElement('div');
-        var strong = document.createElement('strong');
-        strong.textContent = person.label;
+        var strong = document.createElement('span');
+        appendHighlightedLabel(strong, person.label);
         var link = document.createElement('a');
         link.href = 'https://www.wikidata.org/wiki/' + person.id;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
         link.textContent = ' (' + person.id + ')';
         identity.appendChild(strong);
         identity.appendChild(link);
@@ -705,6 +792,16 @@ document.querySelectorAll('.person-match').forEach(function(form) {
             description.className = 'muted';
             description.textContent = person.description;
             identity.appendChild(description);
+        }
+        if (person.matchedLabel && person.matchedLabel !== person.label) {
+            identity.appendChild(document.createElement('br'));
+            var matchedLabel = document.createElement('span');
+            matchedLabel.className = 'muted';
+            matchedLabel.appendChild(document.createTextNode('Matched label: '));
+            var matchedLabelValue = document.createElement('span');
+            appendHighlightedLabel(matchedLabelValue, person.matchedLabel);
+            matchedLabel.appendChild(matchedLabelValue);
+            identity.appendChild(matchedLabel);
         }
         var options = document.createElement('div');
         options.innerHTML = personOptions;
@@ -725,8 +822,8 @@ document.querySelectorAll('.person-match').forEach(function(form) {
         button.disabled = true;
         button.textContent = 'Loading...';
         var offset = parseInt(section.dataset.nextOffset || '0', 10);
-        fetch('$base/api/people?name_item=$safeNameItemId&q=' + encodeURIComponent('$safeQuery')
-            + '&ui=' + encodeURIComponent('$ui')
+        fetch('$base/api/people?name_item=' + encodeURIComponent(nameItemId) + '&q=' + encodeURIComponent(query)
+            + '&ui=' + encodeURIComponent(uiLanguage)
             + '&offset=' + offset, { cache: 'no-store' })
             .then(function(response) {
                 if (!response.ok) throw new Error('People search failed');

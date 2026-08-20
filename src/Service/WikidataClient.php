@@ -44,7 +44,23 @@ final class WikidataClient
             }
         }
 
-        return array_slice($items, 0, max(1, min(50, $limit)));
+        // wbsearchentities ranks results per search language by popularity,
+        // which can hide the exact label match behind more popular entities
+        // and push it past the $limit slice (e.g. "Nico" surfaces its
+        // unisex given-name item only in the Dutch result set). Keep
+        // exact-label matches first so they are never truncated away.
+        $foldedSearch = mb_strtolower(trim($search));
+        $exact = [];
+        $rest = [];
+        foreach ($items as $item) {
+            if (mb_strtolower(trim($item['label'])) === $foldedSearch) {
+                $exact[] = $item;
+            } else {
+                $rest[] = $item;
+            }
+        }
+
+        return array_slice([...$exact, ...$rest], 0, max(1, min(50, $limit)));
     }
 
     /**
@@ -293,20 +309,22 @@ final class WikidataClient
         }
 
         $type = '';
+        $isFamilyName = false;
+        $isGivenName = false;
         $instanceOf = [];
         foreach ($entity['claims']['P31'] ?? [] as $claim) {
             $qid = $claim['mainsnak']['datavalue']['value']['id'] ?? '';
             if (is_string($qid) && preg_match('/^Q\d+$/', $qid)) {
                 $instanceOf[] = $qid;
             }
-            if (is_string($qid) && in_array($qid, ['Q101352', 'Q66480858', 'Q60558422'], true)) {
-                $type = 'family';
-                break;
+            if (is_string($qid) && in_array($qid, ['Q101352', 'Q66480858', 'Q60558422', 'Q66475447', 'Q18972207', 'Q18972245', 'Q11455398'], true)) {
+                $isFamilyName = true;
             }
             if (is_string($qid) && in_array($qid, ['Q202444', 'Q12308941', 'Q11879590', 'Q3409032'], true)) {
-                $type = 'given';
+                $isGivenName = true;
             }
         }
+        $type = $isFamilyName ? 'family' : ($isGivenName ? 'given' : '');
         if ($type === '') {
             return null;
         }
@@ -439,6 +457,10 @@ final class WikidataClient
             'mulLabel' => $mulLabel,
             'sameAs' => $this->claimItemIds($entity['claims']['P460'] ?? []),
             'equivalents' => $equivalents,
+            'otherGenderEquivalents' => array_merge(
+                $this->claimItemIds($entity['claims']['P1560'] ?? []),
+                $this->claimItemIds($entity['claims']['P5278'] ?? []),
+            ),
         ];
     }
 
@@ -449,7 +471,7 @@ final class WikidataClient
     private function isMatchingNameEquivalent(array $entity, array $sourceLabels, string $sourceScript, string $candidateType): bool
     {
         $compatibleTypes = $candidateType === 'family'
-            ? ['Q101352', 'Q66480858', 'Q60558422']
+            ? ['Q101352', 'Q66480858', 'Q60558422', 'Q66475447', 'Q18972207', 'Q18972245', 'Q11455398']
             : ['Q202444', 'Q12308941', 'Q11879590', 'Q3409032'];
         $candidateTypes = $this->claimItemIds($entity['claims']['P31'] ?? []);
         if (array_intersect($compatibleTypes, $candidateTypes) === []) {
@@ -508,6 +530,10 @@ final class WikidataClient
                 'Q101352' => 'family name',
                 'Q66480858' => 'affixed family name',
                 'Q60558422' => 'Chinese family name',
+                'Q66475447' => 'family name affix',
+                'Q18972207' => 'feminine family name',
+                'Q18972245' => 'masculine family name',
+                'Q11455398' => 'patronymic family name',
             ][$qid] ?? '';
             if ($label !== '') {
                 return $label;
@@ -553,6 +579,10 @@ final class WikidataClient
             'Q101352' => 'family',
             'Q66480858' => 'family',
             'Q60558422' => 'family',
+            'Q66475447' => 'family',
+            'Q18972207' => 'family',
+            'Q18972245' => 'family',
+            'Q11455398' => 'family',
         ];
         $matches = [];
         foreach ($types as $instanceQid => $type) {
@@ -582,15 +612,45 @@ final class WikidataClient
             return [];
         }
 
+        $entities = $this->api([
+            'action' => 'wbgetentities',
+            'format' => 'json',
+            'ids' => implode('|', array_keys($matches)),
+            'props' => 'labels|descriptions|claims',
+            'languages' => implode('|', array_values(array_unique([$language, 'mul', 'en']))),
+            'languagefallback' => 1,
+        ])['entities'] ?? [];
+
         $out = [];
         foreach ($matches as $id => $match) {
+            $entity = is_array($entities[$id] ?? null) ? $entities[$id] : [];
+            $nativeLabel = '';
+            foreach ($entity['claims']['P1705'] ?? [] as $claim) {
+                $candidate = (string) ($claim['mainsnak']['datavalue']['value']['text'] ?? '');
+                if ($candidate !== '') {
+                    $nativeLabel = $candidate;
+                    break;
+                }
+            }
+            $label = (string) ($entity['labels']['mul']['value']
+                ?? $entity['labels'][$language]['value']
+                ?? $entity['labels']['en']['value']
+                ?? $match['label']);
+            $description = (string) ($entity['descriptions'][$language]['value']
+                ?? $entity['descriptions']['mul']['value']
+                ?? $entity['descriptions']['en']['value']
+                ?? $match['description']);
+            if ($description === '' && $nativeLabel !== '' && $nativeLabel !== $label) {
+                $description = ($match['type'] === 'given' ? 'given name' : 'family name') . ' (' . $nativeLabel . ')';
+            }
             $out[] = [
                 'id' => $id,
-                'label' => $match['label'],
+                'label' => $label,
                 'type' => $match['type'],
                 'script' => '',
                 'languageCode' => '',
-                'description' => $match['description'],
+                'description' => $description,
+                'nativeLabel' => $nativeLabel,
                 '_rank' => $match['rank'],
             ];
         }
@@ -676,7 +736,7 @@ final class WikidataClient
         }
 
         $scriptLanguages = $this->languagesForScript($scriptQid);
-        $searchQuery = $query . ' haswbstatement:P31=' . self::HUMAN;
+        $searchQuery = '"' . str_replace('"', '\\"', $query) . '" haswbstatement:P31=' . self::HUMAN;
         if (is_string($nameItemId) && preg_match('/^Q\d+$/', $nameItemId)) {
             $properties = $nameType === 'given'
                 ? ['P735']
@@ -901,7 +961,7 @@ final class WikidataClient
         }
 
         $compatibleTypes = match ($rootTypeQid) {
-            'Q101352' => ['Q101352', 'Q66480858', 'Q60558422'],
+            'Q101352' => ['Q101352', 'Q66480858', 'Q60558422', 'Q66475447', 'Q18972207', 'Q18972245', 'Q11455398'],
             'Q202444' => ['Q202444', 'Q12308941', 'Q11879590', 'Q3409032'],
             default => [$rootTypeQid],
         };
@@ -998,11 +1058,20 @@ SPARQL;
 
         $values = 'wd:' . implode(' wd:', $ids);
         $types = 'wd:' . implode(' wd:', $allowedP31);
+        // Affix/particle items (e.g. "von" Q69870160) are used as the P7377
+        // target by many affixed family names; match them via that link rather
+        // than requiring a family-name P31.
         $query = <<<SPARQL
-SELECT ?item WHERE {
+SELECT DISTINCT ?item WHERE {
   VALUES ?item { $values }
-  ?item wdt:P31 ?type .
-  VALUES ?type { $types }
+  {
+    ?item wdt:P31 ?type .
+    VALUES ?type { $types }
+  }
+  UNION
+  {
+    ?item ^wdt:P7377 ?affixedName .
+  }
 }
 SPARQL;
 

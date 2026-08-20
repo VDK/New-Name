@@ -41,7 +41,38 @@ final class AffixDetector
             $hits[] = $hit;
         }
 
-        return $hits;
+        return $this->removeSubsumedPrefixes($hits);
+    }
+
+    /**
+     * A compound prefix match (e.g. "van der") already covers its shorter
+     * word prefix ("van"), so the shorter one should not be suggested again.
+     *
+     * @param list<array{kind: string, group: string, value: string, confidence: string, item?: string, itemLabel?: string}> $hits
+     * @return list<array{kind: string, group: string, value: string, confidence: string, item?: string, itemLabel?: string}>
+     */
+    private function removeSubsumedPrefixes(array $hits): array
+    {
+        $prefixValues = [];
+        foreach ($hits as $hit) {
+            if (($hit['kind'] ?? '') === 'prefix') {
+                $prefixValues[] = (string) $hit['value'];
+            }
+        }
+
+        return array_values(array_filter($hits, static function (array $hit) use ($prefixValues): bool {
+            if (($hit['kind'] ?? '') !== 'prefix') {
+                return true;
+            }
+            $value = (string) $hit['value'];
+            foreach ($prefixValues as $other) {
+                if ($other !== $value && str_starts_with($other, $value . ' ')) {
+                    return false;
+                }
+            }
+
+            return true;
+        }));
     }
 
     private function normalizeName(string $name): string
@@ -101,8 +132,13 @@ final class AffixDetector
      */
     private function prefixItem(string $group, string $prefix, string $name): ?array
     {
-        if ($group === 'nl' && $prefix === 'de' && preg_match('/^De(?:\s|-|$)/u', $name) === 1) {
-            return LanguageHeuristics::PREFIX_ITEMS['nl']['De'];
+        $capitalized = ucfirst($prefix);
+        if (
+            $capitalized !== $prefix
+            && isset(LanguageHeuristics::PREFIX_ITEMS[$group][$capitalized])
+            && preg_match('/^' . preg_quote($capitalized, '/') . '(?:\s|-|$)/u', $name) === 1
+        ) {
+            return LanguageHeuristics::PREFIX_ITEMS[$group][$capitalized];
         }
 
         return LanguageHeuristics::PREFIX_ITEMS[$group][$prefix] ?? null;

@@ -170,6 +170,7 @@ final class WikidataSaveController
             'ru' => 'Q7737',
             'he' => 'Q9288',
             'hi' => 'Q1568',
+            'tr' => 'Q256',
         ][$code] ?? null;
     }
 
@@ -211,6 +212,7 @@ final class WikidataSaveController
             'Q7737' => 'ru',
             'Q9288' => 'he',
             'Q1568' => 'hi',
+            'Q256' => 'tr',
         ][$qid ?? ''] ?? null;
     }
 
@@ -254,6 +256,7 @@ final class WikidataSaveController
             'ru' => 'Russian',
             'he' => 'Hebrew',
             'hi' => 'Hindi',
+            'tr' => 'Turkish',
         ][$code ?? ''] ?? ($qid ?? '');
     }
 
@@ -580,6 +583,7 @@ final class WikidataSaveController
                 'Q101352' => 'family name',
                 'Q66480858' => 'affixed family name',
                 'Q60558422' => 'compound surname',
+                'Q66475447' => 'family name affix',
                 'Q202444' => 'given name',
                 'Q12308941' => 'male given name',
                 'Q11879590' => 'female given name',
@@ -589,6 +593,7 @@ final class WikidataSaveController
                 'Q101352' => 'achternaam',
                 'Q66480858' => 'achternaam met tussenvoegsel',
                 'Q60558422' => 'samengestelde achternaam',
+                'Q66475447' => 'familienaamprefix',
                 'Q202444' => 'voornaam',
                 'Q12308941' => 'mannelijke voornaam',
                 'Q11879590' => 'vrouwelijke voornaam',
@@ -598,6 +603,7 @@ final class WikidataSaveController
                 'Q101352' => 'Familienname',
                 'Q66480858' => 'Familienname mit Namenszusatz',
                 'Q60558422' => 'zusammengesetzter Familienname',
+                'Q66475447' => 'Zusatz zum Familiennamen',
                 'Q202444' => 'Vorname',
                 'Q12308941' => 'männlicher Vorname',
                 'Q11879590' => 'weiblicher Vorname',
@@ -607,6 +613,7 @@ final class WikidataSaveController
                 'Q101352' => 'nom de famille',
                 'Q66480858' => 'nom de famille avec particule',
                 'Q60558422' => 'nom de famille composé',
+                'Q66475447' => 'affixe d\'un nom de famille',
                 'Q202444' => 'prénom',
                 'Q12308941' => 'prénom masculin',
                 'Q11879590' => 'prénom féminin',
@@ -616,6 +623,7 @@ final class WikidataSaveController
                 'Q101352' => 'apellido',
                 'Q66480858' => 'apellido con partícula',
                 'Q60558422' => 'apellido compuesto',
+                'Q66475447' => 'afijo de un apellido',
                 'Q202444' => 'nombre de pila',
                 'Q12308941' => 'nombre masculino',
                 'Q11879590' => 'nombre femenino',

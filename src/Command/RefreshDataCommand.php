@@ -53,13 +53,20 @@ final class RefreshDataCommand extends Command
             $this->writeTsv($dataDir . '/affixes.tsv', $this->affixesQuery(), ['item', 'itemLabel', 'class', 'classLabel']);
             $output->writeln('<info>Updated data/affixes.tsv</info>');
 
+            $validLanguageCodes = $this->validLanguageCodes();
             $this->writeTsv($dataDir . '/script-languages.tsv', $this->scriptLanguagesQuery(), [
                 'script',
                 'scriptLabel',
                 'language',
                 'code',
                 'label_en',
-            ]);
+            ], static function (array $row) use ($validLanguageCodes): bool {
+                // Labels are only accepted in languages Wikidata knows; codes that
+                // exist in Wikidata's language items but not here (e.g. ISO 639-3
+                // codes like "bsa") make the whole wbeditentity call fail.
+                $code = strtolower((string) ($row['code']['value'] ?? ''));
+                return $code !== '' && isset($validLanguageCodes[$code]);
+            });
             $output->writeln('<info>Updated data/script-languages.tsv</info>');
         }
 
@@ -83,8 +90,9 @@ final class RefreshDataCommand extends Command
 
     /**
      * @param list<string> $columns
+     * @param (callable(array<string, array{type: string, value: string}>): bool)|null $keepRow
      */
-    private function writeTsv(string $path, string $sparql, array $columns): void
+    private function writeTsv(string $path, string $sparql, array $columns, ?callable $keepRow = null): void
     {
         $rows = $this->sparql($sparql);
         $tmp = $path . '.tmp';
@@ -95,6 +103,9 @@ final class RefreshDataCommand extends Command
 
         fwrite($handle, implode("\t", $columns) . "\n");
         foreach ($rows as $row) {
+            if ($keepRow !== null && !$keepRow($row)) {
+                continue;
+            }
             $values = [];
             foreach ($columns as $column) {
                 $values[] = $this->tsvValue($row[$column]['value'] ?? '');
@@ -218,6 +229,24 @@ final class RefreshDataCommand extends Command
     }
 
     /**
+     * @return array<string, true> Lower-cased language codes Wikidata accepts for entity labels.
+     */
+    private function validLanguageCodes(): array
+    {
+        $body = $this->httpGet('https://www.wikidata.org/w/api.php?action=query&meta=siteinfo&siprop=languages&format=json');
+        $data = json_decode($body, true);
+        $codes = [];
+        foreach ($data['query']['languages'] ?? [] as $language) {
+            $code = strtolower((string) ($language['code'] ?? ''));
+            if ($code !== '') {
+                $codes[$code] = true;
+            }
+        }
+
+        return $codes;
+    }
+
+    /**
      * @return list<array<string, array{type: string, value: string}>>
      */
     private function sparql(string $query): array
@@ -314,15 +343,20 @@ SPARQL;
 
     private function affixesQuery(): string
     {
+        // Affix items are the objects of P7377 (infix) statements on affixed
+        // family names (e.g. "von Koenigsegg" -> P7377 -> "von" Q69870160),
+        // so drive the list from that link rather than only from P31 classes.
         return <<<'SPARQL'
-SELECT ?item ?itemLabel ?class ?classLabel WHERE {
+SELECT DISTINCT ?item ?itemLabel ?class ?classLabel WHERE {
   VALUES ?class {
     wd:Q62155
     wd:Q23585486
+    wd:Q66475447
     wd:Q2620828
   }
 
   ?item wdt:P31 ?class.
+  ?item ^wdt:P7377 ?affixedName.
 
   SERVICE wikibase:label { bd:serviceParam wikibase:language "nl,en". }
 }
@@ -331,6 +365,11 @@ SPARQL;
 
     private function scriptLanguagesQuery(): string
     {
+        // Many Latin-script languages (en, fr, de, nl, it, …) declare an
+        // alphabet item (P31/P279* of Q29575627 "Latin-script alphabet")
+        // rather than the generic "Latin script" (Q8229) as their P282.
+        // Normalize those to Q8229 so the Latin-script language list is
+        // not missing the common European languages.
         return <<<'SPARQL'
 SELECT DISTINCT ?script ?scriptLabel ?language
        ?code
@@ -340,7 +379,8 @@ WHERE {
   ?language wdt:P31/wdt:P279* wd:Q1288568.
   FILTER NOT EXISTS { ?language wdt:P31/wdt:P279* wd:Q34228. }
   ?language rdfs:label ?label_en FILTER(LANG(?label_en) = "en")
-  ?language wdt:P282 ?script.
+  ?language wdt:P282 ?scriptItem.
+  BIND(IF(EXISTS { ?scriptItem wdt:P31/wdt:P279* wd:Q29575627. }, wd:Q8229, ?scriptItem) AS ?script)
 
   SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
 }

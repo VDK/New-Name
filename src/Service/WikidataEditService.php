@@ -27,18 +27,39 @@ final class WikidataEditService
         $data = ['claims' => []];
         if (!$entityId) {
             $data['labels'] = $this->labels($name, $displayLabel, $scriptQid, $nativeLabelLanguage);
-        } elseif ($updateTransliteration) {
+        } elseif ($updateTransliteration && $displayLabel !== '' && $displayLabel !== $name) {
             $data['labels'] = [
-                'mul' => ['language' => 'mul', 'value' => $displayLabel],
+                'en' => ['language' => 'en', 'value' => $displayLabel],
             ];
         }
         if (!$entityId || in_array('overwrite_descriptions', $apply, true)) {
             $data['descriptions'] = $this->descriptions($type, $name, $name);
+        } elseif (in_array('description_ru_feminine', $apply, true) && DescriptionSet::isRussianFeminineFamilyName($type, $name)) {
+            $data['descriptions']['ru'] = [
+                'language' => 'ru',
+                'value' => 'женская форма русской фамилии',
+            ];
+        } elseif (in_array('description_ru_masculine', $apply, true) && DescriptionSet::isRussianMasculineFamilyName($type, $name)) {
+            $data['descriptions']['ru'] = [
+                'language' => 'ru',
+                'value' => 'мужская фамилия',
+            ];
         }
 
         $typeQid = NameTypes::TYPE_ITEMS[$type] ?? NameTypes::TYPE_ITEMS[NameTypes::GIVEN_NAME];
         if (!$this->hasCompatibleTypeClaim($existingClaims, $type)) {
             $data['claims'][] = $this->itemClaim('P31', $typeQid);
+        }
+        foreach ($this->appliedItemClaims($apply, 'P31') as $additionalTypeQid) {
+            $allowedAdditionalType = ($additionalTypeQid === 'Q18972207' && DescriptionSet::isRussianFeminineFamilyName($type, $name))
+                || ($additionalTypeQid === 'Q18972245' && DescriptionSet::isRussianMasculineFamilyName($type, $name))
+                || ($additionalTypeQid === 'Q11455398' && DescriptionSet::isRussianPatronymicFamilyName($type, $name));
+            if (!$allowedAdditionalType) {
+                continue;
+            }
+            if (!$this->hasItemClaim($existingClaims, 'P31', $additionalTypeQid)) {
+                $data['claims'][] = $this->itemClaim('P31', $additionalTypeQid);
+            }
         }
         if ($scriptQid && !$this->hasItemClaim($existingClaims, 'P282', $scriptQid)) {
             $data['claims'][] = $this->itemClaim('P282', $scriptQid);
@@ -168,15 +189,21 @@ final class WikidataEditService
      */
     private function labels(string $name, string $displayLabel, ?string $scriptQid, string $nativeLabelLanguage): array
     {
-        $labels = [
-            'mul' => ['language' => 'mul', 'value' => $displayLabel],
-        ];
+        $labels = [];
+
+        if ($scriptQid === 'Q8229') {
+            $labels['mul'] = ['language' => 'mul', 'value' => $displayLabel];
+        }
 
         $scriptLanguages = $scriptQid === 'Q8201'
             ? [$this->hanLabelLanguage($nativeLabelLanguage)]
             : $this->scriptLanguages->languageCodesForScript($scriptQid);
         foreach ($scriptLanguages as $scriptLanguage) {
             $labels[$scriptLanguage] = ['language' => $scriptLanguage, 'value' => $name];
+        }
+
+        if ($displayLabel !== '' && $displayLabel !== $name) {
+            $labels['en'] = ['language' => 'en', 'value' => $displayLabel];
         }
 
         return $labels;

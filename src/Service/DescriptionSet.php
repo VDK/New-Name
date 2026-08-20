@@ -25,7 +25,48 @@ final class DescriptionSet
             $out[$language] = $value;
         }
 
+        if (self::isRussianFeminineFamilyName($type, $name)) {
+            $out['ru'] = 'женская форма русской фамилии';
+        }
+
+        if (self::isRussianMasculineFamilyName($type, $name)) {
+            $out['ru'] = 'мужская фамилия';
+        }
+
         return $out;
+    }
+
+    public static function isRussianFeminineFamilyName(string $type, string $name): bool
+    {
+        if (!in_array($type, [NameTypes::FAMILY_NAME, NameTypes::CHINESE_FAMILY_NAME], true)) {
+            return false;
+        }
+
+        $name = mb_strtolower(trim($name));
+
+        return preg_match('/^[\p{Cyrillic}\p{M}\s\'’-]+(?:ова|ева|ёва|ина|ына|ская|цкая)$/u', $name) === 1;
+    }
+
+    public static function isRussianMasculineFamilyName(string $type, string $name): bool
+    {
+        if (!in_array($type, [NameTypes::FAMILY_NAME, NameTypes::CHINESE_FAMILY_NAME], true)) {
+            return false;
+        }
+
+        $name = mb_strtolower(trim($name));
+
+        return preg_match('/^[\p{Cyrillic}\p{M}\s\'’-]+(?:ов|ев|ёв|ин|ын|ский|цкий)$/u', $name) === 1;
+    }
+
+    public static function isRussianPatronymicFamilyName(string $type, string $name): bool
+    {
+        if (!in_array($type, [NameTypes::FAMILY_NAME, NameTypes::CHINESE_FAMILY_NAME], true)) {
+            return false;
+        }
+
+        $name = mb_strtolower(trim($name));
+
+        return preg_match('/^[\p{Cyrillic}\p{M}\s\'’-]+(?:ов|ев|ёв|ин|ын|ова|ева|ёва|ина|ына)$/u', $name) === 1;
     }
 
     /**

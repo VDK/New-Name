@@ -16,7 +16,7 @@
  * @author Jon Harald Søby
  * @author Vera de Kok (1Veertje)
  * @license GPL-2.0-or-later
- * @version 3.0.2
+ * @version 3.1.0
  */
 
 if ( mw.NamePrefiller === undefined ) {
@@ -68,6 +68,13 @@ if ( mw.NamePrefiller === undefined ) {
 					},
 					fill: {
 						P527: { mode: 'consecutiveLastnames', allowMultiple: true }
+					}
+				},
+				{
+					name: 'follows / followed by',
+					fill: {
+						P155: { mode: 'adjacentLabel', direction: -1 },
+						P156: { mode: 'adjacentLabel', direction: +1 }
 					}
 				}
 			]
@@ -325,6 +332,45 @@ if ( mw.NamePrefiller === undefined ) {
 		return [ label.split( ' ' )[ 0 ] ];
 	}
 
+	function getOrdinalSuffix( number ) {
+		if ( number % 100 >= 11 && number % 100 <= 13 ) {
+			return 'th';
+		}
+
+		switch ( number % 10 ) {
+			case 1: return 'st';
+			case 2: return 'nd';
+			case 3: return 'rd';
+			default: return 'th';
+		}
+	}
+
+	function getAdjacentLabel( label, direction ) {
+		// Find the first standalone figure in the label (e.g. "2014" or "2nd")
+		// and shift it by `direction` (+1 / -1). When the figure is an ordinal
+		// the suffix is recomputed, so "2nd" → "1st"/"3rd" and "2014" → "2013"/"2015".
+		var match = label.match( /\b(\d+)(st|nd|rd|th)?\b/i );
+
+		if ( !match ) {
+			return '';
+		}
+
+		var number = parseInt( match[ 1 ], 10 ),
+			next = number + direction;
+
+		if ( next < 1 ) {
+			return '';
+		}
+
+		var replacement = match[ 2 ] ?
+			next + getOrdinalSuffix( next ) :
+			String( next );
+
+		return label.slice( 0, match.index ) +
+			replacement +
+			label.slice( match.index + match[ 0 ].length );
+	}
+
 	function getModeValue( fillRule, label, index, propertyId, $valueview ) {
 		var parts = label.split( ' ' ),
 			mode = fillRule.mode,
@@ -427,6 +473,10 @@ if ( mw.NamePrefiller === undefined ) {
 
 				return result;
 			}, [] )[ index ] || '';
+		}
+
+		if ( mode === 'adjacentLabel' ) {
+			return getAdjacentLabel( label, fillRule.direction || 1 );
 		}
 
 		return '';

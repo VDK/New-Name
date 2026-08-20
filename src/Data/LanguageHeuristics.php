@@ -8,6 +8,8 @@ final class LanguageHeuristics
         'nl' => [
             'van der' => ['qid' => 'Q69869239', 'label' => 'van der'],
             'van de' => ['qid' => 'Q69869744', 'label' => 'van de'],
+            "van 't" => ['qid' => 'Q76768750', 'label' => "van 't"],
+            "Van 't" => ['qid' => 'Q76795195', 'label' => "Van 't"],
             'van' => ['qid' => 'Q1258618', 'label' => 'van'],
             'de' => ['qid' => 'Q11071485', 'label' => 'de'],
             'De' => ['qid' => 'Q69874623', 'label' => 'De'],
@@ -18,12 +20,12 @@ final class LanguageHeuristics
         'de' => [
             'von der' => ['qid' => 'Q75135664', 'label' => 'von der'],
             'von dem' => ['qid' => 'Q83441628', 'label' => 'von dem'],
-            'von' => ['qid' => 'Q70084230', 'label' => 'Von'],
+            'von' => ['qid' => 'Q69870160', 'label' => 'von'],
         ],
     ];
 
     public const PREFIXES = [
-        'nl' => ['van der', 'van den', 'van de', 'van het', 'van', 'de', 'den', 'ten', 'ter', "'t", "'s"],
+        'nl' => ['van der', 'van den', 'van de', 'van het', "van 't", 'van', 'de', 'den', 'ten', 'ter', "'t", "'s"],
         'de' => ['von und zu', 'von der', 'von dem', 'von', 'zu'],
         'fr' => ["l'", 'le', 'la', "d'", 'de la', 'du', 'des', 'de'],
         'it' => ['di', 'da', 'della', 'dello', 'degli', 'del'],
@@ -46,6 +48,7 @@ final class LanguageHeuristics
         ['group' => 'gd', 'value' => 'Mac/Mc', 'confidence' => 'low', 'subject' => 'name', 'regex' => '/^Ma?c[\p{Lu}]/u'],
         ['group' => 'gd', 'value' => 'Mac/Mc', 'confidence' => 'low', 'subject' => 'normalized', 'regex' => '/^ma?c[\p{Ll}]/u'],
         ['group' => 'is', 'value' => 'Icelandic patronymic', 'confidence' => 'medium', 'subject' => 'normalized', 'regex' => '/[\x{00E1}\x{00E9}\x{00ED}\x{00F3}\x{00FA}\x{00FD}\x{00FE}\x{00E6}\x{00F6}].*(?:son|sson)$/u'],
+        ['group' => 'tr', 'value' => 'Turkish ğ/ı/ş', 'confidence' => 'high', 'subject' => 'name', 'regex' => '/[\x{011E}\x{011F}\x{0130}\x{0131}\x{015E}\x{015F}]/u'],
     ];
 
     public const LANGUAGE_SUFFIXES = [

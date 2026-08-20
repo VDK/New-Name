@@ -21,7 +21,7 @@ Created by [Vera de Kok](https://www.veradekok.nl/). Licensed under the MIT Lice
   - `given name version for other gender (P1560)`
   - `surname for other gender (P5278)`
 - Adds fixed core statements for new name items:
-  - `label` in `mul`
+  - `label` in `mul` for Latin-script names; the latinised form is stored as the `en` label when a transliteration exists
   - `native label (P1705)`
   - `instance of (P31)`
   - `writing system (P282)`

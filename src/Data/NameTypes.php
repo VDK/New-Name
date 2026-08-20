@@ -40,6 +40,21 @@ final class NameTypes
         self::CHINESE_GIVEN_NAME => 'Q202444',
     ];
 
+    /** Wikidata P31 values accepted as name items in search results. */
+    public const NAME_TYPE_QIDS = [
+        'Q101352',
+        'Q66480858',
+        'Q60558422',
+        'Q66475447',
+        'Q18972207',
+        'Q18972245',
+        'Q11455398',
+        'Q202444',
+        'Q12308941',
+        'Q11879590',
+        'Q3409032',
+    ];
+
     public const LABELS = [
         self::FAMILY_NAME => 'family name',
         self::GIVEN_NAME => 'given name',
@@ -54,6 +69,10 @@ final class NameTypes
         'Q101352' => 'family name',
         'Q66480858' => 'affixed family name',
         'Q60558422' => 'compound surname',
+        'Q66475447' => 'family name affix',
+        'Q18972207' => 'feminine family name',
+        'Q18972245' => 'masculine family name',
+        'Q11455398' => 'patronymic family name',
         'Q4167410' => 'Wikimedia disambiguation page',
         'Q23765057' => 'given name has to use a different item than disambiguation pages',
         'Q27924673' => 'family name has to use a different item than disambiguation page',
@@ -64,8 +83,8 @@ final class NameTypes
     ];
 
     public const COMPATIBLE_TYPE_ITEMS = [
-        self::FAMILY_NAME => ['Q101352', 'Q66480858', 'Q60558422'],
-        self::CHINESE_FAMILY_NAME => ['Q101352', 'Q66480858', 'Q60558422'],
+        self::FAMILY_NAME => ['Q101352', 'Q66480858', 'Q60558422', 'Q66475447', 'Q18972207', 'Q18972245', 'Q11455398'],
+        self::CHINESE_FAMILY_NAME => ['Q101352', 'Q66480858', 'Q60558422', 'Q66475447', 'Q18972207', 'Q18972245', 'Q11455398'],
         self::GIVEN_NAME => ['Q202444', 'Q12308941', 'Q11879590', 'Q3409032'],
         self::CHINESE_GIVEN_NAME => ['Q202444', 'Q12308941', 'Q11879590', 'Q3409032'],
         self::MALE_GIVEN_NAME => ['Q12308941', 'Q202444'],

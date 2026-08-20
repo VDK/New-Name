@@ -69,7 +69,7 @@ final class HomeController
             if ($selectedItemId !== '') {
                 $selectedItem = $wikidataClient->nameItem($selectedItemId);
                 $existingMulLabel = trim((string) ($selectedItem['mulLabel'] ?? ''));
-                if ($existingMulLabel !== '') {
+                if ($this->shouldPreferExistingTransliteration($existingMulLabel, $name, $analysis['script'] ?? null)) {
                     $defaultTransliteration = $existingMulLabel;
                 }
             }
@@ -138,13 +138,16 @@ final class HomeController
         $value = $name !== '' && is_array($script)
             ? $this->defaultTransliteration($name, $script, $transliterator)
             : '';
+        $uiLanguage = $this->interfaceLanguage((string) $request->query->get('ui', 'en'));
 
         return new JsonResponse([
             'transliteration' => $value,
             'showTransliteration' => !in_array($scriptQid, ['', 'Q8229'], true),
-            'labelGroup' => $scriptQid === 'Q8209'
-                ? $this->t($this->interfaceLanguage((string) $request->query->get('ui', 'en')), 'cyrillic_languages')
-                : '',
+            'labelGroup' => match ($scriptQid) {
+                'Q8209' => $this->t($uiLanguage, 'cyrillic_languages'),
+                'Q8229' => $this->t($uiLanguage, 'latin_languages'),
+                default => '',
+            },
         ], 200, ['Cache-Control' => 'no-store, max-age=0']);
     }
 
@@ -454,14 +457,10 @@ final class HomeController
 
         .name-suggestions {
             display: none;
-            position: absolute;
-            z-index: 20;
-            top: calc(100% + 2px);
-            left: 0;
-            right: 0;
+            position: static;
             max-height: 280px;
             overflow: auto;
-            margin: 0;
+            margin: 2px 0 0;
             padding: 4px 0;
             list-style: none;
             border: 1px solid var(--line);
@@ -926,10 +925,6 @@ final class HomeController
             h1 { font-size: 38px; }
             .grid { grid-template-columns: 1fr; }
             th { width: auto; }
-            .name-suggestions {
-                position: static;
-                margin-top: 2px;
-            }
         }
 
         @media (max-width: 480px) {
@@ -1238,7 +1233,14 @@ final class HomeController
             var usesTransliteration = !!script && script.value !== '' && script.value !== 'Q8229';
             var proposedTransliteration = transliteration ? (transliteration.dataset.defaultValue || '') : '';
             if (transliteration) {
-                var nextTransliteration = existingMul || proposedTransliteration;
+                var existingIsOriginal = existingMul !== ''
+                    && existingMul === (transliteration.dataset.originalName || '');
+                var preferExisting = serverUpdate
+                    ? transliteration.dataset.preferExisting === '1'
+                    : !existingIsOriginal;
+                var nextTransliteration = existingMul && preferExisting
+                    ? existingMul
+                    : proposedTransliteration;
                 var keepUserTransliteration = !resetTransliteration
                     && transliteration.dataset.userEdited === '1'
                     && transliteration.value.trim() !== '';
@@ -1391,8 +1393,8 @@ final class HomeController
             updateLabelPreview(input);
             var changed = input.value.trim() !== ''
                 && input.value.trim() !== (input.dataset.existingValue || '');
-            document.querySelectorAll('[data-update-label]').forEach(function(row) {
-                row.style.display = changed && row.dataset.updateLabel === 'mul' ? '' : 'none';
+            document.querySelectorAll('[data-update-label="mul"]').forEach(function(row) {
+                row.style.display = changed ? '' : 'none';
             });
         }
 
@@ -1844,6 +1846,7 @@ HTML;
                 'infix' => 'infix',
                 'label' => 'Label',
                 'language_of_name' => 'Language of name',
+                'latin_languages' => 'Latin languages',
                 'log_in' => 'Log in',
                 'log_in_with_wikimedia' => 'Log in with Wikimedia',
                 'log_in_before_saving' => 'Log in with Wikimedia before saving changes.',
@@ -1875,7 +1878,7 @@ HTML;
                 'tagline' => 'Create Wikidata items for given and family names.',
                 'try_not_duplicate' => 'Try not to make duplicate items. Is it one of these?',
                 'transliteration' => 'Transliteration',
-                'transliteration_hint' => 'Used as the mul label; the original spelling remains the native label.',
+                'transliteration_hint' => 'Used as the en label; the original spelling remains the native label.',
                 'type' => 'Type',
                 'update_item' => 'Update item',
                 'update_heading' => 'Update',
@@ -1896,6 +1899,7 @@ HTML;
                 'infix' => 'tussenvoegsel',
                 'label' => 'Label',
                 'language_of_name' => 'Taal van de naam',
+                'latin_languages' => 'Latijnse talen',
                 'log_in' => 'Inloggen',
                 'log_in_with_wikimedia' => 'Inloggen met Wikimedia',
                 'log_in_before_saving' => 'Log in met Wikimedia voordat je wijzigingen opslaat.',
@@ -1927,7 +1931,7 @@ HTML;
                 'tagline' => 'Maak Wikidata-items voor voor- en achternamen.',
                 'try_not_duplicate' => 'Probeer dubbele items te voorkomen. Is het een van deze?',
                 'transliteration' => 'Transcriptie',
-                'transliteration_hint' => 'Wordt gebruikt als mul-label; de oorspronkelijke schrijfwijze blijft de native label.',
+                'transliteration_hint' => 'Wordt gebruikt als en-label; de oorspronkelijke schrijfwijze blijft de native label.',
                 'type' => 'Type',
                 'update_item' => 'Item bijwerken',
                 'update_heading' => 'Bijwerken',
@@ -1948,6 +1952,7 @@ HTML;
                 'infix' => 'Namenszusatz',
                 'label' => 'Label',
                 'language_of_name' => 'Sprache des Namens',
+                'latin_languages' => 'lateinische Sprachen',
                 'log_in' => 'Anmelden',
                 'log_in_with_wikimedia' => 'Mit Wikimedia anmelden',
                 'log_in_before_saving' => 'Melde dich mit Wikimedia an, bevor du Änderungen speicherst.',
@@ -1979,7 +1984,7 @@ HTML;
                 'tagline' => 'Neue Wikidata-Items für Vor- und Nachnamen erstellen.',
                 'try_not_duplicate' => 'Versuche doppelte Items zu vermeiden. Ist es eines davon?',
                 'transliteration' => 'Transliteration',
-                'transliteration_hint' => 'Wird als mul-Label verwendet; die ursprüngliche Schreibweise bleibt das native label.',
+                'transliteration_hint' => 'Wird als en-Label verwendet; die ursprüngliche Schreibweise bleibt das native label.',
                 'type' => 'Typ',
                 'update_item' => 'Item aktualisieren',
                 'update_heading' => 'Aktualisieren',
@@ -2000,6 +2005,7 @@ HTML;
                 'infix' => 'particule',
                 'label' => 'Libellé',
                 'language_of_name' => 'Langue du nom',
+                'latin_languages' => 'langues latines',
                 'log_in' => 'Connexion',
                 'log_in_with_wikimedia' => 'Connexion avec Wikimedia',
                 'log_in_before_saving' => 'Connectez-vous avec Wikimedia avant d’enregistrer.',
@@ -2031,7 +2037,7 @@ HTML;
                 'tagline' => 'Créer des éléments Wikidata pour les prénoms et les noms de famille.',
                 'try_not_duplicate' => 'Évitez de créer des doublons. Est-ce l’un de ces éléments ?',
                 'transliteration' => 'Translittération',
-                'transliteration_hint' => 'Utilisée comme libellé mul ; l’écriture originale reste le native label.',
+                'transliteration_hint' => 'Utilisée comme libellé en ; l’écriture originale reste le native label.',
                 'type' => 'Type',
                 'update_item' => 'Mettre à jour',
                 'update_heading' => 'Mettre à jour',
@@ -2052,6 +2058,7 @@ HTML;
                 'infix' => 'partícula',
                 'label' => 'Etiqueta',
                 'language_of_name' => 'Idioma del nombre',
+                'latin_languages' => 'idiomas latinos',
                 'log_in' => 'Iniciar sesión',
                 'log_in_with_wikimedia' => 'Iniciar sesión con Wikimedia',
                 'log_in_before_saving' => 'Inicia sesión con Wikimedia antes de guardar cambios.',
@@ -2083,7 +2090,7 @@ HTML;
                 'tagline' => 'Crea elementos de Wikidata para nombres de pila y apellidos.',
                 'try_not_duplicate' => 'Intenta no crear elementos duplicados. ¿Es uno de estos?',
                 'transliteration' => 'Transliteración',
-                'transliteration_hint' => 'Se usa como etiqueta mul; la escritura original sigue siendo el native label.',
+                'transliteration_hint' => 'Se usa como etiqueta en; la escritura original sigue siendo el native label.',
                 'type' => 'Tipo',
                 'update_item' => 'Actualizar elemento',
                 'update_heading' => 'Actualizar',
@@ -2130,7 +2137,7 @@ HTML;
         }
         $isUpdate = preg_match('/^Q\d+$/', $selectedItemId) === 1;
         if ($isUpdate) {
-            $currentItem = $wikidataClient->nameItem($selectedItemId);
+            $currentItem = $wikidataClient->nameItem($selectedItemId, true);
             if (is_array($currentItem)) {
                 $currentItem['scripts'] = ($currentItem['script'] ?? '') !== '' ? [$currentItem['script']] : [];
                 $selectedMatch = $currentItem;
@@ -2161,6 +2168,10 @@ HTML;
         $hasEquivalent = $equivalentItemId !== '';
         if ($hasEquivalent) {
             $analysis['_equivalent'] = $equivalentItemId;
+            $analysis['relationshipSuggestions'] = array_values(array_filter(
+                $analysis['relationshipSuggestions'],
+                static fn (array $suggestion): bool => ($suggestion['property'] ?? '') !== 'P1533'
+            ));
             $hasP1533 = false;
             foreach ($analysis['relationshipSuggestions'] as $suggestion) {
                 if (($suggestion['property'] ?? '') === 'P1533' && ($suggestion['target'] ?? '') === $equivalentItemId) {
@@ -2205,7 +2216,7 @@ HTML;
         if ($isUpdate && ($selectedMatch['languageCode'] ?? '') !== '') {
             $resolvedLanguage = (string) $selectedMatch['languageCode'];
         }
-        $type = $this->typeSelect((string) $analysis['selectedType'], (string) $analysis['name'], $uiLanguage, $isUpdate, $rootTypeLabel);
+        $type = $this->typeSelect((string) $analysis['selectedType'], (string) $analysis['name'], $uiLanguage, $isUpdate, $rootTypeLabel, true);
         $script = $this->scriptSelect($analysis, $uiLanguage, $isUpdate);
         $hintCodes = $this->uniqueLanguageHints(
             $languages,
@@ -2223,7 +2234,7 @@ HTML;
             : (string) $analysis['name'];
         $nativeLabelField = $this->nativeLabelField($nativeValue, $resolvedLanguage, $uiLanguage, $isUpdate);
         $transliteration = $this->transliterationField(
-            (string) $analysis['name'],
+            $nativeValue,
             $analysis['script'] ?? null,
             $transliterator,
             $uiLanguage,
@@ -2244,8 +2255,8 @@ HTML;
                 $oppositeTypeUrl
             )
             : $this->duplicates($request, $analysis, $uiLanguage, (string) $analysis['name'], '', true);
-        $generatedTransliteration = $this->defaultTransliteration((string) $analysis['name'], $analysis['script'] ?? null, $transliterator);
-        $displayLabel = $isUpdate && $existingMulLabel !== ''
+        $generatedTransliteration = $this->defaultTransliteration($nativeValue, $analysis['script'] ?? null, $transliterator);
+        $displayLabel = $isUpdate && $this->shouldPreferExistingTransliteration($existingMulLabel, (string) $analysis['name'], $analysis['script'] ?? null)
             ? $existingMulLabel
             : $generatedTransliteration;
         $updateTransliteration = $isUpdate
@@ -2415,7 +2426,7 @@ HTML;
 HTML;
     }
 
-    private function typeSelect(string $selected, string $name, string $uiLanguage, bool $locked = false, string $lockedLabel = ''): string
+    private function typeSelect(string $selected, string $name, string $uiLanguage, bool $locked = false, string $lockedLabel = '', bool $hasAnalysis = false): string
     {
         $options = '';
         foreach (NameTypes::ACTIVE_TYPES as $type) {
@@ -2433,12 +2444,13 @@ HTML;
 
         $selectDisabled = $locked ? ' disabled' : '';
         $hiddenType = $locked ? '<input name="type" type="hidden" value="' . htmlspecialchars(NameTypes::toUrl($selected), ENT_QUOTES, 'UTF-8') . '">' : '';
+        $analysisParam = $hasAnalysis ? '&_analysis=1' : '';
 
         return <<<HTML
 <div id="type-field">
     <label for="type">$typeLabel</label>
     <div id="type-editor">
-        <select id="type" name="type"$selectDisabled onchange="window.location='?ui=$safeUiLanguage&name=$safeName&type=' + encodeURIComponent(this.value)">
+        <select id="type" name="type"$selectDisabled onchange="window.location='?ui=$safeUiLanguage&name=$safeName&type=' + encodeURIComponent(this.value) + '$analysisParam'">
             $options
         </select>
         <p class="hint">$confidenceLabel: $confidence.</p>
@@ -2451,11 +2463,14 @@ HTML;
     private function transliterationField(string $name, mixed $script, NameTransliterator $transliterator, string $uiLanguage, bool $isUpdate = false, string $existingMulLabel = ''): string
     {
         $generatedValue = $this->defaultTransliteration($name, $script, $transliterator);
-        $value = $isUpdate && $existingMulLabel !== '' ? $existingMulLabel : $generatedValue;
+        $value = $isUpdate && $this->shouldPreferExistingTransliteration($existingMulLabel, $name, $script)
+            ? $existingMulLabel
+            : $generatedValue;
         $safeValue = htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $safeGeneratedValue = htmlspecialchars($generatedValue, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $safeExistingValue = htmlspecialchars($existingMulLabel, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $safeOriginal = htmlspecialchars($name, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $preferExisting = $this->shouldPreferExistingTransliteration($existingMulLabel, $name, $script) ? '1' : '0';
         $label = htmlspecialchars($this->t($uiLanguage, 'transliteration'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $hint = htmlspecialchars($this->t($uiLanguage, 'transliteration_hint'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $show = is_array($script)
@@ -2466,7 +2481,7 @@ HTML;
         return <<<HTML
 <div id="transliteration-field"$style>
     <label for="label-transliteration">$label</label>
-    <input id="label-transliteration" class="typeahead" name="label_transliteration" type="text" value="$safeValue" data-default-value="$safeGeneratedValue" data-existing-value="$safeExistingValue" data-original-name="$safeOriginal" autocomplete="off"$disabled>
+    <input id="label-transliteration" class="typeahead" name="label_transliteration" type="text" value="$safeValue" data-default-value="$safeGeneratedValue" data-existing-value="$safeExistingValue" data-original-name="$safeOriginal" data-prefer-existing="$preferExisting" autocomplete="off"$disabled>
     <p class="hint">$hint</p>
 </div>
 HTML;
@@ -2479,6 +2494,20 @@ HTML;
         }
 
         return $transliterator->transliterate($name, $script);
+    }
+
+    private function shouldPreferExistingTransliteration(string $existingValue, string $name, mixed $script): bool
+    {
+        if ($existingValue === '' || $existingValue === $name) {
+            return false;
+        }
+
+        $scriptName = is_array($script) ? (string) ($script['script'] ?? '') : '';
+        if ($scriptName === '' || $scriptName === 'Latin') {
+            return true;
+        }
+
+        return preg_match('/\p{' . preg_quote($scriptName, '/') . '}/u', $existingValue) !== 1;
     }
 
     private function typeConfidence(string $selected): string
@@ -2837,8 +2866,23 @@ HTML;
             ? NameTypes::FAMILY_NAME
             : NameTypes::GIVEN_NAME;
         $sameTypeMatches = $analysis['sameTypeMatches'] ?? [];
-        if ($selectedItem === '' && count($sameTypeMatches) === 1) {
-            $selectedItem = (string) ($sameTypeMatches[0]['id'] ?? '');
+        if ($selectedItem === '') {
+            $exactNativeMatches = array_values(array_filter(
+                $sameTypeMatches,
+                static fn (array $match): bool => in_array(
+                    mb_strtolower(trim($name)),
+                    array_map(
+                        static fn (mixed $label): string => mb_strtolower(trim((string) $label)),
+                        $match['nativeLabels'] ?? []
+                    ),
+                    true
+                )
+            ));
+            if (count($exactNativeMatches) === 1) {
+                $selectedItem = (string) ($exactNativeMatches[0]['id'] ?? '');
+            } elseif (count($sameTypeMatches) === 1) {
+                $selectedItem = (string) ($sameTypeMatches[0]['id'] ?? '');
+            }
         }
         $createChecked = $selectedItem === '' ? ' checked' : '';
         $rows = '';
@@ -2934,6 +2978,7 @@ HTML;
             'ru' => ['label' => 'Russian', 'item' => 'Q7737'],
             'he' => ['label' => 'Hebrew', 'item' => 'Q9288'],
             'hi' => ['label' => 'Hindi', 'item' => 'Q1568'],
+            'tr' => ['label' => 'Turkish', 'item' => 'Q256'],
         ];
     }
 
@@ -2952,7 +2997,7 @@ HTML;
             return $this->preferredLanguageAmong($preferredLanguages, ['nl', 'fr', 'es']);
         }
 
-        if (in_array($group, ['en', 'nl', 'de', 'ga', 'gd', 'fy', 'sv', 'da', 'no', 'is'], true)) {
+        if (in_array($group, ['en', 'nl', 'de', 'ga', 'gd', 'fy', 'sv', 'da', 'no', 'is', 'tr'], true)) {
             return $group;
         }
 
@@ -3072,18 +3117,46 @@ HTML;
     private function checks(array $analysis, string $language, string $uiLanguage, string $displayLabel, ScriptLanguageLookup $scriptLanguages, bool $showNativeLabel = true, bool $isUpdate = false, bool $updateTransliteration = false): string
     {
         $checks = '';
+        $name = (string) ($analysis['name'] ?? '');
         $languages = $this->languages();
         if (!$isUpdate) {
             foreach ($this->labelRows($analysis, $language, $uiLanguage, $displayLabel, $scriptLanguages) as $labelRow) {
                 $checks .= $labelRow;
             }
         } elseif (
-            is_array($analysis['script'] ?? null)
+            $updateTransliteration
+            && $displayLabel !== ''
+            && $displayLabel !== $name
+            && is_array($analysis['script'] ?? null)
             && ($analysis['script']['qid'] ?? '') !== 'Q8229'
         ) {
-            $checks .= $this->labelRow($uiLanguage, $displayLabel, 'mul', !$updateTransliteration);
+            $checks .= $this->labelRow($uiLanguage, $displayLabel, 'en', false);
         }
         $checks .= $this->overwriteDescriptionsCheck($analysis, $uiLanguage, $isUpdate);
+        if (!empty($analysis['isRussianFeminineFamilyName'])) {
+            $checks .= $this->russianFeminineDescriptionCheck($uiLanguage);
+        }
+        if (!empty($analysis['isRussianMasculineFamilyName'])) {
+            $checks .= $this->russianMasculineDescriptionCheck($uiLanguage);
+            $checks .= $this->check(
+                'claim_P31_Q18972245',
+                $this->sentenceCase($this->propertyLabel($uiLanguage, 'P31', 'instance of')),
+                $this->itemLabel($uiLanguage, 'Q18972245', 'masculine family name') . ' (Q18972245)',
+                true,
+                false,
+                'Russian masculine surname form'
+            );
+        }
+        if (!empty($analysis['isRussianPatronymicFamilyName'])) {
+            $checks .= $this->check(
+                'claim_P31_Q11455398',
+                $this->sentenceCase($this->propertyLabel($uiLanguage, 'P31', 'instance of')),
+                $this->itemLabel($uiLanguage, 'Q11455398', 'patronymic family name') . ' (Q11455398)',
+                true,
+                false,
+                'Russian patronymic surname form'
+            );
+        }
         if (!$isUpdate && $showNativeLabel) {
             $checks .= $this->nativeLabelRow((string) $analysis['name'], $this->nativeLabelLanguage($language), $uiLanguage);
         }
@@ -3102,6 +3175,17 @@ HTML;
                 $title,
                 $detail,
                 $claim['property'] === 'P282' ? 'claim-P282-detail' : ''
+            );
+        }
+
+        if (!empty($analysis['isRussianFeminineFamilyName'])) {
+            $checks .= $this->check(
+                'claim_P31_Q18972207',
+                $this->sentenceCase($this->propertyLabel($uiLanguage, 'P31', 'instance of')),
+                $this->itemLabel($uiLanguage, 'Q18972207', 'feminine family name') . ' (Q18972207)',
+                true,
+                false,
+                'Russian feminine surname form'
             );
         }
 
@@ -3144,6 +3228,30 @@ HTML;
 <label id="overwrite-descriptions-row" class="check" for="overwrite-descriptions"$style>
     <input id="overwrite-descriptions" name="apply[]" value="overwrite_descriptions" type="checkbox"$disabled>
     <span><strong>$label</strong><br><span class="meta">$safeDescription (mul)</span></span>
+</label>
+HTML;
+    }
+
+    private function russianFeminineDescriptionCheck(string $uiLanguage): string
+    {
+        $label = htmlspecialchars($this->t($uiLanguage, 'overwrite_descriptions'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
+        return <<<HTML
+<label class="check" for="description-ru-feminine">
+    <input id="description-ru-feminine" name="apply[]" value="description_ru_feminine" type="checkbox" checked>
+    <span><strong>$label</strong><br><span class="meta">женская форма русской фамилии (ru)</span></span>
+</label>
+HTML;
+    }
+
+    private function russianMasculineDescriptionCheck(string $uiLanguage): string
+    {
+        $label = htmlspecialchars($this->t($uiLanguage, 'overwrite_descriptions'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
+        return <<<HTML
+<label class="check" for="description-ru-masculine">
+    <input id="description-ru-masculine" name="apply[]" value="description_ru_masculine" type="checkbox" checked>
+    <span><strong>$label</strong><br><span class="meta">мужская фамилия (ru)</span></span>
 </label>
 HTML;
     }
@@ -3208,9 +3316,12 @@ HTML;
     {
         $name = (string) ($analysis['name'] ?? '');
         $scriptQid = is_array($analysis['script'] ?? null) ? (string) ($analysis['script']['qid'] ?? '') : '';
-        $labelLanguages = ['mul' => $displayLabel];
+        $grouped = in_array($scriptQid, ['Q8209', 'Q8229'], true);
+        $labelLanguages = $scriptQid === 'Q8229'
+            ? ['mul' => $displayLabel]
+            : ($displayLabel !== '' && $displayLabel !== $name ? ['en' => $displayLabel] : []);
 
-        if ($scriptQid !== 'Q8209') {
+        if (!$grouped) {
             foreach ($scriptLanguages->languageCodesForScript($scriptQid) as $scriptLanguage) {
                 $labelLanguages[$scriptLanguage] = $name;
             }
@@ -3222,9 +3333,13 @@ HTML;
         }
         $rows[] = $this->scriptLabelSummaryRow(
             $name,
-            $this->t($uiLanguage, 'cyrillic_languages'),
+            match ($scriptQid) {
+                'Q8209' => $this->t($uiLanguage, 'cyrillic_languages'),
+                'Q8229' => $this->t($uiLanguage, 'latin_languages'),
+                default => '',
+            },
             $uiLanguage,
-            $scriptQid === 'Q8209'
+            $grouped
         );
 
         return $rows;
@@ -3253,9 +3368,10 @@ HTML;
         $safeTitle = htmlspecialchars($this->t($uiLanguage, 'label'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $safeDisplayLabel = htmlspecialchars($displayLabel, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $safeLanguage = htmlspecialchars($language, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        $previewAttribute = $language === 'mul' ? ' data-label-preview="display"' : '';
-        $scriptLanguageAttribute = $language !== 'mul' ? ' data-script-language-row' : '';
-        $updateLabelAttribute = ' data-update-label="' . ($language === 'mul' ? 'mul' : 'script') . '"';
+        $isTransliteration = $language === 'mul' || $language === 'en';
+        $previewAttribute = $isTransliteration ? ' data-label-preview="display"' : '';
+        $scriptLanguageAttribute = $isTransliteration ? '' : ' data-script-language-row';
+        $updateLabelAttribute = ' data-update-label="' . ($isTransliteration ? 'mul' : 'script') . '"';
         $style = $hidden ? ' style="display:none"' : '';
 
         return <<<HTML
@@ -3289,7 +3405,7 @@ HTML;
     private function staticRow(string $title, string $detail, string $detailId = ''): string
     {
         $safeTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
-        $safeDetail = htmlspecialchars($detail, ENT_QUOTES, 'UTF-8');
+        $safeDetail = $this->detailWithQidLinks($detail);
         $id = $detailId !== '' ? ' id="' . htmlspecialchars($detailId, ENT_QUOTES, 'UTF-8') . '"' : '';
 
         return <<<HTML
@@ -3307,7 +3423,7 @@ HTML;
     {
         $safeId = htmlspecialchars(preg_replace('/[^a-z0-9_]+/i', '_', $id) ?? $id, ENT_QUOTES, 'UTF-8');
         $safeTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
-        $safeDetail = htmlspecialchars($detail, ENT_QUOTES, 'UTF-8');
+        $safeDetail = $this->detailWithQidLinks($detail);
         $safeReason = htmlspecialchars($reason, ENT_QUOTES, 'UTF-8');
         $checkedAttr = $checked ? ' checked' : '';
         $requiredAttr = $required ? ' disabled checked' : $checkedAttr;
@@ -3325,6 +3441,22 @@ HTML;
     </span>
 </label>
 HTML;
+    }
+
+    private function detailWithQidLinks(string $detail): string
+    {
+        $parts = preg_split('/(Q\d+)/', $detail, -1, PREG_SPLIT_DELIM_CAPTURE) ?: [];
+        $html = '';
+        foreach ($parts as $part) {
+            if (preg_match('/^Q\d+$/', $part) === 1) {
+                $safeQid = htmlspecialchars($part, ENT_QUOTES, 'UTF-8');
+                $html .= '<a class="qid-link" href="https://www.wikidata.org/wiki/' . $safeQid . '" target="_blank" rel="noopener noreferrer">' . $safeQid . '</a>';
+            } else {
+                $html .= htmlspecialchars($part, ENT_QUOTES, 'UTF-8');
+            }
+        }
+
+        return $html;
     }
 
     /**
@@ -3412,6 +3544,7 @@ HTML;
                 'Q101352' => 'family name',
                 'Q66480858' => 'affixed family name',
                 'Q60558422' => 'compound surname',
+                'Q66475447' => 'family name affix',
                 'Q4167410' => 'Wikimedia disambiguation page',
                 'Q202444' => 'given name',
                 'Q12308941' => 'male given name',
@@ -3422,6 +3555,7 @@ HTML;
                 'Q101352' => 'achternaam',
                 'Q66480858' => 'achternaam met tussenvoegsel',
                 'Q60558422' => 'samengestelde achternaam',
+                'Q66475447' => 'familienaamprefix',
                 'Q4167410' => 'Wikimedia-doorverwijspagina',
                 'Q202444' => 'voornaam',
                 'Q12308941' => 'mannelijke voornaam',
@@ -3432,6 +3566,7 @@ HTML;
                 'Q101352' => 'Familienname',
                 'Q66480858' => 'Familienname mit Namenszusatz',
                 'Q60558422' => 'zusammengesetzter Familienname',
+                'Q66475447' => 'Zusatz zum Familiennamen',
                 'Q4167410' => 'Wikimedia-Begriffsklärungsseite',
                 'Q202444' => 'Vorname',
                 'Q12308941' => 'männlicher Vorname',
@@ -3442,6 +3577,7 @@ HTML;
                 'Q101352' => 'nom de famille',
                 'Q66480858' => 'nom de famille avec particule',
                 'Q60558422' => 'nom de famille composé',
+                'Q66475447' => 'affixe d\'un nom de famille',
                 'Q4167410' => 'page d’homonymie Wikimedia',
                 'Q202444' => 'prénom',
                 'Q12308941' => 'prénom masculin',
@@ -3452,6 +3588,7 @@ HTML;
                 'Q101352' => 'apellido',
                 'Q66480858' => 'apellido con partícula',
                 'Q60558422' => 'apellido compuesto',
+                'Q66475447' => 'afijo de un apellido',
                 'Q4167410' => 'página de desambiguación de Wikimedia',
                 'Q202444' => 'nombre de pila',
                 'Q12308941' => 'nombre masculino',

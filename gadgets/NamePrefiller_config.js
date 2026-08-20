@@ -87,6 +87,10 @@ mw.NamePrefiller.config = {
 			 *   atIndex, n: N       – word at position N (negative = from end)
 			 *   firstN, n: N        – first N words joined  e.g. "Abies alba"
 			 *   lastN,  n: N        – last  N words joined  e.g. "alba nebrodensis"
+			 *   adjacentLabel, direction: N – shift the first figure in the label
+			 *                                by N. "2014 X" +1 → "2015 X",
+			 *                                "2nd edition" -1 → "1st edition".
+			 *                                Used for P155 follows / P156 followed by.
 			 *
 			 * Multi-value modes (use with allowMultiple):
 			 *   consecutive                   – each word, indexed forward
