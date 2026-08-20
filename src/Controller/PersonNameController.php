@@ -529,11 +529,11 @@ button{display:inline-flex;align-items:center;justify-content:center;min-height:
 .options{display:flex;flex-wrap:wrap;gap:10px}.muted{color:#54595d;font-size:13px}.notice{background:#f8f9fa;padding:10px}.success{border-left:4px solid #14866d;padding:10px;background:#edfaf7}
 .person-actions{display:flex;gap:8px}.person-actions button{flex:1 1 100%;min-width:0;min-height:40px;padding:6px 10px}.person-actions.has-equivalent button{flex-basis:50%}
 .button-spinner{display:none;width:14px;height:14px;margin-right:6px;border:2px solid rgba(255,255,255,.55);border-top-color:#fff;border-radius:50%;animation:spin .75s linear infinite}.add-name.is-loading .button-spinner{display:inline-block}.add-name.is-success{border-color:#14866d;background:#14866d}.add-name.is-present,.add-name.is-present:hover{border-color:#a2a9b1;background:#eaecf0;color:#54595d;cursor:not-allowed}.add-name.is-failure{border-color:#b32424;background:#b32424}
-.equivalent-create{display:inline-flex;align-items:center;min-height:36px;padding:6px 12px;border:1px solid #36c;background:#36c;color:#fff;border-radius:2px;font-weight:700;text-decoration:none}.equivalent-create:hover{background:#2a4b8d;border-color:#2a4b8d;text-decoration:none}.equivalent-create-wrap{margin:16px 0 0}
+.equivalent-create{display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:100%;min-height:36px;padding:6px 12px;border:1px solid #36c;background:#36c;color:#fff;border-radius:2px;font-weight:700;text-decoration:none}.equivalent-create:hover{background:#2a4b8d;border-color:#2a4b8d;text-decoration:none}.equivalent-create-wrap{margin:16px 0 0}
 @keyframes spin{to{transform:rotate(360deg)}}
 .suggest-wrap{position:relative}.suggestions{display:none;position:static;max-height:280px;overflow:auto;margin:2px 0 0;padding:4px 0;list-style:none;border:1px solid #a2a9b1;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.15)}
 .suggestions li{display:flex;flex-direction:column;gap:2px;align-items:stretch;padding:8px 10px;cursor:pointer;border-top:1px solid #a2a9b1}.suggestions li:first-child{border-top:0}.suggestions li:hover,.suggestions li.active{background:#eaecf0}.suggestions strong{display:block}.suggestions .muted{display:block}
-a{color:#36c;text-decoration:none}@media(max-width:620px){.person button{width:100%}.equivalent-create-wrap .equivalent-create{width:100%;justify-content:center}}@media(max-width:480px){.tagline-break{display:inline}}
+a{color:#36c;text-decoration:none}@media(max-width:620px){.person button{width:100%}}@media(max-width:480px){.tagline-break{display:inline}}
 CSS;
     }
 
