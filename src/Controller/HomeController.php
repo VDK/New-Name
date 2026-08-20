@@ -2193,6 +2193,7 @@ HTML;
                     array_unshift($analysis['relationshipSuggestions'], [
                         'target' => $equivalentItemId,
                         'targetLabel' => $equivalentNameItem['label'],
+                        'targetNativeLabel' => (string) ($equivalentNameItem['nativeLabels'][0] ?? ''),
                         'targetTypes' => $equivalentInstanceLabels,
                         'property' => 'P1533',
                         'propertyLabel' => $oppositeIsGiven ? 'family name identical to this given name' : 'given name equivalent',
@@ -3460,7 +3461,7 @@ HTML;
     }
 
     /**
-     * @param array{target: string, targetLabel: string, targetTypes?: list<string>, property: string, propertyLabel: string, value: string, reason: string, checked?: bool} $suggestion
+     * @param array{target: string, targetLabel: string, targetNativeLabel?: string, targetTypes?: list<string>, property: string, propertyLabel: string, value: string, reason: string, checked?: bool} $suggestion
      */
     private function relationshipCheck(array $suggestion, string $uiLanguage): string
     {
@@ -3474,6 +3475,11 @@ HTML;
         $property = htmlspecialchars($this->sentenceCase($propertyText), ENT_QUOTES, 'UTF-8');
         $target = htmlspecialchars($suggestion['target'], ENT_QUOTES, 'UTF-8');
         $targetLabel = htmlspecialchars($suggestion['targetLabel'], ENT_QUOTES, 'UTF-8');
+        $targetNativeLabel = htmlspecialchars((string) ($suggestion['targetNativeLabel'] ?? ''), ENT_QUOTES, 'UTF-8');
+        $labelText = $targetLabel;
+        if ($targetNativeLabel !== '' && $targetNativeLabel !== $targetLabel) {
+            $labelText = $targetNativeLabel . ' (' . $targetLabel . ')';
+        }
         $targetTypes = htmlspecialchars($this->translatedInstanceList($uiLanguage, $suggestion['targetTypes'] ?? []), ENT_QUOTES, 'UTF-8');
         $typeText = $targetTypes !== '' ? '<br><span class="meta">' . $targetTypes . '</span>' : '';
         $checked = $suggestion['property'] === 'P5278' && empty($suggestion['checked']) ? '' : ' checked';
@@ -3482,7 +3488,7 @@ HTML;
     <input id="$safeId" name="apply[]" value="$value" type="checkbox"$checked>
     <span>
         <strong>$property</strong><br>
-        <span class="meta">$targetLabel <a class="qid-link" href="https://www.wikidata.org/wiki/$target" target="_blank" rel="noopener noreferrer">($target)</a></span>$typeText
+        <span class="meta">$labelText <a class="qid-link" href="https://www.wikidata.org/wiki/$target" target="_blank" rel="noopener noreferrer">($target)</a></span>$typeText
     </span>
 </label>
 HTML;
