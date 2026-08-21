@@ -2196,10 +2196,11 @@ HTML;
                         'targetNativeLabel' => (string) ($equivalentNameItem['nativeLabels'][0] ?? ''),
                         'targetTypes' => $equivalentInstanceLabels,
                         'property' => 'P1533',
-                        'propertyLabel' => $oppositeIsGiven ? 'family name identical to this given name' : 'given name equivalent',
+                        'propertyLabel' => $oppositeIsGiven ? 'family name equivalent' : 'given name equivalent',
                         'value' => 'related_' . $equivalentItemId . '_P1533',
                         'reason' => $oppositeIsGiven ? 'family name equivalent of the created name item' : 'given name equivalent of the created name item',
                         'direction' => $oppositeIsGiven ? '' : 'target',
+                        'showIdInsteadOfTypes' => true,
                     ]);
                 }
             }
@@ -3461,7 +3462,7 @@ HTML;
     }
 
     /**
-     * @param array{target: string, targetLabel: string, targetNativeLabel?: string, targetTypes?: list<string>, property: string, propertyLabel: string, value: string, reason: string, checked?: bool} $suggestion
+     * @param array{target: string, targetLabel: string, targetNativeLabel?: string, targetTypes?: list<string>, property: string, propertyLabel: string, value: string, reason: string, checked?: bool, showIdInsteadOfTypes?: bool} $suggestion
      */
     private function relationshipCheck(array $suggestion, string $uiLanguage): string
     {
@@ -3482,13 +3483,21 @@ HTML;
         }
         $targetTypes = htmlspecialchars($this->translatedInstanceList($uiLanguage, $suggestion['targetTypes'] ?? []), ENT_QUOTES, 'UTF-8');
         $typeText = $targetTypes !== '' ? '<br><span class="meta">' . $targetTypes . '</span>' : '';
+        $qidUrl = 'https://www.wikidata.org/wiki/' . $target;
+        if (!empty($suggestion['showIdInsteadOfTypes'])) {
+            $metaLine = '<span class="meta">' . $labelText . '</span>';
+            $bottomText = '<br><span class="meta"><a class="qid-link" href="' . $qidUrl . '" target="_blank" rel="noopener noreferrer">' . $target . '</a></span>';
+        } else {
+            $metaLine = '<span class="meta">' . $labelText . ' <a class="qid-link" href="' . $qidUrl . '" target="_blank" rel="noopener noreferrer">(' . $target . ')</a></span>';
+            $bottomText = $typeText;
+        }
         $checked = $suggestion['property'] === 'P5278' && empty($suggestion['checked']) ? '' : ' checked';
         return <<<HTML
 <label class="check" for="$safeId" data-suggestion-target="$target" data-property="$propertyId">
     <input id="$safeId" name="apply[]" value="$value" type="checkbox"$checked>
     <span>
         <strong>$property</strong><br>
-        <span class="meta">$labelText <a class="qid-link" href="https://www.wikidata.org/wiki/$target" target="_blank" rel="noopener noreferrer">($target)</a></span>$typeText
+        $metaLine$bottomText
     </span>
 </label>
 HTML;
@@ -3721,7 +3730,7 @@ HTML;
                 'P7377' => 'infix',
                 'P460' => 'said to be the same as',
                 'P1889' => 'different from',
-                'P1533' => 'family name identical to this given name',
+                'P1533' => 'family name equivalent',
                 'P1560' => 'other gender form',
                 'P5278' => 'other gender form',
             ],
