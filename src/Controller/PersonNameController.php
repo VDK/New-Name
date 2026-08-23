@@ -83,7 +83,7 @@ final class PersonNameController
     }
 
     #[Route('/match', name: 'person_name', methods: ['GET'])]
-    public function index(Request $request, WikidataClient $wikidataClient): Response
+    public function index(Request $request, WikidataClient $wikidataClient, WikimediaOAuthClient $oauthClient): Response
     {
         $nameItemId = strtoupper(trim((string) $request->query->get('name_item', '')));
         $nameItem = $nameItemId !== '' ? $wikidataClient->nameItem($nameItemId, true) : null;
@@ -109,7 +109,20 @@ final class PersonNameController
             )
             : ['matches' => [], 'nextOffset' => 0, 'hasMore' => false];
 
-        $response = new Response($this->page($request, $nameItemId, $nameItem, $query, $page['matches'], $page['nextOffset'], $page['hasMore'], $status, $personId));
+        $authorized = $oauthClient->isAuthorized();
+        $username = '';
+        if ($authorized) {
+            try {
+                $username = $oauthClient->getUsername();
+            } catch (OAuthAuthorizationRequired) {
+                $authorized = false;
+                $username = '';
+            } catch (\Throwable) {
+                $username = '';
+            }
+        }
+
+        $response = new Response($this->page($request, $nameItemId, $nameItem, $query, $page['matches'], $page['nextOffset'], $page['hasMore'], $status, $personId, $authorized, $username));
         $response->headers->set('Cache-Control', 'no-store, max-age=0');
 
         return $response;
@@ -198,13 +211,15 @@ final class PersonNameController
      * @param array{id: string, label: string, description: string, type: string, script: string, languageCode: string}|null $nameItem
      * @param list<array{id: string, label: string, description: string, matchedLabel: string}> $matches
      */
-    private function page(Request $request, string $nameItemId, ?array $nameItem, string $query, array $matches, int $nextOffset, bool $hasMore, string $status, string $personId): string
+    private function page(Request $request, string $nameItemId, ?array $nameItem, string $query, array $matches, int $nextOffset, bool $hasMore, string $status, string $personId, bool $authorized, string $username): string
     {
         $base = htmlspecialchars($request->getBaseUrl(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $uiLanguage = $this->interfaceLanguage((string) $request->query->get('ui', 'en'));
         $safeNameItemId = htmlspecialchars($nameItemId, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $safeQuery = htmlspecialchars($query, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $ui = htmlspecialchars($uiLanguage, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $auth = $this->authStatus($request, $authorized, $username, $uiLanguage);
+        $languageSwitch = $authorized ? '' : $this->languageSwitch($request, $uiLanguage);
         $tagline = match ($uiLanguage) {
             'nl' => 'Maak Wikidata-items<span class="tagline-break"><br></span> voor voor-&nbsp;en&nbsp;achternamen.',
             'de' => 'Neue Wikidata-Items<span class="tagline-break"><br></span> für Vor-&nbsp;und&nbsp;Nachnamen erstellen.',
@@ -387,6 +402,7 @@ HTML;
 </style>
 </head>
 <body><main>
+<div class="topbar">$languageSwitch$auth</div>
 <div class="brand"><h1>New Name</h1><p>$tagline</p></div>
 $universalSearch
 $selectedItemBlock$invalid$message$resultBlock
@@ -395,6 +411,60 @@ $selectedItemBlock$invalid$message$resultBlock
 </body>
 </html>
 HTML;
+    }
+
+    private function t(string $language, string $key): string
+    {
+        $language = $this->interfaceLanguage($language);
+        $translations = [
+            'en' => ['interface_language' => 'Interface language', 'log_in' => 'Log in', 'log_out' => 'Log out'],
+            'nl' => ['interface_language' => 'Interfacetaal', 'log_in' => 'Inloggen', 'log_out' => 'Uitloggen'],
+            'de' => ['interface_language' => 'Oberflächensprache', 'log_in' => 'Anmelden', 'log_out' => 'Abmelden'],
+            'fr' => ['interface_language' => 'Langue de l’interface', 'log_in' => 'Connexion', 'log_out' => 'Déconnexion'],
+            'es' => ['interface_language' => 'Idioma de la interfaz', 'log_in' => 'Iniciar sesión', 'log_out' => 'Cerrar sesión'],
+        ][$language];
+
+        return $translations[$key] ?? $key;
+    }
+
+    private function languageSwitch(Request $request, string $current): string
+    {
+        $query = $request->query->all();
+        unset($query['ui']);
+
+        $hidden = '';
+        foreach ($query as $key => $value) {
+            if (is_array($value)) {
+                continue;
+            }
+            $hidden .= '<input type="hidden" name="' . htmlspecialchars((string) $key, ENT_QUOTES, 'UTF-8') . '" value="' . htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '">';
+        }
+
+        $options = '';
+        foreach (['en' => 'English', 'nl' => 'Nederlands', 'de' => 'Deutsch', 'fr' => 'Français', 'es' => 'Español'] as $code => $label) {
+            $selected = $code === $current ? ' selected' : '';
+            $options .= '<option value="' . htmlspecialchars($code, ENT_QUOTES, 'UTF-8') . '"' . $selected . '>' . htmlspecialchars($label, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</option>';
+        }
+
+        $label = htmlspecialchars($this->t($current, 'interface_language'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
+        return '<form class="language-switch" method="get" action="" aria-label="' . $label . '"><label for="ui-language">' . $label . '</label><select id="ui-language" name="ui" onchange="this.form.submit()">' . $options . '</select>' . $hidden . '</form>';
+    }
+
+    private function authStatus(Request $request, bool $authorized, string $username, string $uiLanguage): string
+    {
+        $return = htmlspecialchars(rawurlencode($request->getRequestUri()), ENT_QUOTES, 'UTF-8');
+        $login = htmlspecialchars($this->t($uiLanguage, 'log_in'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $oauthBase = htmlspecialchars($request->getBasePath() . '/index.php/oauth', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        if (!$authorized) {
+            return '<div class="auth-status"><a href="' . $oauthBase . '/login?return=' . $return . '">' . $login . '</a></div>';
+        }
+
+        $safeUsername = htmlspecialchars($username !== '' ? $username : 'Wikimedia', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $logout = htmlspecialchars($this->t($uiLanguage, 'log_out'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $languageSwitch = $this->languageSwitch($request, $uiLanguage);
+
+        return '<div class="auth-status"><div class="auth-line"><strong>' . $safeUsername . '</strong><a href="' . $oauthBase . '/logout">' . $logout . '</a></div>' . $languageSwitch . '</div>';
     }
 
     /**
@@ -535,6 +605,9 @@ HTML;
         return <<<'CSS'
 body{margin:0;background:#f8f9fa;color:#202122;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 main{width:min(720px,calc(100% - 32px));margin:40px auto;display:grid;gap:16px}
+.topbar{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start}
+.language-switch{display:flex;align-items:center;font-size:13px}.language-switch label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.language-switch select{width:auto;max-width:max-content;min-height:32px;padding:4px 28px 4px 8px;border:1px solid #a2a9b1;border-radius:2px;background:#fff;color:#202122}
+.auth-status{display:flex;flex-direction:column;align-items:flex-end;gap:6px;min-height:28px;color:#54595d;font-size:14px}.auth-line{display:flex;align-items:center;gap:8px}.auth-status a{color:#36c;text-decoration:none}
 .brand{text-align:center;margin-bottom:6px}.brand h1{margin:0 0 8px;font-size:44px;font-weight:400}.brand p{margin:0;color:#54595d}.tagline-break{display:none}
 section{background:#fff;border:1px solid #c8ccd1;padding:18px}h2{margin:0 0 12px}
 .search-card>label{display:block;margin-bottom:6px;font-weight:700}.search{display:grid;grid-template-columns:1fr;gap:8px}.search input,.ordinal{width:100%;box-sizing:border-box;min-height:44px;padding:6px 9px;border:1px solid #a2a9b1;font-size:16px}
