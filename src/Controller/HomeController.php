@@ -376,6 +376,8 @@ final class HomeController
 
         .language-switch select {
             width: auto;
+            height: auto;
+            margin: 0;
             max-width: max-content;
             padding: 2px 4px 2px 24px;
             border: 1px solid transparent;
