@@ -162,7 +162,7 @@ final class HomeController
             : ($analysisPending ? $this->analysisLoading($name, $uiLanguage) : '');
         $bodyClass = $analysis || $analysisPending ? 'has-review' : 'start';
         $auth = $this->authStatus($request, $authorized, $username, $uiLanguage);
-        $languageSwitch = $authorized ? '' : $this->languageSwitch($request, $uiLanguage);
+        $languageSwitch = $this->languageSwitch($request, $uiLanguage);
         $tagline = match ($uiLanguage) {
             'nl' => 'Maak Wikidata-items<span class="tagline-break"><br></span> voor voor-&nbsp;en&nbsp;achternamen.',
             'de' => 'Neue Wikidata-Items<span class="tagline-break"><br></span> für Vor-&nbsp;und&nbsp;Nachnamen erstellen.',
@@ -378,16 +378,29 @@ final class HomeController
         .language-switch select {
             width: auto;
             max-width: max-content;
-            min-height: 32px;
-            padding: 4px 28px 4px 32px;
-            border: 1px solid #a2a9b1;
+            padding: 2px 4px 2px 24px;
+            border: 1px solid transparent;
             border-radius: 2px;
-            background-color: #fff;
+            background-color: transparent;
             background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20d%3D%22m17.835%2019-1.248-3h-4.174l-1.248%203.001H9l4.577-11.005h1.846L20%2019h-2.165Zm-4.59-5h2.51L14.5%2010.982%2013.245%2014ZM7.618%203H12v2H9.991a8.516%208.516%200%200%201-1.423%204.02c-.16.239-.336.474-.528.707.423.244.882.482%201.379.711l.908.42-.839%201.816-.907-.42a17.952%2017.952%200%200%201-2.026-1.09c-1.255.979-2.912%201.8-5.076%202.31l-.973.228-.458-1.946.973-.23c1.631-.383%202.885-.954%203.85-1.608C3.29%208.527%202.317%206.884%202.065%205H0V3h5.382l-.724-1.447%201.79-.895L7.617%203ZM4.094%205c.243%201.282.974%202.489%202.29%203.586A6.544%206.544%200%200%200%207.98%205H4.094Z%22%20fill%3D%22%2354595d%22%2F%3E%3C%2Fsvg%3E");
             background-repeat: no-repeat;
-            background-position: left 8px center;
+            background-position: left 4px center;
             background-size: 16px 16px;
             color: var(--text);
+            font: inherit;
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        .language-switch select:hover {
+            border-color: #a2a9b1;
+            background-color: #fff;
+        }
+
+        .language-switch select:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 1px;
         }
 
         h1 {
@@ -1782,6 +1795,22 @@ final class HomeController
             });
             updateMode(true);
         });
+        document.addEventListener('DOMContentLoaded', function () {
+            function fitLanguageSwitches() {
+                document.querySelectorAll('.language-switch select').forEach(function (select) {
+                    var option = select.options[select.selectedIndex];
+                    var cs = getComputedStyle(select);
+                    var probe = document.createElement('span');
+                    probe.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font:' + cs.font + ';padding:' + cs.padding + ';border:' + cs.border + ';';
+                    probe.textContent = option ? option.textContent : '';
+                    document.body.appendChild(probe);
+                    select.style.width = probe.offsetWidth + 'px';
+                    document.body.removeChild(probe);
+                });
+            }
+            fitLanguageSwitches();
+            document.addEventListener('change', fitLanguageSwitches);
+        });
     </script>
 </head>
 <body class="$bodyClass">
@@ -1849,9 +1878,8 @@ HTML;
 
         $safeUsername = htmlspecialchars($username !== '' ? $username : 'Wikimedia', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $logout = htmlspecialchars($this->t($uiLanguage, 'log_out'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        $languageSwitch = $this->languageSwitch($request, $uiLanguage);
 
-        return '<div class="auth-status"><div class="auth-line">' . $this->icon('user-active') . '<strong>' . $safeUsername . '</strong><a href="' . $oauthBase . '/logout">' . $this->icon('log-out') . $logout . '</a>' . $languageSwitch . '</div></div>';
+        return '<div class="auth-status"><div class="auth-line">' . $this->icon('user-active') . '<strong>' . $safeUsername . '</strong><a href="' . $oauthBase . '/logout">' . $this->icon('log-out') . $logout . '</a></div></div>';
     }
 
     private function icon(string $name): string
