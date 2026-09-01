@@ -321,6 +321,28 @@ final class HomeController
             gap: 8px;
         }
 
+        .auth-line .cdx-icon {
+            flex: 0 0 auto;
+        }
+
+        .cdx-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1em;
+            height: 1em;
+            color: currentColor;
+            line-height: 1;
+            vertical-align: -0.125em;
+        }
+
+        .cdx-icon svg {
+            display: block;
+            width: 1em;
+            height: 1em;
+            fill: currentColor;
+        }
+
         .auth-status a {
             color: var(--accent);
             text-decoration: none;
@@ -1809,7 +1831,7 @@ HTML;
 
         $label = htmlspecialchars($this->t($current, 'interface_language'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
-        return '<form class="language-switch" method="get" action="" aria-label="' . $label . '">' . $hidden . '<label for="ui-language">' . $label . '</label><select id="ui-language" name="ui" onchange="this.form.submit()">' . $options . '</select></form>';
+        return '<form class="language-switch" method="get" action="" aria-label="' . $label . '">' . $this->icon('language') . $hidden . '<label for="ui-language">' . $label . '</label><select id="ui-language" name="ui" onchange="this.form.submit()">' . $options . '</select></form>';
     }
 
     private function authStatus(Request $request, bool $authorized, string $username, string $uiLanguage): string
@@ -1825,7 +1847,22 @@ HTML;
         $logout = htmlspecialchars($this->t($uiLanguage, 'log_out'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $languageSwitch = $this->languageSwitch($request, $uiLanguage);
 
-        return '<div class="auth-status"><div class="auth-line"><strong>' . $safeUsername . '</strong><a href="' . $oauthBase . '/logout">' . $logout . '</a></div>' . $languageSwitch . '</div>';
+        return '<div class="auth-status"><div class="auth-line">' . $this->icon('user-active') . '<strong>' . $safeUsername . '</strong><a href="' . $oauthBase . '/logout">' . $this->icon('log-out') . $logout . '</a></div>' . $languageSwitch . '</div>';
+    }
+
+    private function icon(string $name): string
+    {
+        $icons = [
+            'user-active' => '<path d="M12 11a6 6 0 0 1 6 6v2H2v-2a6 6 0 0 1 6-6h4ZM10 1a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"/>',
+            'log-out' => '<path d="M17 3H3v14h14v2H1V1h16v2Z"/><path d="M19 9.293v1.414l-4.69 4.707L12.895 14l3-3H6V9h9.896l-3-3 1.414-1.414L19 9.293Z"/>',
+            'language' => '<path d="m17.835 19-1.248-3h-4.174l-1.248 3.001H9l4.577-11.005h1.846L20 19h-2.165Zm-4.59-5h2.51L14.5 10.982 13.245 14ZM7.618 3H12v2H9.991a8.516 8.516 0 0 1-1.423 4.02c-.16.239-.336.474-.528.707.423.244.882.482 1.379.711l.908.42-.839 1.816-.907-.42a17.952 17.952 0 0 1-2.026-1.09c-1.255.979-2.912 1.8-5.076 2.31l-.973.228-.458-1.946.973-.23c1.631-.383 2.885-.954 3.85-1.608C3.29 8.527 2.317 6.884 2.065 5H0V3h5.382l-.724-1.447 1.79-.895L7.617 3ZM4.094 5c.243 1.282.974 2.489 2.29 3.586A6.544 6.544 0 0 0 7.98 5H4.094Z"/>',
+        ];
+        $path = $icons[$name] ?? '';
+        if ($path === '') {
+            return '';
+        }
+
+        return '<span class="cdx-icon" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><g>' . $path . '</g></svg></span>';
     }
 
     private function t(string $language, string $key): string
