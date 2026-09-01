@@ -306,13 +306,11 @@ final class HomeController
 
         .auth-status {
             display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 6px;
-            min-height: 28px;
-            margin-bottom: 12px;
+            align-items: center;
+            gap: 8px;
             color: var(--muted);
             font-size: 14px;
+            white-space: nowrap;
         }
 
         .auth-line {
@@ -353,10 +351,11 @@ final class HomeController
         }
 
         .topbar {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 16px;
-            align-items: start;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            flex-wrap: wrap;
             margin-bottom: 12px;
         }
 
