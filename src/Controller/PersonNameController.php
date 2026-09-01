@@ -448,7 +448,7 @@ HTML;
 
         $label = htmlspecialchars($this->t($current, 'interface_language'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
-        return '<form class="language-switch" method="get" action="" aria-label="' . $label . '">' . $this->icon('language') . '<label for="ui-language">' . $label . '</label><select id="ui-language" name="ui" onchange="this.form.submit()">' . $options . '</select>' . $hidden . '</form>';
+        return '<form class="language-switch" method="get" action="" aria-label="' . $label . '">' . $hidden . '<label for="ui-language">' . $label . '</label><select id="ui-language" name="ui" onchange="this.form.submit()">' . $options . '</select></form>';
     }
 
     private function authStatus(Request $request, bool $authorized, string $username, string $uiLanguage): string
@@ -464,7 +464,7 @@ HTML;
         $logout = htmlspecialchars($this->t($uiLanguage, 'log_out'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $languageSwitch = $this->languageSwitch($request, $uiLanguage);
 
-        return '<div class="auth-status"><div class="auth-line">' . $this->icon('user-active') . '<strong>' . $safeUsername . '</strong><a href="' . $oauthBase . '/logout">' . $this->icon('log-out') . $logout . '</a></div>' . $languageSwitch . '</div>';
+        return '<div class="auth-status"><div class="auth-line">' . $this->icon('user-active') . '<strong>' . $safeUsername . '</strong><a href="' . $oauthBase . '/logout">' . $this->icon('log-out') . $logout . '</a>' . $languageSwitch . '</div></div>';
     }
 
     private function icon(string $name): string
@@ -472,7 +472,6 @@ HTML;
         $icons = [
             'user-active' => '<path d="M12 11a6 6 0 0 1 6 6v2H2v-2a6 6 0 0 1 6-6h4ZM10 1a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z"/>',
             'log-out' => '<path d="M17 3H3v14h14v2H1V1h16v2Z"/><path d="M19 9.293v1.414l-4.69 4.707L12.895 14l3-3H6V9h9.896l-3-3 1.414-1.414L19 9.293Z"/>',
-            'language' => '<path d="m17.835 19-1.248-3h-4.174l-1.248 3.001H9l4.577-11.005h1.846L20 19h-2.165Zm-4.59-5h2.51L14.5 10.982 13.245 14ZM7.618 3H12v2H9.991a8.516 8.516 0 0 1-1.423 4.02c-.16.239-.336.474-.528.707.423.244.882.482 1.379.711l.908.42-.839 1.816-.907-.42a17.952 17.952 0 0 1-2.026-1.09c-1.255.979-2.912 1.8-5.076 2.31l-.973.228-.458-1.946.973-.23c1.631-.383 2.885-.954 3.85-1.608C3.29 8.527 2.317 6.884 2.065 5H0V3h5.382l-.724-1.447 1.79-.895L7.617 3ZM4.094 5c.243 1.282.974 2.489 2.29 3.586A6.544 6.544 0 0 0 7.98 5H4.094Z"/>',
         ];
         $path = $icons[$name] ?? '';
         if ($path === '') {
@@ -621,7 +620,7 @@ HTML;
 body{margin:0;background:#f8f9fa;color:#202122;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 main{width:min(720px,calc(100% - 32px));margin:40px auto;display:grid;gap:16px}
 .topbar{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start}
-.language-switch{display:flex;align-items:center;font-size:13px}.language-switch label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.language-switch select{width:auto;max-width:max-content;min-height:32px;padding:4px 28px 4px 8px;border:1px solid #a2a9b1;border-radius:2px;background:#fff;color:#202122}
+.language-switch{display:flex;align-items:center;font-size:13px}.language-switch label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.language-switch select{width:auto;max-width:max-content;min-height:32px;padding:4px 28px 4px 32px;border:1px solid #a2a9b1;border-radius:2px;background-color:#fff;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20d%3D%22m17.835%2019-1.248-3h-4.174l-1.248%203.001H9l4.577-11.005h1.846L20%2019h-2.165Zm-4.59-5h2.51L14.5%2010.982%2013.245%2014ZM7.618%203H12v2H9.991a8.516%208.516%200%200%201-1.423%204.02c-.16.239-.336.474-.528.707.423.244.882.482%201.379.711l.908.42-.839%201.816-.907-.42a17.952%2017.952%200%200%201-2.026-1.09c-1.255.979-2.912%201.8-5.076%202.31l-.973.228-.458-1.946.973-.23c1.631-.383%202.885-.954%203.85-1.608C3.29%208.527%202.317%206.884%202.065%205H0V3h5.382l-.724-1.447%201.79-.895L7.617%203ZM4.094%205c.243%201.282.974%202.489%202.29%203.586A6.544%206.544%200%200%200%207.98%205H4.094Z%22%20fill%3D%22%2354595d%22%2F%3E%3C%2Fsvg%3E");background-repeat:no-repeat;background-position:left 8px center;background-size:16px 16px;color:#202122}
 .auth-status{display:flex;flex-direction:column;align-items:flex-end;gap:6px;min-height:28px;color:#54595d;font-size:14px}.auth-line{display:flex;align-items:center;gap:8px}.auth-status a{color:#36c;text-decoration:none}.auth-line .cdx-icon{flex:0 0 auto}
 .cdx-icon{display:inline-flex;align-items:center;justify-content:center;width:1em;height:1em;color:currentColor;line-height:1;vertical-align:-.125em}.cdx-icon svg{display:block;width:1em;height:1em;fill:currentColor}
 .brand{text-align:center;margin-bottom:6px}.brand h1{margin:0 0 8px;font-size:44px;font-weight:400}.brand p{margin:0;color:#54595d}.tagline-break{display:none}
