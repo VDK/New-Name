@@ -51,6 +51,14 @@ mw.NamePrefiller.config = {
 	 */
 	useDefaultRules: true,
 
+	/**
+	 * Qualifier prefilling. Series ordinal (P1545) is always filled; on
+	 * author name string (P2093) statements the author given names (P9687)
+	 * and author last names (P9688) are split off the statement value.
+	 * Set this to false to leave the P2093 qualifiers to you.
+	 */
+	fillAuthorNameQualifiers: true,
+
 	rules: [
 		{
 			name: 'species taxon',

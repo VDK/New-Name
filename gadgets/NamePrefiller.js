@@ -9,6 +9,10 @@
  * mw.NamePrefiller.customModes (string → function lookup) or by
  * passing a function directly as `fill[property].mode`.
  *
+ * Qualifiers are prefilled as well: series ordinal (P1545), and for
+ * author name string (P2093) statements the author given names (P9687)
+ * and author last names (P9688), split from the statement value.
+ *
  * Personal config:
  * importScript( 'User:YOU/NamePrefiller_config.js' );
  * importScript( 'User:1Veertje/NamePrefiller.js' );
@@ -16,7 +20,7 @@
  * @author Jon Harald Søby
  * @author Vera de Kok (1Veertje)
  * @license GPL-2.0-or-later
- * @version 3.1.0
+ * @version 3.2.0
  */
 
 if ( mw.NamePrefiller === undefined ) {
@@ -36,6 +40,14 @@ if ( mw.NamePrefiller === undefined ) {
 				'da', 'del', 'della', 'di', 'du', 'la', 'le',
 				"'t", '\u2019t'
 			],
+
+			// Trailing name suffixes, dropped before splitting a name so that
+			// "John Smith Jr." does not turn "Jr." into a last name.
+			nameSuffixes: [ 'jr.', 'jr', 'sr.', 'sr', 'ii', 'iii', 'iv' ],
+
+			// Prefill author given names (P9687) and author last names (P9688)
+			// qualifiers on author name string (P2093) statements.
+			fillAuthorNameQualifiers: true,
 
 			rules: [
 				{
@@ -101,6 +113,15 @@ if ( mw.NamePrefiller === undefined ) {
 				userConfig.rules || []
 			);
 		}
+
+		// $.extend( true, ... ) merges arrays index-wise, so a user list could
+		// never be emptied (e.g. [] to stop stripping name suffixes). Replace
+		// these lists wholesale instead.
+		[ 'lastnamePrefixes', 'nameSuffixes' ].forEach( function ( key ) {
+			if ( $.isArray( userConfig[ key ] ) ) {
+				config[ key ] = userConfig[ key ];
+			}
+		} );
 
 		return config;
 	}
@@ -330,6 +351,68 @@ if ( mw.NamePrefiller === undefined ) {
 		}
 
 		return [ label.split( ' ' )[ 0 ] ];
+	}
+
+	function normalizeNameSuffix( suffix ) {
+		return String( suffix || '' ).toLowerCase().replace( /\.$/, '' );
+	}
+
+	function stripNameSuffixes( name ) {
+		var currentConfig = getConfig(),
+			suffixes = $.map( currentConfig.nameSuffixes || [], normalizeNameSuffix ),
+			parts = normalizeWhitespace( name ).split( ' ' ),
+			lastPart;
+
+		while ( parts.length > 1 ) {
+			lastPart = normalizeNameSuffix( parts[ parts.length - 1 ] );
+
+			if ( $.inArray( lastPart, suffixes ) === -1 ) {
+				break;
+			}
+
+			parts.pop();
+		}
+
+		return parts.join( ' ' );
+	}
+
+	/**
+	 * Split a personal name into the portions a bibliographic reference file
+	 * (BibTeX) would store: "Lastname, Given names", trailing suffixes
+	 * ("Jr.", "III") and last-name prefixes ("van", "Di", "'t") are handled.
+	 * Returns empty strings when the name cannot be split: a single word, an
+	 * empty value, or a value holding several authors ("Smith, J.; Doe, J."),
+	 * which has no unambiguous breakdown. No qualifiers are prefilled then.
+	 *
+	 * Exposed as mw.NamePrefiller.getNameParts for reuse and testing.
+	 */
+	function getNameParts( name ) {
+		var cleaned = stripNameSuffixes( name ).replace( /^[\s,]+|[\s,]+$/g, '' ),
+			commaIndex = cleaned.indexOf( ',' ),
+			givenNames,
+			lastNames;
+
+		if ( !cleaned || /[;&]|\band\b|\bet al\b/i.test( cleaned ) ) {
+			return { givenNames: '', lastNames: '' };
+		}
+
+		if ( commaIndex > 0 ) {
+			lastNames = normalizeWhitespace( cleaned.slice( 0, commaIndex ) );
+			givenNames = normalizeWhitespace( cleaned.slice( commaIndex + 1 ) );
+
+			if ( givenNames && lastNames ) {
+				return { givenNames: givenNames, lastNames: lastNames };
+			}
+		}
+
+		if ( cleaned.split( ' ' ).length < 2 ) {
+			return { givenNames: '', lastNames: '' };
+		}
+
+		return {
+			givenNames: getFirstnames( cleaned ).join( ' ' ),
+			lastNames: getLastnameSegment( cleaned, 0 )
+		};
 	}
 
 	function getOrdinalSuffix( number ) {
@@ -583,11 +666,96 @@ if ( mw.NamePrefiller === undefined ) {
 
 	function getPropertyIdForStatement( $statementview ) {
 		var $mainSnak = $statementview.find( '> .wikibase-statementview-mainsnak > .wikibase-snakview' ),
-			snakview = $mainSnak.data( 'snakview' );
+			snakview = $mainSnak.data( 'snakview' ),
+			$group;
 
-		return snakview && snakview.value() ?
-			snakview.value().property :
-			'';
+		if ( snakview && snakview.value() ) {
+			return snakview.value().property;
+		}
+
+		$group = $statementview.closest( '.wikibase-statementgroupview' );
+
+		return $group.attr( 'data-property-id' ) || $group.attr( 'id' ) || '';
+	}
+
+	function unwrapDataValue( dataValue ) {
+		var value = dataValue,
+			depth = 0;
+
+		while (
+			value &&
+			typeof value !== 'string' &&
+			typeof value.getValue === 'function' &&
+			depth < 3
+		) {
+			value = value.getValue();
+			depth++;
+		}
+
+		return typeof value === 'string' ? value : '';
+	}
+
+	/**
+	 * Value of a statement's main snak as plain text, read from the statement
+	 * model first (so saved statements work in read mode) and from the DOM as
+	 * a fallback (so a value being typed in edit mode is picked up as well).
+	 */
+	function getStatementMainStringValue( $statement ) {
+		var statementview = $statement.data( 'statementview' ),
+			$mainSnak = $statement.find( '> .wikibase-statementview-mainsnak' ).first(),
+			claim,
+			mainSnak,
+			value = '';
+
+		try {
+			if ( statementview && typeof statementview.value === 'function' ) {
+				claim = statementview.value().getClaim();
+				mainSnak = claim && claim.getMainSnak ? claim.getMainSnak() : null;
+				value = normalizeWhitespace( unwrapDataValue(
+					mainSnak && mainSnak.getValue ? mainSnak.getValue() : null
+				) );
+			}
+		} catch ( e ) {
+			value = '';
+		}
+
+		if ( value ) {
+			return value;
+		}
+
+		value = normalizeWhitespace( $mainSnak.find( 'input, textarea' ).first().val() );
+
+		if ( value ) {
+			return value;
+		}
+
+		return normalizeWhitespace(
+			$mainSnak.find( '.wikibase-snakview-value' ).first().text()
+		);
+	}
+
+	function getQualifierFillValue( propertyId, $valueview ) {
+		var $statement = $valueview.closest( '.wikibase-statementview' ),
+			nameParts;
+
+		if ( propertyId === 'P1545' ) {
+			return String( getP1545Ordinal( $valueview ) );
+		}
+
+		if (
+			( propertyId !== 'P9687' && propertyId !== 'P9688' ) ||
+			!getConfig().fillAuthorNameQualifiers
+		) {
+			return '';
+		}
+
+		if ( getPropertyIdForStatement( $statement ) !== 'P2093' ) {
+			return '';
+		}
+
+		nameParts = getNameParts( getStatementMainStringValue( $statement ) );
+
+		return propertyId === 'P9687' ? nameParts.givenNames : nameParts.lastNames;
 	}
 
 	function statementHasP1545Qualifier( $statement ) {
@@ -722,13 +890,12 @@ if ( mw.NamePrefiller === undefined ) {
 			return;
 		}
 
-		// Qualifier fields: only fill series ordinal (P1545). Other qualifier
-		// fields are left alone.
+		// Qualifier fields: fill series ordinal (P1545) and the author name
+		// qualifiers (P9687/P9688) of author name string statements. Any other
+		// qualifier field is left alone.
 		if ( $valueview.closest( '.wikibase-statementview-qualifiers' ).length ) {
-			if ( propertyId !== 'P1545' ) {
-				return;
-			}
 			expert = valueview.expert();
+
 			if (
 				!expert ||
 				!expert.$input ||
@@ -736,8 +903,13 @@ if ( mw.NamePrefiller === undefined ) {
 			) {
 				return;
 			}
-			value = String( getP1545Ordinal( $valueview ) );
-			setExpertInput( expert, value );
+
+			value = getQualifierFillValue( propertyId, $valueview );
+
+			if ( value ) {
+				setExpertInput( expert, value );
+			}
+
 			return;
 		}
 
@@ -779,4 +951,6 @@ if ( mw.NamePrefiller === undefined ) {
 			handleValueViewAfterStartEditing
 		);
 	} );
+
+	mw.NamePrefiller.getNameParts = getNameParts;
 }( jQuery ) );
