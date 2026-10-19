@@ -396,9 +396,22 @@ if ( mw.NamePrefiller === undefined ) {
 			return { givenNames: '', lastNames: '' };
 		}
 
+		// "Last name, First name Second name" is the shape handled below.
+		// A second comma left after dropping the suffixes ("Holm, Anders, Bo",
+		// "Holm,, Anders") is not that shape: the split would be a guess, so
+		// nothing is prefilled.
+		if ( cleaned.split( ',' ).length > 2 ) {
+			return { givenNames: '', lastNames: '' };
+		}
+
 		if ( commaIndex > 0 ) {
-			lastNames = normalizeWhitespace( cleaned.slice( 0, commaIndex ) );
-			givenNames = normalizeWhitespace( cleaned.slice( commaIndex + 1 ) );
+			// Suffixes can sit on either side of the comma ("Holm Jr., Anders").
+			lastNames = normalizeWhitespace(
+				stripNameSuffixes( cleaned.slice( 0, commaIndex ) )
+			);
+			givenNames = normalizeWhitespace(
+				stripNameSuffixes( cleaned.slice( commaIndex + 1 ) )
+			);
 
 			if ( givenNames && lastNames ) {
 				return { givenNames: givenNames, lastNames: lastNames };
