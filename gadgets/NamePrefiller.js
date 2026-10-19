@@ -665,7 +665,11 @@ if ( mw.NamePrefiller === undefined ) {
 	}
 
 	function getPropertyIdForStatement( $statementview ) {
-		var $mainSnak = $statementview.find( '> .wikibase-statementview-mainsnak > .wikibase-snakview' ),
+		var $mainSnak = $statementview
+				.find( '.wikibase-statementview-mainsnak' )
+				.first()
+				.find( '.wikibase-snakview' )
+				.first(),
 			snakview = $mainSnak.data( 'snakview' ),
 			$group;
 
@@ -702,7 +706,9 @@ if ( mw.NamePrefiller === undefined ) {
 	 */
 	function getStatementMainStringValue( $statement ) {
 		var statementview = $statement.data( 'statementview' ),
-			$mainSnak = $statement.find( '> .wikibase-statementview-mainsnak' ).first(),
+			$mainSnak = $statement
+				.find( '.wikibase-statementview-mainsnak' )
+				.first(),
 			claim,
 			mainSnak,
 			value = '';
