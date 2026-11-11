@@ -98,7 +98,7 @@ final class NameTypes
             return null;
         }
 
-        return self::URL_TYPES[$type] ?? null;
+        return self::URL_TYPES[$type] ?? (isset(self::TYPE_ITEMS[$type]) ? $type : null);
     }
 
     public static function toUrl(string $type): string
