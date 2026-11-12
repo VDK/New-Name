@@ -19,21 +19,40 @@
  */
 ( function ( $, mw ) {
 	'use strict';
-
 	var toolUrl = 'https://nn.toolforge.org/';
-
 	var propertyInfo = {
 		P735: { type: 'given_name' },
 		P734: { type: 'family_name' },
-		P1950: { type: 'family_name', languages: ['es'] },
-		P9139: { type: 'family_name', languages: ['pt']  },
-		P6978: { type: 'family_name', languages: ['no', 'nn', 'da', 'sv'] }
+		P1533: { type: 'family_name' },
+		P1950: { type: 'family_name', languages: [ 'es' ] },
+		P9139: { type: 'family_name', languages: [ 'pt' ]  },
+		P6978: { type: 'family_name', languages: [ 'no', 'nn', 'da', 'sv' ] }
 	};
-
 	var currentField = null;
 	var currentInfo = null;
 	var updateTimer = null;
-
+	mw.util.addCSS(
+		'.newname-create-link-wrapper {' +
+            'padding:4px 12px 4px 0;' +
+            'border-top:1px solid #eaecf0;' +
+            'background:#fff;' +
+       '}'+
+		'.newname-create-link-wrapper a {'+
+		'    color:#36c;'+
+		'    text-decoration:none;'+
+		'    display:flex;'+
+		'    justify-content:space-between;'+
+		'    align-items:center;'+
+		'}'+
+		'.newname-create-link-wrapper a:hover {' +
+			'text-decoration:underline;' +
+		'}' +
+		'.newname-shortcut {' +
+			'color:#72777d;' +
+			'font-size:0.9em;' +
+			'flex-shrink:0;' +
+		'}'
+	);
 	function message( type ) {
 		var messages = {
 			given_name: {
@@ -51,103 +70,81 @@
 				en: 'Create a new family name item'
 			}
 		};
-
 		return (
 			messages[ type ] &&
 			messages[ type ][ mw.config.get( 'wgUserLanguage' ) ]
 		) || messages[ type ].en;
 	}
-
 	function newNameUrl( value, info ) {
 		var params = new URLSearchParams( {
 			name: value.trim(),
 			type: info.type,
 			ui: mw.config.get( 'wgUserLanguage' )
 		} );
-
-		if ( info.languages) {
+		if ( info.languages ) {
 			params.set( 'languages', info.languages.join( ',' ) );
 		}
-
+		if ( info._equivalent ) {
+			params.set( '_equivalent', info._equivalent );
+		}
 		return toolUrl + '?' + params.toString();
 	}
-
 	function updateLists() {
-		var value;
-
-		if ( !currentField || !currentInfo ) {
+		var value = currentField ? currentField.val() || '' : '';
+		$( '.newname-create-link-wrapper' ).remove();
+		if ( !currentField || !currentInfo || !value.trim() ) {
 			return;
 		}
-
-		value = currentField.val() || '';
-
 		$( '.ui-entityselector-list' ).each( function () {
 			var $list = $( this ),
-				$more = $list.find( '.ui-entityselector-more' ).not( '.newname-create-link' ).first(),
-				$notFound = $list.find( '.ui-entityselector-notfound' ).first(),
-				$newName = $list.find( '.newname-create-link' ).first(),
+				$wrapper,
 				$link;
-
-			if ( !value.trim() ) {
-				$newName.remove();
-				return;
-			}
-
-			if ( !$newName.length ) {
-				$newName = $( '<li>' )
-					.addClass( 'ui-ooMenu-item ui-ooMenu-customItem ui-ooMenu-customItem-action ui-entityselector-more newname-create-link' )
-					.attr( 'dir', 'auto' )
-					.append( $( '<a>' ).attr( 'tabindex', '-1' ) );
-			}
-
-			$link = $newName.find( 'a' ).first();
-
-			$link
+			$wrapper = $( '<div>' )
+				.addClass( 'newname-create-link-wrapper' );
+			$link = $( '<a>' )
 				.attr( {
 					href: newNameUrl( value, currentInfo ),
 					target: '_blank',
 					rel: 'noopener noreferrer'
 				} )
-				.text( message( currentInfo.type ) + ': ' + value.trim() );
-
-			if ( $more.length ) {
-				$newName.insertBefore( $more );
-			} else if ( $notFound.length ) {
-				$notFound.replaceWith( $newName );
-			} else {
-				$list.prepend( $newName );
-			}
+				.append(
+					document.createTextNode(
+						message( currentInfo.type ) + ': ' + value.trim() + ' '
+					)
+				)
+				.append(
+					$( '<span>' )
+						.addClass( 'newname-shortcut' )
+						.text( '(Alt+Enter)' )
+				);
+			$wrapper.append( $link );
+			$list.prepend( $wrapper );
 		} );
 	}
-
 	function scheduleUpdates() {
 		var runs = 0;
-
 		if ( updateTimer ) {
 			clearInterval( updateTimer );
 		}
-
 		updateTimer = setInterval( function () {
 			updateLists();
 			runs++;
-
 			if ( runs >= 15 ) {
 				clearInterval( updateTimer );
 				updateTimer = null;
 			}
 		}, 100 );
 	}
-
 	function inputHandler( event ) {
 		var $valueview = $( event.target ).closest( '.valueview' ),
 			$snakview = $valueview.closest( '.wikibase-snakview' ),
 			snakview = $snakview.data( 'snakview' ),
-			property = snakview && snakview.value().property;
-
+			property = snakview && snakview.value().property,
+			info;
 		currentField = $( event.target );
-		currentInfo = propertyInfo[ property ] || null;
-
-		if ( !currentInfo ) {
+		info = propertyInfo[ property ] || null;
+		if ( !info ) {
+			currentInfo = null;
 			return;
 		}
 
@@ -157,22 +154,40 @@
 			return;
 		}
 
+		currentInfo = $.extend( {}, info );
+		if ( property === 'P1533' ) {
+			currentInfo._equivalent = mw.config.get( 'wbEntityId' );
+		}
 		scheduleUpdates();
 	}
-
-		function bindInputs() {
-			$( document )
-				.off(
-					'input.newNameCreateLink paste.newNameCreateLink keyup.newNameCreateLink change.newNameCreateLink newnamecreate:update.newNameCreateLink',
-					'.valueview-input'
-				)
-				.on(
-					'input.newNameCreateLink paste.newNameCreateLink keyup.newNameCreateLink change.newNameCreateLink newnamecreate:update.newNameCreateLink',
-					'.valueview-input',
-					inputHandler
-				);
+	function bindInputs() {
+		$( document )
+			.off(
+				'input.newNameCreateLink paste.newNameCreateLink keyup.newNameCreateLink change.newNameCreateLink newnamecreate:update.newNameCreateLink keydown.newNameCreateLink',
+				'.valueview-input'
+			)
+			.on(
+				'input.newNameCreateLink paste.newNameCreateLink keyup.newNameCreateLink change.newNameCreateLink newnamecreate:update.newNameCreateLink',
+				'.valueview-input',
+				inputHandler
+			)
+			.on( 'keydown.newNameCreateLink', '.valueview-input', keydownHandler );
+	}
+	function keydownHandler( event ) {
+		var value;
+		if ( !currentField || !currentInfo ) {
+			return;
 		}
-
+		if ( event.key !== 'Enter' || !event.altKey ) {
+			return;
+		}
+		value = currentField.val() || '';
+		if ( !value.trim() ) {
+			return;
+		}
+		event.preventDefault();
+		window.open( newNameUrl( value, currentInfo ), '_blank', 'noopener' );
+	}
 	$( function () {
 		bindInputs();
 	} );
