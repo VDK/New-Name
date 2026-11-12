@@ -78,7 +78,7 @@
 	function newNameUrl( value, info ) {
 		var params = new URLSearchParams( {
 			name: value.trim(),
-			type: info.type,
+			type: info.type.replace( /_name$/, '' ),
 			ui: mw.config.get( 'wgUserLanguage' )
 		} );
 		if ( info.languages ) {
